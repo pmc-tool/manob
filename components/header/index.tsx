@@ -3,6 +3,7 @@
 import { GiftOutlined, GithubOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Tooltip } from "antd";
 import { ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { PublishDropdown } from "./PublishDropdown"; // Import the separate component
 import { userMenuItems } from "./UserDropdown";
 import { LogoIcon } from "../icons/LogoIcon";
@@ -12,6 +13,35 @@ import { useState } from "react";
 export default function Header() {
   const { openRenameModal } = useRenameModal();
   const [publishDropdownOpen, setPublishDropdownOpen] = useState(false);
+  const router = useRouter();
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    switch (key) {
+      case 'profile':
+        router.push('/my-profile');
+        break;
+      case 'dashboard':
+        router.push('/dashboard');
+        break;
+      case 'settings':
+        router.push('/dashboard/settings');
+        break;
+      case 'pricing':
+        router.push('/pricing');
+        break;
+      case 'forum':
+        router.push('/forum/questions');
+        break;
+      case 'support':
+        router.push('/support-requests');
+        break;
+      case 'logout':
+        // TODO: Implement logout
+        console.log('Logout clicked');
+        break;
+    }
+  };
+
   return (
     <div className="flex items-center w-full">
       {/* LEFT SIDE: Logo + Title */}
@@ -79,7 +109,7 @@ export default function Header() {
         </Dropdown>
 
         {/* User Dropdown */}
-        <Dropdown menu={{ items: userMenuItems }} trigger={["click"]} arrow>
+        <Dropdown menu={{ items: userMenuItems, onClick: handleMenuClick }} trigger={["click"]} arrow>
           <div className="cursor-pointer">
             <Avatar
               size="small"

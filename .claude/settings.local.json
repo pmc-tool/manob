@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
+      "Bash(npm run dev)",
+      "Bash(npm install)",
+      "Bash(command -v:*)",
+      "Bash([ -s \"$HOME/.nvm/nvm.sh\" ])",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(nvm install:*)",
+      "Bash(nvm use:*)",
+      "Bash(node --version)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(pkill:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

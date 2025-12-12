@@ -1,0 +1,171 @@
+/* MIGRATION: SkillsSection CSS from PackMyCode */
+
+.section {
+  margin-bottom: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  color: #ea2725;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.editButton:hover {
+  background: rgba(234, 39, 37, 0.1);
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.skill:hover {
+  background: #e5e7eb;
+}
+
+.emptyState {
+  padding: 20px;
+}
+
+.emptyText {
+  color: #ea2725;
+  font-weight: 500;
+}
+
+/* Search */
+.searchWrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #ea2725;
+  box-shadow: 0 0 0 3px rgba(234, 39, 37, 0.1);
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.suggestionList {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.suggestionItem {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: background 0.15s;
+}
+
+.suggestionItem:hover {
+  background: #f3f4f6;
+}
+
+/* Tags */
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #111827;
+}
+
+.tagRemove {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.tagRemove:hover {
+  color: #ef4444;
+}
+
+.clearAll {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.clearAll:hover {
+  text-decoration: underline;
+}

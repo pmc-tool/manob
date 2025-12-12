@@ -1,0 +1,152 @@
+/* MIGRATION: ProfileCard CSS from PackMyCode */
+
+.card {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  text-align: center;
+  padding-bottom: 56px;
+  overflow: hidden;
+}
+
+.coverImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(135deg, #ea2725 0%, #ff6b6b 100%);
+  border-radius: 12px 12px 0 0;
+}
+
+.coverImage::before,
+.coverImage::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  transform: rotate(12deg);
+  left: -25%;
+  bottom: -63%;
+  width: 100%;
+  height: 70%;
+  border-top: 1px solid #e5e7eb;
+}
+
+.coverImage::after {
+  left: auto;
+  right: -25%;
+  transform: rotate(-8deg);
+}
+
+.avatarWrapper {
+  position: relative;
+  margin: 50px auto 12px;
+  width: 96px;
+  height: 96px;
+}
+
+.avatar {
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.name {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.rating {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.info {
+  position: relative;
+  padding: 16px 20px;
+  margin: 0 16px 20px;
+}
+
+.info::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: radial-gradient(ellipse at center, #ddd 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.infoItem:last-child {
+  margin-bottom: 0;
+}
+
+.infoIcon {
+  width: 30px;
+  flex-shrink: 0;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+}
+
+.infoLabel {
+  flex: 1;
+  text-align: left;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.infoValue {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid transparent;
+  background: linear-gradient(to top, #fff, #fff);
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: radial-gradient(ellipse at center, #ddd 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.viewProfile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ea2725;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.viewProfile:hover {
+  color: #d12220;
+}

@@ -5,6 +5,8 @@ import { Progress } from "antd";
 import {
   BadgeDollarSign,
   ChevronRight,
+  Headset,
+  LayoutDashboard,
   LogOut,
   Settings,
   UserRoundPen,
@@ -61,6 +63,11 @@ export const userMenuItems: MenuProps["items"] = [
     label: <span className="dark:text-gray-300 font-medium">Profile</span>,
   },
   {
+    key: "dashboard",
+    icon: <LayoutDashboard size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Dashboard</span>,
+  },
+  {
     key: "pricing",
     icon: <BadgeDollarSign size={18} />,
     label: <span className="dark:text-gray-300 font-medium">Pricing</span>,
@@ -74,8 +81,13 @@ export const userMenuItems: MenuProps["items"] = [
     key: "forum",
     icon: <UsersRound size={18} />,
     label: (
-      <span className="dark:text-gray-300 font-medium">Community Forum</span>
+      <span className="dark:text-gray-300 font-medium">Discussion</span>
     ),
+  },
+  {
+    key: "support",
+    icon: <Headset size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Support</span>,
   },
 
   { type: "divider" },

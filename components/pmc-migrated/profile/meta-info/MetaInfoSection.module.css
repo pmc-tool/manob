@@ -1,0 +1,251 @@
+/* MIGRATION: MetaInfoSection CSS from PackMyCode */
+
+.section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.title {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Item styles */
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.item:last-child {
+  margin-bottom: 0;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: #6b7280;
+}
+
+.content {
+  flex: 1;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.itemTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  color: #ea2725;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.editButton:hover {
+  background: rgba(234, 39, 37, 0.1);
+}
+
+.itemText {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.emptyText {
+  font-size: 14px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Language list */
+.languageList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.languageItem {
+  font-size: 14px;
+}
+
+.languageItem:not(:last-child)::after {
+  content: '•';
+  margin-left: 8px;
+  color: #d1d5db;
+}
+
+.languageName {
+  font-weight: 500;
+  color: #111827;
+}
+
+.languageLevel {
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+/* Form styles */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.formGroup {
+  margin-bottom: 0;
+}
+
+.formRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.formRow .formGroup {
+  flex: 1;
+}
+
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #ea2725;
+  box-shadow: 0 0 0 3px rgba(234, 39, 37, 0.1);
+}
+
+.addButton {
+  padding: 10px 16px;
+  background: #ea2725;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.addButton:hover {
+  background: #d12220;
+}
+
+/* Tags */
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.tagName {
+  font-weight: 500;
+  color: #111827;
+}
+
+.tagLevel {
+  color: #6b7280;
+}
+
+.tagRemove {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  margin-left: 2px;
+}
+
+.tagRemove:hover {
+  color: #ef4444;
+}
+
+.clearAll {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.clearAll:hover {
+  text-decoration: underline;
+}
+
+/* Language form */
+.languageForm {
+  /* Just a wrapper */
+}
+
+@media (max-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addButton {
+    width: 100%;
+  }
+}

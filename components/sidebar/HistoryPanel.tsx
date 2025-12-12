@@ -37,7 +37,7 @@ const HistoryPanel = forwardRef<HTMLDivElement, HistoryPanelProps>(
         {open && (
           <motion.div
             ref={ref}
-            className="absolute left-[67px] top-0 h-full w-72 bg-white rounded-2xl z-1 p-4 border border-gray-200 overflow-y-auto shadow-sm"
+            className="absolute left-[67px] top-0 h-full w-72 bg-white rounded-2xl z-50 p-4 border border-gray-200 overflow-y-auto shadow-lg"
             initial={{ x: -367 }}
             animate={{ x: 0 }}
             exit={{ x: -367 }}

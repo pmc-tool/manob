@@ -1,0 +1,76 @@
+/* Product list page styles */
+
+.container {
+  padding: 0;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+}
+
+.emptyState p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.emptyState button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ea2725;
+  background: transparent;
+  border: 1px solid #ea2725;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emptyState button:hover {
+  background: #ea2725;
+  color: #fff;
+}

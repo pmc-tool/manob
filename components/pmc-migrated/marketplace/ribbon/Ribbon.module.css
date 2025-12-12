@@ -1,0 +1,79 @@
+/* MIGRATION: Ribbon CSS Module from PackMyCode */
+
+.ribbon {
+  position: absolute;
+  top: 20px;
+  padding: 0 12px;
+  background: #0db02b;
+  color: #fff;
+  box-shadow: -1px 2px 3px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  text-transform: capitalize;
+  letter-spacing: 0;
+  font-weight: 500;
+  font-size: 14px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 0 16px 16px 0;
+  left: 0;
+}
+
+.ribbon + .ribbon {
+  top: 57px;
+}
+
+.trending {
+  background: #0084b4;
+}
+
+.sale {
+  background: #0db02b;
+}
+
+.pixi {
+  background: #8b5cf6;
+}
+
+.ribbon::before,
+.ribbon::after {
+  content: '';
+  position: absolute;
+}
+
+.ribbon::before {
+  width: 7px;
+  height: 35px;
+  top: 0;
+  left: -6.5px;
+  background: inherit;
+  border-radius: 5px 0 0 5px;
+}
+
+.ribbon::after {
+  width: 5px;
+  height: 5px;
+  bottom: -5px;
+  left: -4.5px;
+  background: #b4efbb;
+  border-radius: 5px 0 0 5px;
+}
+
+.trending::after {
+  background: #89d3ed;
+}
+
+.sale::after {
+  background: #b4efbb;
+}
+
+.pixi::after {
+  background: #c4b5fd;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+}

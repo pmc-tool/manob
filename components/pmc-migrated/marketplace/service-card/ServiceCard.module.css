@@ -1,0 +1,190 @@
+/* MIGRATION: ServiceCard CSS Module from PackMyCode */
+
+.serviceCard {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+
+.serviceCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stretchedLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.imageWrapper {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+}
+
+.serviceImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.serviceCard:hover .serviceImage {
+  transform: scale(1.1) rotate(-1deg);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px;
+}
+
+.metaLine {
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.authorLink,
+.categoryLink {
+  font-style: normal;
+  font-weight: 500;
+  color: inherit;
+  text-decoration: none;
+}
+
+.authorLink:hover,
+.categoryLink:hover {
+  color: #ea2725;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.title a {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(transparent calc(100% - 2px), #ea2725 2px);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  transition: background-size 500ms ease-in-out;
+  display: inline;
+}
+
+.title a:hover {
+  background-size: 100% 100%;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 12px 0;
+}
+
+.footerContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+}
+
+.authorAvatar {
+  flex-shrink: 0;
+}
+
+.avatarImage {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.authorName {
+  font-weight: 500;
+  font-size: 14px;
+  color: #212529;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.authorName:hover {
+  color: #ea2725;
+}
+
+.priceSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.fromLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.price {
+  font-size: 23px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.priceWithDiscount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.originalPrice {
+  font-size: 18px;
+  color: #6c757d;
+  text-decoration: line-through;
+}
+
+.discountPrice {
+  font-size: 23px;
+  font-weight: 600;
+  color: #0db02b;
+}

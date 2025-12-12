@@ -6,7 +6,9 @@ import {
   Mail,
   Settings,
   SplinePointer,
+  Store,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useSettingsModal } from "@/context/SettingsModalContext";
@@ -16,6 +18,7 @@ export default function ProjectSidebar() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [openHistory, setOpenHistory] = useState(false);
   const { openModal } = useSettingsModal();
+  const router = useRouter();
 
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +33,18 @@ export default function ProjectSidebar() {
 
     if (tab === "settings") {
       openModal();
+    }
+
+    if (tab === "marketplace") {
+      router.push("/marketplace");
+    }
+
+    if (tab === "chat") {
+      router.push("/projects");
+    }
+
+    if (tab === "inbox") {
+      router.push("/chat");
     }
   };
 
@@ -64,9 +79,9 @@ export default function ProjectSidebar() {
     }`;
 
   return (
-    <div className="relative flex-1 z-10">
+    <div className="relative flex-1" style={{ zIndex: 50, overflow: 'visible' }}>
       {/* SIDEBAR */}
-      <div className="flex-col h-full p-2 flex min-w-16 pl-0 bg-white rounded-xl z-10">
+      <div className="flex-col h-full p-2 flex min-w-16 pl-0 bg-white rounded-xl">
         <div className="flex flex-col gap-2.5">
           <button
             onClick={() => handleClick("chat")}
@@ -83,6 +98,16 @@ export default function ProjectSidebar() {
               <SplinePointer size={23} />
             </div>
             Design
+          </button>
+
+          <button
+            onClick={() => handleClick("marketplace")}
+            className={buttonClass("marketplace")}
+          >
+            <div className={iconClass("marketplace")}>
+              <Store size={22} />
+            </div>
+            Market
           </button>
 
           <button

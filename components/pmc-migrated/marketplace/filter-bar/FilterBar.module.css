@@ -1,0 +1,246 @@
+/* MIGRATION: FilterBar CSS Module - Top horizontal filter bar */
+
+.filterBar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownTrigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #374151;
+}
+
+.dropdownTrigger:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.dropdownTrigger.active {
+  border-color: #ea2725;
+  color: #ea2725;
+  background: #fef2f2;
+}
+
+.dropdownTrigger svg {
+  transition: transform 0.2s ease;
+}
+
+.dropdownTrigger svg.rotated {
+  transform: rotate(180deg);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #ea2725;
+  color: #fff;
+  border-radius: 9px;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.dropdownHeader {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dropdownContent {
+  padding: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.checkboxItem:hover {
+  background: #f3f4f6;
+}
+
+.checkboxItem input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #ea2725;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  flex: 1;
+  font-size: 14px;
+  color: #374151;
+}
+
+.count {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.radioItem {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.15s ease;
+}
+
+.radioItem:hover {
+  background: #f3f4f6;
+}
+
+.radioItem.selected {
+  background: #fef2f2;
+  color: #ea2725;
+  font-weight: 500;
+}
+
+.resultInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.resultCount {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.clearAll {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ea2725;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.clearAll:hover {
+  text-decoration: underline;
+}
+
+.activeTags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #f3f4f6;
+  border-radius: 16px;
+  color: #374151;
+}
+
+.tag button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.tag button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    overflow-x: auto;
+    padding-bottom: 4px;
+    flex-wrap: nowrap;
+  }
+
+  .dropdownTrigger {
+    white-space: nowrap;
+  }
+
+  .resultInfo {
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,55 @@
+/* MIGRATION: My Profile page CSS from PackMyCode */
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.pageTitle {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 24px 0;
+}
+
+.metaSection {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .metaGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.reviewsSection {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.sectionTitle {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.reviewsPlaceholder {
+  padding: 40px 20px;
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 12px;
+  color: #6b7280;
+  font-size: 14px;
+}
