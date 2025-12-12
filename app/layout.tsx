@@ -6,8 +6,6 @@ import { ConfigProvider } from "antd";
 import { PMCTheme } from "./themes";
 import { RenameModalProvider } from "@/context/RenameModalContext";
 import { SettingsModalProvider } from "@/context/SettingsModalContext";
-// MIGRATION: Auth context for PMC migrated pages
-import { AuthProvider } from "@/context/AuthContext";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -37,12 +35,9 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${dmSans.variable} ${kalam.variable} antialiased`}>
           <AntdRegistry>
-            {/* MIGRATION: AuthProvider wraps all contexts for PMC migrated pages */}
-            <AuthProvider>
-              <RenameModalProvider>
-                <SettingsModalProvider>{children}</SettingsModalProvider>
-              </RenameModalProvider>
-            </AuthProvider>
+            <RenameModalProvider>
+              <SettingsModalProvider>{children}</SettingsModalProvider>
+            </RenameModalProvider>
           </AntdRegistry>
         </body>
       </html>
