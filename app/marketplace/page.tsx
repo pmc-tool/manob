@@ -19,11 +19,11 @@ import styles from './page.module.css';
 const allProducts = [...mockFeaturedProducts, ...mockTrendingProducts];
 const allServices = [...mockFeaturedServices, ...mockTrendingServices];
 
-// MOCK: Filter categories
-const filterCategories = mockCategories.map((cat) => ({
+// MOCK: Filter categories with deterministic counts (avoid hydration mismatch)
+const filterCategories = mockCategories.map((cat, index) => ({
   id: cat.slug,
   label: cat.title,
-  count: Math.floor(Math.random() * 100) + 10,
+  count: ((index + 1) * 17) % 89 + 10, // Deterministic pseudo-random: 27, 44, 61, 78, 6, 23...
 }));
 
 const SORT_OPTIONS = [

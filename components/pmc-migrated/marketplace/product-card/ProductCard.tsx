@@ -1,12 +1,13 @@
 // MIGRATION: ProductCardGrid component from PackMyCode
-// Uses lucide-react icons, CSS Modules, simplified without hooks (addToCart, useFavorite)
+// Uses lucide-react icons, CSS Modules, with cart integration
 'use client';
 
-import { Zap, Tag, ShoppingCart, ExternalLink, Box } from 'lucide-react';
+import { Zap, Tag, ShoppingCart, ExternalLink, Box, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReviewStars } from '../review-stars';
 import { Ribbon } from '../ribbon';
+import useAddToCart from '@/hooks/useAddToCart';
 import styles from './ProductCard.module.css';
 
 interface Author {
@@ -61,10 +62,19 @@ export default function ProductCard({
   isPixiCompatible = false,
   size = 'default',
 }: ProductCardProps) {
+  const { addToCart, isLoading, isInCart } = useAddToCart();
   const isSmall = size === 'small';
   const authorName = author?.full_name
     ? author.full_name
     : `${author?.first_name || ''} ${author?.last_name || ''}`.trim();
+  const inCart = isInCart(id);
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (inCart) return;
+    await addToCart(id, { quantity: 1, lic_type: 'REGULAR' });
+  };
 
   return (
     <div className={`${styles.productCard} ${isSmall ? styles.small : ''} ${className}`}>
@@ -135,10 +145,16 @@ export default function ProductCard({
 
             <div className={styles.actions}>
               <button
-                className={`${styles.cartButton} ${isSmall ? styles.buttonSmall : ''}`}
-                title="Add to Cart"
+                className={`${styles.cartButton} ${isSmall ? styles.buttonSmall : ''} ${inCart ? styles.inCart : ''}`}
+                title={inCart ? 'In Cart' : 'Add to Cart'}
+                onClick={handleAddToCart}
+                disabled={isLoading || inCart}
               >
-                <ShoppingCart size={isSmall ? 14 : 18} />
+                {isLoading ? (
+                  <Loader2 size={isSmall ? 14 : 18} className="animate-spin" />
+                ) : (
+                  <ShoppingCart size={isSmall ? 14 : 18} />
+                )}
               </button>
               <Link
                 href={`/product-preview/${id}`}

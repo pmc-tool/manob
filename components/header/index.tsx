@@ -1,19 +1,29 @@
 "use client";
 
-import { GiftOutlined, GithubOutlined } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Tooltip } from "antd";
-import { ChevronDown } from "lucide-react";
+import { GiftOutlined } from "@ant-design/icons";
+import { Avatar, Button, Dropdown } from "antd";
+import { ChevronDown, Bell, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PublishDropdown } from "./PublishDropdown"; // Import the separate component
 import { userMenuItems } from "./UserDropdown";
 import { LogoIcon } from "../icons/LogoIcon";
 import { useRenameModal } from "@/context/RenameModalContext";
 import { useState } from "react";
+import { NotificationDropdown } from "@/components/pmc-migrated/notifications";
+import { mockNotifications, getUnseenCount } from "@/lib/mocks/notifications.mock";
+import { ReferralPopup } from "@/components/pmc-migrated/referral";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const { openRenameModal } = useRenameModal();
   const [publishDropdownOpen, setPublishDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const [referralPopupOpen, setReferralPopupOpen] = useState(false);
   const router = useRouter();
+  const { getCartItemCount } = useCart();
+
+  const unseenCount = getUnseenCount(mockNotifications);
+  const cartCount = getCartItemCount();
 
   const handleMenuClick = ({ key }: { key: string }) => {
     switch (key) {
@@ -24,16 +34,22 @@ export default function Header() {
         router.push('/dashboard');
         break;
       case 'settings':
-        router.push('/dashboard/settings');
+        router.push('/settings/security');
         break;
       case 'pricing':
         router.push('/pricing');
+        break;
+      case 'become-seller':
+        router.push('/become-seller');
         break;
       case 'forum':
         router.push('/forum/questions');
         break;
       case 'support':
         router.push('/support-requests');
+        break;
+      case 'blog':
+        router.push('/blog');
         break;
       case 'logout':
         // TODO: Implement logout
@@ -77,20 +93,48 @@ export default function Header() {
           color="default"
           variant="outlined"
           icon={<GiftOutlined />}
+          onClick={() => setReferralPopupOpen(true)}
         >
           Refer
         </Button>
-        <Tooltip title="Connect to branch">
+        {/* Notification Bell */}
+        <Dropdown
+          trigger={["click"]}
+          open={notificationDropdownOpen}
+          onOpenChange={(open) => setNotificationDropdownOpen(open)}
+          popupRender={() => (
+            <NotificationDropdown onClose={() => setNotificationDropdownOpen(false)} />
+          )}
+          placement="bottomRight"
+        >
+          <div className="relative cursor-pointer">
+            <Button
+              color="default"
+              variant="outlined"
+              size="small"
+              icon={<Bell className="h-4 w-4" />}
+            />
+            {unseenCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[11px] font-semibold text-white bg-red-500 rounded-full flex items-center justify-center">
+                {unseenCount > 99 ? '99+' : unseenCount}
+              </span>
+            )}
+          </div>
+        </Dropdown>
+        {/* Cart Icon */}
+        <div className="relative cursor-pointer" onClick={() => router.push('/cart')}>
           <Button
-            icon={<GithubOutlined />}
             color="default"
             variant="outlined"
             size="small"
+            icon={<ShoppingCart className="h-4 w-4" />}
           />
-        </Tooltip>
-        <Button color="default" variant="outlined" size="small">
-          Share
-        </Button>
+          {cartCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[11px] font-semibold text-white bg-primary rounded-full flex items-center justify-center">
+              {cartCount > 99 ? '99+' : cartCount}
+            </span>
+          )}
+        </div>
         {/* Publish Dropdown */}
         <Dropdown
           trigger={["click"]}
@@ -118,6 +162,12 @@ export default function Header() {
             />
           </div>
         </Dropdown>
+
+        {/* Referral Popup */}
+        <ReferralPopup
+          open={referralPopupOpen}
+          onClose={() => setReferralPopupOpen(false)}
+        />
       </div>
     </div>
   );

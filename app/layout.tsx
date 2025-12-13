@@ -6,6 +6,8 @@ import { ConfigProvider } from "antd";
 import { PMCTheme } from "./themes";
 import { RenameModalProvider } from "@/context/RenameModalContext";
 import { SettingsModalProvider } from "@/context/SettingsModalContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -35,9 +37,13 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${dmSans.variable} ${kalam.variable} antialiased`}>
           <AntdRegistry>
-            <RenameModalProvider>
-              <SettingsModalProvider>{children}</SettingsModalProvider>
-            </RenameModalProvider>
+            <AuthProvider>
+              <CartProvider>
+                <RenameModalProvider>
+                  <SettingsModalProvider>{children}</SettingsModalProvider>
+                </RenameModalProvider>
+              </CartProvider>
+            </AuthProvider>
           </AntdRegistry>
         </body>
       </html>

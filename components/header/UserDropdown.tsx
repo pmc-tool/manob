@@ -4,11 +4,13 @@ import type { MenuProps } from "antd";
 import { Progress } from "antd";
 import {
   BadgeDollarSign,
+  BookOpen,
   ChevronRight,
   Headset,
   LayoutDashboard,
   LogOut,
   Settings,
+  Store,
   UserRoundPen,
   UsersRound,
 } from "lucide-react";
@@ -73,6 +75,11 @@ export const userMenuItems: MenuProps["items"] = [
     label: <span className="dark:text-gray-300 font-medium">Pricing</span>,
   },
   {
+    key: "become-seller",
+    icon: <Store size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Become a Seller</span>,
+  },
+  {
     key: "settings",
     icon: <Settings size={18} />,
     label: <span className="dark:text-gray-300 font-medium">Settings</span>,
@@ -88,6 +95,11 @@ export const userMenuItems: MenuProps["items"] = [
     key: "support",
     icon: <Headset size={18} />,
     label: <span className="dark:text-gray-300 font-medium">Support</span>,
+  },
+  {
+    key: "blog",
+    icon: <BookOpen size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Blog</span>,
   },
 
   { type: "divider" },

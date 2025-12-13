@@ -192,6 +192,18 @@
   color: #ea2725;
 }
 
+.cartButton.inCart {
+  background: #0db02b;
+  border-color: #0db02b;
+  color: #fff;
+  cursor: default;
+}
+
+.cartButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .buttonSmall {
   width: 28px;
   height: 28px;

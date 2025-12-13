@@ -2,6 +2,7 @@
 
 import {
   BotMessageSquare,
+  Briefcase,
   History,
   Mail,
   Settings,
@@ -32,7 +33,7 @@ export default function ProjectSidebar() {
     }
 
     if (tab === "settings") {
-      openModal();
+      router.push("/settings/security");
     }
 
     if (tab === "marketplace") {
@@ -45,6 +46,10 @@ export default function ProjectSidebar() {
 
     if (tab === "inbox") {
       router.push("/chat");
+    }
+
+    if (tab === "hire") {
+      router.push("/job-list");
     }
   };
 
@@ -108,6 +113,16 @@ export default function ProjectSidebar() {
               <Store size={22} />
             </div>
             Market
+          </button>
+
+          <button
+            onClick={() => handleClick("hire")}
+            className={buttonClass("hire")}
+          >
+            <div className={iconClass("hire")}>
+              <Briefcase size={22} />
+            </div>
+            Hire
           </button>
 
           <button

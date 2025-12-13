@@ -1,0 +1,8 @@
+.stripeBadgeText {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

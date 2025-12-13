@@ -1,0 +1,315 @@
+/* Job Post Page Styles */
+
+.jobPostPage {
+  min-height: 100%;
+  background: #fff;
+}
+
+/* Page Header */
+.pageHeader {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #6b7280;
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  color: #374151;
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.headerContent {
+  max-width: 600px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 8px;
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Form Container */
+.formContainer {
+  display: flex;
+  gap: 32px;
+  padding: 32px 24px;
+  max-width: 1200px;
+}
+
+/* Form Card */
+.formCard {
+  flex: 1;
+  max-width: 720px;
+}
+
+/* Form Group */
+.formGroup {
+  margin-bottom: 28px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.label svg {
+  color: #6b7280;
+}
+
+.hint {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 8px 0 0;
+}
+
+.input,
+.textarea {
+  width: 100%;
+}
+
+/* Form Row */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.deliveryRow {
+  display: flex;
+  gap: 12px;
+}
+
+/* Radio Group */
+.radioGroup {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.radioBtn {
+  min-width: 120px;
+  text-align: center;
+}
+
+/* Job Type Section */
+.jobTypeSection {
+  padding: 20px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 28px;
+}
+
+.jobTypeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jobTypeInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.liveIcon {
+  color: #f97316;
+}
+
+.jobTypeInfo h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.jobTypeInfo p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.liveDuration {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.liveDuration label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Form Actions */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.submitBtn {
+  min-width: 140px;
+}
+
+/* Tips Sidebar */
+.tipsSidebar {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.tipsCard,
+.statsCard {
+  padding: 24px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.tipsCard h3,
+.statsCard h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 16px;
+}
+
+.tipsCard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tipsCard li {
+  padding: 12px 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tipsCard li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.tipsCard li strong {
+  display: block;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+/* Stats Card */
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.stat:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .formContainer {
+    flex-direction: column;
+  }
+
+  .tipsSidebar {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .tipsCard,
+  .statsCard {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    padding: 16px;
+  }
+
+  .pageTitle {
+    font-size: 20px;
+  }
+
+  .formContainer {
+    padding: 20px 16px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .deliveryRow {
+    flex-direction: column;
+  }
+
+  .radioGroup {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .radioBtn {
+    width: 100%;
+  }
+
+  .formActions {
+    flex-direction: column-reverse;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}

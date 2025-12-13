@@ -1,0 +1,427 @@
+/* Settings Styles - Migrated from PackMyCode */
+
+/* Settings Card */
+.settingsCard {
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: none;
+}
+
+.cardBody {
+  padding: 16px;
+}
+
+@media (min-width: 640px) {
+  .cardBody {
+    padding: 24px;
+  }
+}
+
+.cardHeader {
+  margin-bottom: 24px;
+}
+
+.cardHeader h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Form Section */
+.formSection {
+  background: white;
+  border: 4px solid white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 640px) {
+  .formSection {
+    padding: 24px;
+  }
+}
+
+/* Form Row */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+@media (min-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+.formRow.noBorder {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.formLabel h6 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.formLabel h6.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.formInput {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Input Wrapper */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.inputWrapper input:focus {
+  outline: none;
+  border-color: #10a37f;
+  box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
+}
+
+.inputWrapper input.inputError {
+  border-color: #ef4444;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eyeButton:hover {
+  color: #374151;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.successMessage {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Submit Button */
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  background: #10a37f;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 16px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #0d8c6d;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Toggle Row */
+.toggleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.toggleRow.noBorder {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.toggleLabel {
+  flex: 1;
+}
+
+.toggleLabel h6 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e7eb;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.toggleSlider::before {
+  position: absolute;
+  content: '';
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle input:checked + .toggleSlider {
+  background-color: #10a37f;
+}
+
+.toggle input:checked + .toggleSlider::before {
+  transform: translateX(22px);
+}
+
+/* Device Card */
+.deviceCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.deviceCard.noBorder {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.deviceIcon {
+  width: 48px;
+  height: 48px;
+  background: #f3f4f6;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.deviceInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.deviceName {
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.currentBadge {
+  font-size: 12px;
+  font-weight: 500;
+  color: #10a37f;
+  background: #d1fae5;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.deviceMeta {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dot {
+  font-size: 10px;
+}
+
+.logoutDeviceBtn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.logoutDeviceBtn:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 32px;
+  color: #6b7280;
+}
+
+/* Settings Navigation */
+.settingsNav {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.navItem:hover {
+  background: #f3f4f6;
+  color: #10a37f;
+}
+
+.navItemActive {
+  background: #d1fae5;
+  color: #10a37f;
+}
+
+.navItemActive:hover {
+  background: #d1fae5;
+}
+
+/* Settings Layout */
+.settingsContainer {
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .settingsContainer {
+    padding: 0 24px;
+  }
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .settingsGrid {
+    grid-template-columns: 240px 1fr;
+  }
+}
+
+.settingsSidebar {
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+}
+
+@media (max-width: 767px) {
+  .settingsSidebar {
+    position: static;
+  }
+}
+
+.settingsMain {
+  min-width: 0;
+}

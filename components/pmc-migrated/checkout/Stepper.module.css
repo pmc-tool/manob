@@ -1,0 +1,35 @@
+.stepTrigger {
+  color: #6c757d;
+  padding: 0 15px;
+}
+
+.stepItem:first-child .stepTrigger {
+  padding-left: 0;
+}
+
+.active.stepTrigger {
+  color: #ea2725;
+}
+
+.line {
+  color: rgb(154 154 154);
+}
+
+.stepItem.crossed + .line {
+  color: #ea2725;
+}
+
+.stepperCircle {
+  width: 2em;
+  height: 2em;
+  background-color: #9a9a9a;
+}
+
+.active .stepperCircle {
+  background-color: #ea2725;
+}
+
+.stepItem.crossed .stepTrigger .stepperCircle {
+  background-color: rgb(254 244 244);
+  color: #ea2725 !important;
+}

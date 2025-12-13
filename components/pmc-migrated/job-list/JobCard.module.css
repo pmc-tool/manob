@@ -1,0 +1,164 @@
+:root .jobListCard.active {
+  --bs-border-color: #fdd0d0;
+}
+:root .jobListCard.activeYellow {
+  --bs-border-color: #fde8a9;
+}
+
+.jobListCard.active .cardTag {
+  border: 1px solid #fdd0d0;
+}
+.jobListCard.activeYellow .cardTag {
+  border: 1px solid #fde8a9;
+}
+
+.jobListCard {
+  -webkit-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+}
+
+.jobListCard:hover {
+  border-color: #212529 !important;
+  -webkit-box-shadow: 0 0.175em 0 #212529 !important;
+  box-shadow: 0 0.175em 0 #212529 !important;
+}
+
+.jobListCard.active {
+  /* border-color: #EA2725 !important; */
+  border-color: #fdd0d0 !important;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(rgba(255, 238, 238, 1)),
+    color-stop(40%, rgba(255, 238, 238, 1)),
+    color-stop(75%, rgba(255, 255, 255, 1)),
+    to(rgba(255, 255, 255, 1))
+  );
+  background: -o-linear-gradient(
+    left,
+    rgba(255, 238, 238, 1) 0%,
+    rgba(255, 238, 238, 1) 40%,
+    rgba(255, 255, 255, 1) 75%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background: linear-gradient(
+    to right,
+    rgba(255, 238, 238, 1) 0%,
+    rgba(255, 238, 238, 1) 40%,
+    rgba(255, 255, 255, 1) 75%,
+    rgba(255, 255, 255, 1) 100%
+  );
+}
+
+.jobListCard.active:hover {
+  border-color: #ea2725 !important;
+  -webkit-box-shadow: 0 0.175em 0 #ea2725 !important;
+  box-shadow: 0 0.175em 0 #ea2725 !important;
+}
+
+/* .jobListCard.active .btnSoftPrimary {
+    background-color: #f5d4d4;
+}
+
+.jobListCard.active .btnSoftWarning {
+    background-color: #f9e5c7;
+} */
+
+.activeYellow {
+  /* border-color: #ffc107 !important; */
+  border-color: #fde8a9 !important;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(rgba(255, 253, 231, 1)),
+    color-stop(40%, rgba(255, 253, 231, 1)),
+    color-stop(75%, rgba(255, 255, 255, 1)),
+    to(rgba(255, 255, 255, 1))
+  );
+  background: -o-linear-gradient(
+    left,
+    rgba(255, 253, 231, 1) 0%,
+    rgba(255, 253, 231, 1) 40%,
+    rgba(255, 255, 255, 1) 75%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background: linear-gradient(
+    to right,
+    rgba(255, 253, 231, 1) 0%,
+    rgba(255, 253, 231, 1) 40%,
+    rgba(255, 255, 255, 1) 75%,
+    rgba(255, 255, 255, 1) 100%
+  );
+}
+
+.activeYellow:hover {
+  border-color: #ffc107 !important;
+  -webkit-box-shadow: 0 0.175em 0 #ffc107 !important;
+  box-shadow: 0 0.175em 0 #ffc107 !important;
+}
+
+.expired {
+  background-color: #f2f2f3;
+  background: linear-gradient(270deg, #fdfbfb 0%, #ebedee 100%);
+  border-color: #e4e4e4 !important;
+}
+
+.ribbon {
+  width: 36px;
+  height: 36px;
+  border-top-right-radius: 10px;
+}
+
+.ribbonBorder {
+  top: -20px;
+  border-right: 65px solid var(--bs-warning);
+  border-bottom: 65px solid transparent;
+}
+
+.expired .ribbonBorder {
+  border-right: 65px solid #c9c9c9;
+}
+
+.active .ribbonBorder {
+  border-right-color: #ea2725;
+}
+
+.ribbonStar {
+  top: 4px;
+  left: 7px;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.jobDes {
+  font-size: 0.906rem;
+}
+
+@media (max-width: 767px) {
+  .jobDes {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+}
+.hired {
+  letter-spacing: 0.09rem;
+}
+@media (min-width: 576px) {
+  .hired {
+    position: absolute;
+    right: 60px;
+    bottom: 16%;
+    transform: rotate(-16deg);
+  }
+}
+@media (min-width: 768px){
+  .hired{
+    bottom: 20%;
+  }
+}

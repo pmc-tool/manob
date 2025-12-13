@@ -22,7 +22,13 @@
       "Bash(npm run build:*)",
       "Bash(npx tsc:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(curl:*)",
+      "Bash(xargs ls:*)",
+      "Bash(find:*)",
+      "Bash(nvm list:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill -9)"
     ]
   }
 }

@@ -1,0 +1,593 @@
+/* JobListPage - CSS Module matching PackMyCode design */
+
+/* ===== Main Layout ===== */
+.jobListPage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: #fff;
+}
+
+/* ===== Search Header ===== */
+.searchHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.searchBox {
+  display: flex;
+  max-width: 600px;
+  margin-bottom: 12px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #222;
+  box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.1);
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: #222;
+  border: 1px solid #222;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.searchButton:hover {
+  background: #333;
+}
+
+.searchInfo {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.searchInfo strong {
+  color: #111;
+  font-weight: 600;
+}
+
+/* ===== Main Content Layout ===== */
+.mainContent {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ===== Sidebar Filter ===== */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+  overflow-y: auto;
+}
+
+.sidebarMobileHeader {
+  display: none;
+}
+
+.sidebarBody {
+  padding: 16px;
+}
+
+/* ===== Filter Section ===== */
+.filterSection {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.filterSection:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: 0.5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.filterHeader:hover {
+  color: #222;
+}
+
+.filterHeader svg {
+  transition: transform 0.2s;
+}
+
+.filterHeader svg.rotated {
+  transform: rotate(180deg);
+}
+
+.filterContent {
+  padding-top: 12px;
+}
+
+/* ===== Range Inputs & Slider ===== */
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rangeInputs span {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.rangeInputs :global(.ant-input-number) {
+  width: 100px;
+}
+
+.rangeSlider {
+  margin: 0;
+}
+
+.rangeSlider :global(.ant-slider-track) {
+  background: #222;
+}
+
+.rangeSlider :global(.ant-slider-handle)::after {
+  box-shadow: 0 0 0 2px #222;
+}
+
+/* ===== Checkbox Items ===== */
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.checkboxItem:hover {
+  opacity: 0.8;
+}
+
+.checkboxItem input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #222;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  flex: 1;
+  font-size: 14px;
+  color: #374151;
+}
+
+.count {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* ===== Mobile Apply Button (hidden on desktop) ===== */
+.mobileApply {
+  display: none;
+}
+
+/* ===== Job List Container ===== */
+.jobListContainer {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== List Header ===== */
+.listHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.listTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.listTitle h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+
+.itemCount {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* ===== List Actions ===== */
+.listActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===== Toggle Group (Desktop) ===== */
+.toggleGroup {
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.toggleBtn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.toggleBtn:hover {
+  color: #374151;
+}
+
+.toggleBtnActive {
+  color: #fff;
+  background: #222;
+}
+
+.toggleBtnActive:hover {
+  color: #fff;
+}
+
+/* ===== Toggle Select (Mobile - hidden on desktop) ===== */
+.toggleSelect {
+  display: none;
+}
+
+/* ===== Post Job Button ===== */
+.postJobBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: #222;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.postJobBtn:hover {
+  background: #333;
+}
+
+/* ===== Filter Toggle Button (Mobile - hidden on desktop) ===== */
+.filterToggleBtn {
+  display: none;
+}
+
+/* ===== Job Cards Container ===== */
+.jobCards {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+/* ===== Loading Skeleton ===== */
+.skeletonCard {
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  background: #fff;
+}
+
+/* ===== Error State ===== */
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.errorState img {
+  max-width: 200px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.errorState p {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+/* ===== Empty State ===== */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.emptyState img {
+  max-width: 200px;
+  margin-bottom: 24px;
+  opacity: 0.6;
+}
+
+.emptyState h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 12px;
+}
+
+.emptyState p {
+  font-size: 14px;
+  color: #6b7280;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* ===== Mobile Overlay ===== */
+.overlay {
+  display: none;
+}
+
+/* ===== Filter Close & Clear Buttons ===== */
+.filterClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+}
+
+.filterTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+.clearBtn {
+  font-size: 14px;
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.clearBtn:hover {
+  text-decoration: underline;
+}
+
+.applyBtn {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: #222;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.applyBtn:hover {
+  background: #333;
+}
+
+.clearFiltersBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  color: #6b7280;
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.clearFiltersBtn:hover {
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+/* ===== Responsive Styles ===== */
+
+/* Tablet & Below */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebarActive {
+    transform: translateX(0);
+  }
+
+  .sidebarMobileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #fafafa;
+  }
+
+  .mobileApply {
+    display: block;
+    padding: 16px;
+    border-top: 1px solid #e5e7eb;
+    background: #fff;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .filterToggleBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .filterToggleBtn:hover {
+    background: #e5e7eb;
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .searchHeader {
+    padding: 16px;
+  }
+
+  .searchBox {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .searchInput {
+    border-radius: 8px;
+    border-right: 1px solid #d1d5db;
+  }
+
+  .searchButton {
+    border-radius: 8px;
+    justify-content: center;
+  }
+
+  .listHeader {
+    padding: 12px 16px;
+  }
+
+  .listTitle h1 {
+    font-size: 16px;
+  }
+
+  .toggleGroup {
+    display: none;
+  }
+
+  .toggleSelect {
+    display: block;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .postJobBtn span {
+    display: none;
+  }
+
+  .postJobBtn {
+    padding: 10px 12px;
+  }
+
+  .jobCards {
+    padding: 16px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .listActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+}
