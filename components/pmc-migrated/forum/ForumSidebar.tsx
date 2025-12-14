@@ -1,4 +1,4 @@
-// MIGRATION: ForumSidebar component from PackMyCode
+// MIGRATION: ForumSidebar component from manob.ai
 'use client';
 
 import Link from 'next/link';

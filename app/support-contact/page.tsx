@@ -1,4 +1,4 @@
-// MIGRATION: Support Contact page from PackMyCode
+// MIGRATION: Support Contact page from manob.ai
 'use client';
 
 import Link from 'next/link';
@@ -22,7 +22,7 @@ function SupportOption({ icon, title, description, helpText, ticketLink, reverse
       <div className={styles.optionContent}>
         <h3 className={styles.optionTitle}>{title}</h3>
         <p className={styles.helpLink}>
-          Visit PackMyCode{' '}
+          Visit manob.ai{' '}
           <Link href="/help" className={styles.link}>
             Help Center
           </Link>
@@ -44,7 +44,7 @@ export default function SupportContactPage() {
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
-        <h1 className={styles.title}>Support Contact PackMyCode</h1>
+        <h1 className={styles.title}>Support Contact manob.ai</h1>
         <p className={styles.subtitle}>
           Find answers to commonly asked questions, and submit requests to appropriate
           <br className={styles.hideMobile} />
@@ -60,9 +60,9 @@ export default function SupportContactPage() {
             <div className={styles.mainIcon}>
               <Users size={36} />
             </div>
-            <h2 className={styles.mainTitle}>PackMyCode Market Support Team</h2>
+            <h2 className={styles.mainTitle}>manob.ai Market Support Team</h2>
             <p className={styles.mainHelpLink}>
-              Visit PackMyCode{' '}
+              Visit manob.ai{' '}
               <Link href="/help" className={styles.link}>
                 Help Center
               </Link>
@@ -87,7 +87,7 @@ export default function SupportContactPage() {
           <SupportOption
             icon={<MessageCircle size={32} />}
             title="Product Support Help Center"
-            helpText="Visit PackMyCode Help Center"
+            helpText="Visit manob.ai Help Center"
             description="Need help? Get help from the community. If you're on a paid plan, submit a ticket to our expert support team for quick solutions."
             ticketLink="/support-contact/product-request"
           />
@@ -95,8 +95,8 @@ export default function SupportContactPage() {
           <SupportOption
             icon={<Headset size={32} />}
             title="Seller Support Help Center"
-            helpText="Visit PackMyCode Help Center"
-            description="Welcome to the PackMyCode Seller Help Center! Find guides, tips, and support to help you create and manage your code packages with ease."
+            helpText="Visit manob.ai Help Center"
+            description="Welcome to the manob.ai Seller Help Center! Find guides, tips, and support to help you create and manage your code packages with ease."
             ticketLink="/support-contact/seller-request"
             reverse
           />

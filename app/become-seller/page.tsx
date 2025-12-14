@@ -2,9 +2,9 @@
 import { BecomeSellerPage } from '@/components/pmc-migrated/become-seller';
 
 export const metadata = {
-  title: 'Become a Seller | PackMyCode',
+  title: 'Become a Seller | manob.ai',
   description:
-    'Join PackMyCode as a seller. Sell source code, themes, scripts, and development services in one place.',
+    'Join manob.ai as a seller. Sell source code, themes, scripts, and development services in one place.',
 };
 
 export default function BecomeSeller() {

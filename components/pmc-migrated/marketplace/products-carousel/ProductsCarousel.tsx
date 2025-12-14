@@ -1,4 +1,4 @@
-// MIGRATION: ProductsCarousel component from PackMyCode
+// MIGRATION: ProductsCarousel component from manob.ai
 // Uses Swiper for carousel, lucide-react icons
 'use client';
 

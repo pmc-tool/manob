@@ -218,7 +218,7 @@ export default function PriceBox({
             <li className="flex items-center gap-2">
               <Check size={18} className="text-primary" />
               <span>
-                Quality checked by <span className="font-medium">PackMyCode</span>
+                Quality checked by <span className="font-medium">manob.ai</span>
               </span>
             </li>
             <li className="flex items-center gap-2">

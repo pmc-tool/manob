@@ -1,4 +1,4 @@
-// Why Choose PackMyCode section
+// Why Choose manob.ai section
 'use client';
 
 import { useState } from 'react';
@@ -12,7 +12,7 @@ const tabs = [
     number: '01',
     heading: 'Dev-Only Marketplace',
     description:
-      'No random gigs. No "design my logo" requests. Every buyer on PackMyCode is looking for real development work—code, scripts, services. Your skills are the product here.',
+      'No random gigs. No "design my logo" requests. Every buyer on manob.ai is looking for real development work—code, scripts, services. Your skills are the product here.',
     cta: 'Try Packmycode',
     img: '/images/become-seller/dev-only.png',
   },
@@ -48,14 +48,14 @@ const tabs = [
   },
 ];
 
-export default function WhyChoosePackMyCode() {
+export default function WhyChooseSection() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
         <h3 className="text-3xl md:text-4xl font-bold text-center mb-2">
-          Why Developers Choose PackMyCode
+          Why Developers Choose manob.ai
         </h3>
         <p className="text-center text-gray-500 mb-8 text-lg">
           Designed for developers seeking trustworthy clients, real projects, and fast payouts.

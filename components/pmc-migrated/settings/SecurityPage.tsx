@@ -1,4 +1,4 @@
-// MIGRATION: SecurityPage component from PackMyCode
+// MIGRATION: SecurityPage component from manob.ai
 'use client';
 
 import { useState } from 'react';

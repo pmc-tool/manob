@@ -1,5 +1,5 @@
 // CONTRACT: GET /home/featured-services, GET /home/trending-services, GET /services
-// This mock data structure matches the exact API response from PackMyCode
+// This mock data structure matches the exact API response from manob.ai
 
 export interface ServiceCreator {
   id: string;

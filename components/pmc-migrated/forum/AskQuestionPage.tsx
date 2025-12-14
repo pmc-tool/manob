@@ -1,4 +1,4 @@
-// MIGRATION: AskQuestionPage component from PackMyCode
+// MIGRATION: AskQuestionPage component from manob.ai
 'use client';
 
 import { useState } from 'react';

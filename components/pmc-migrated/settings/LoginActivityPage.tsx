@@ -1,4 +1,4 @@
-// MIGRATION: LoginActivityPage component from PackMyCode
+// MIGRATION: LoginActivityPage component from manob.ai
 'use client';
 
 import { useState } from 'react';

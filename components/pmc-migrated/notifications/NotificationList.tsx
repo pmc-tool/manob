@@ -1,4 +1,4 @@
-// MIGRATION: NotificationList component from PackMyCode
+// MIGRATION: NotificationList component from manob.ai
 'use client';
 
 import { useState } from 'react';

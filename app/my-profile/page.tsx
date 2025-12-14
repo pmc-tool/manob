@@ -1,4 +1,4 @@
-// MIGRATION: My Profile page from PackMyCode
+// MIGRATION: My Profile page from manob.ai
 'use client';
 
 import { useState } from 'react';

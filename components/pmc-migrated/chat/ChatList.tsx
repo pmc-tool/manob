@@ -1,4 +1,4 @@
-// MIGRATION: ChatList component from PackMyCode
+// MIGRATION: ChatList component from manob.ai
 'use client';
 
 import { FileText, Image as ImageIcon } from 'lucide-react';

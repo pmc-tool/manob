@@ -1,4 +1,4 @@
-// MIGRATION: ServiceCardGrid component from PackMyCode
+// MIGRATION: ServiceCardGrid component from manob.ai
 // Uses lucide-react icons, CSS Modules
 'use client';
 

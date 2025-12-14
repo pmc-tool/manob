@@ -1,5 +1,5 @@
 // CONTRACT: GET /user/profile
-// This mock data structure matches the exact API response from PackMyCode
+// This mock data structure matches the exact API response from manob.ai
 
 export interface UserProfile {
   id: string;

@@ -1,4 +1,4 @@
-// MIGRATION: SettingsNav component from PackMyCode
+// MIGRATION: SettingsNav component from manob.ai
 'use client';
 
 import Link from 'next/link';

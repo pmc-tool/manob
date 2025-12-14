@@ -1,4 +1,4 @@
-// MIGRATION: ChatContent component from PackMyCode
+// MIGRATION: ChatContent component from manob.ai
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';

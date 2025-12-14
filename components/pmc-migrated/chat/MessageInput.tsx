@@ -1,4 +1,4 @@
-// MIGRATION: MessageInput component from PackMyCode
+// MIGRATION: MessageInput component from manob.ai
 'use client';
 
 import { useState, useRef, useEffect, ChangeEvent } from 'react';

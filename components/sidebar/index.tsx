@@ -4,6 +4,7 @@ import {
   BotMessageSquare,
   Briefcase,
   History,
+  Home,
   Mail,
   Settings,
   SplinePointer,
@@ -51,6 +52,10 @@ export default function ProjectSidebar() {
     if (tab === "hire") {
       router.push("/job-list");
     }
+
+    if (tab === "home") {
+      router.push("/");
+    }
   };
 
   // CLICK OUTSIDE to close HISTORY panel
@@ -84,10 +89,20 @@ export default function ProjectSidebar() {
     }`;
 
   return (
-    <div className="relative flex-1" style={{ zIndex: 50, overflow: 'visible' }}>
+    <div className="relative" style={{ zIndex: 50, overflow: 'visible', height: '100%' }}>
       {/* SIDEBAR */}
-      <div className="flex-col h-full p-2 flex min-w-16 pl-0 bg-white rounded-xl">
+      <div className="flex-col h-full p-2 flex min-w-16 pl-0 bg-white rounded-xl justify-between">
         <div className="flex flex-col gap-2.5">
+          <button
+            onClick={() => handleClick("home")}
+            className={buttonClass("home")}
+          >
+            <div className={iconClass("home")}>
+              <Home size={22} />
+            </div>
+            Home
+          </button>
+
           <button
             onClick={() => handleClick("chat")}
             className={buttonClass("chat")}

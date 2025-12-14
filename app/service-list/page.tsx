@@ -1,7 +1,7 @@
 // MIGRATION: Service list page with filters
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
@@ -20,6 +20,14 @@ const filterCategories = mockCategories.map((cat) => ({
 }));
 
 export default function ServiceListPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ServiceListContent />
+    </Suspense>
+  );
+}
+
+function ServiceListContent() {
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get('filter');
 

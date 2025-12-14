@@ -1,4 +1,4 @@
-// MIGRATION: Ribbon component from PackMyCode
+// MIGRATION: Ribbon component from manob.ai
 'use client';
 
 import { ReactNode } from 'react';

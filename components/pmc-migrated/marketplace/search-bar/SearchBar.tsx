@@ -1,4 +1,4 @@
-// MIGRATION: PageHeaderSearch component from PackMyCode
+// MIGRATION: PageHeaderSearch component from manob.ai
 // Simplified version with CSS Modules
 'use client';
 

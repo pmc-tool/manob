@@ -1,4 +1,4 @@
-// MIGRATION: UserInfoSidebar component from PackMyCode
+// MIGRATION: UserInfoSidebar component from manob.ai
 'use client';
 
 import { X, Star, MapPin, Calendar, Mail } from 'lucide-react';

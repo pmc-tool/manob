@@ -1,7 +1,7 @@
 // MIGRATION: Product list page with filters
 'use client';
 
-import { useState, useMemo } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar';
 import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card';
@@ -20,6 +20,14 @@ const filterCategories = mockCategories.map((cat) => ({
 }));
 
 export default function ProductListPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductListContent />
+    </Suspense>
+  );
+}
+
+function ProductListContent() {
   const searchParams = useSearchParams();
   const initialFilter = searchParams.get('filter');
 

@@ -1,4 +1,4 @@
-// MIGRATION: ServicesCarousel component from PackMyCode
+// MIGRATION: ServicesCarousel component from manob.ai
 // Uses Swiper for carousel, lucide-react icons
 'use client';
 

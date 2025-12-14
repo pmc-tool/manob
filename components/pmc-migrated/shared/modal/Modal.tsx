@@ -1,4 +1,4 @@
-// MIGRATION: Modal component from PackMyCode
+// MIGRATION: Modal component from manob.ai
 'use client';
 
 import { MouseEvent, ReactNode, useEffect, useState } from 'react';

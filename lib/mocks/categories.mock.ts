@@ -1,6 +1,6 @@
 // CONTRACT: GET /home/popular-categories
 // Response structure: { data: Category[] }
-// MOCK: This mock data matches the exact PackMyCode API response structure
+// MOCK: This mock data matches the exact manob.ai API response structure
 
 export interface Category {
   id: number;

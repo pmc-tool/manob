@@ -1,4 +1,4 @@
-// MIGRATION: CommentCard component from PackMyCode
+// MIGRATION: CommentCard component from manob.ai
 'use client';
 
 import { format, formatDistanceToNowStrict } from 'date-fns';

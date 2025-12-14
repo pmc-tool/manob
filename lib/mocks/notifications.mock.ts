@@ -144,7 +144,7 @@ export const mockNotifications: NotificationSection[] = [
       },
       {
         id: '7',
-        notification_title: 'Welcome to PackMyCode!',
+        notification_title: 'Welcome to manob.ai!',
         notification_body: 'Thank you for joining. Start exploring our marketplace today!',
         type: 'SYSTEM',
         created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),

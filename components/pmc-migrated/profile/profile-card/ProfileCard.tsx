@@ -1,4 +1,4 @@
-// MIGRATION: ProfileCard component from PackMyCode
+// MIGRATION: ProfileCard component from manob.ai
 'use client';
 
 import Link from 'next/link';

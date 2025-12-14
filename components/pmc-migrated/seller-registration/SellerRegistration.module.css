@@ -1,0 +1,397 @@
+.headerTitle {
+  letter-spacing: -2px;
+}
+@media (max-width: 575px) {
+  .headerTitle {
+    font-size: 32px;
+  }
+}
+.stepper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.stepper .stepTrigger {
+  color: #6c757d;
+  padding: 0 15px;
+}
+
+.stepper .stepItem:first-child .stepTrigger {
+  padding-left: 0;
+}
+
+.stepper .active.stepTrigger {
+  color: #1dbf73;
+}
+
+.stepper .stepperCircle {
+  width: 1.5em;
+  height: 1.5em;
+  background-color: #b9b8b8;
+  border-radius: 0 !important;
+}
+
+.stepper .active .stepperCircle {
+  background-color: #1dbf73;
+}
+
+.stepper .stepItem.crossed .stepTrigger .stepperCircle {
+  background-color: #ffffff;
+  color: #1dbf73 !important;
+  border: 1px solid #1dbf73;
+}
+
+.stepItem.crossed {
+  border-radius: 0 !important;
+}
+.stepper .stepTrigger {
+  padding: 0 !important;
+}
+
+.activeBorder {
+  border: 6px solid #1dbf73;
+}
+
+.inActiveBorder {
+  border: 6px solid #f5f5f5;
+}
+
+.bordersWidth {
+  width: 200px;
+}
+
+@media (max-width: 1199px) {
+  .bordersWidth {
+    width: 120px;
+  }
+}
+
+@media (min-width: 368px) and (max-width: 992px) {
+  .bordersWidth {
+    width: 60px;
+  }
+}
+
+.stepperContentWrapper {
+  position: relative;
+  overflow: hidden;
+  flex-grow: 1;
+}
+.stepperContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: transform 0.3s var(--ease-out), opacity 0.3s;
+}
+
+.stepPrev,
+.stepNext {
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s var(--ease-out), opacity 0.3s, visibility 0s 0.3s;
+}
+
+.stepPrev {
+  transform: translateX(-40px);
+}
+
+.stepNext {
+  transform: translateX(40px);
+}
+/* --------------------------------- */
+@media (max-width: 991px) {
+  .btnContainer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    padding: 1rem;
+    box-shadow: var(--bs-box-shadow-lg) !important;
+    background-color: #fff;
+    z-index: 100;
+  }
+  .btnContainer :global(.ud-btn) {
+    width: 100%;
+  }
+}
+@media (min-width: 992px) {
+  .btnContainer {
+    padding-top: 1rem;
+    margin-top: 3rem;
+    justify-content: flex-end;
+    border-top: var(--bs-border-width) var(--bs-border-style)
+      var(--bs-border-color);
+  }
+}
+
+/* -------------------- */
+.formContent {
+  padding-top: 6.5rem;
+  padding-bottom: 5rem;
+}
+
+.imageContainer {
+  padding: 3rem;
+  background-color: #f8f9fa;
+}
+@media (min-width: 1200px) {
+  .imageContainer {
+    padding: 4rem;
+  }
+}
+@media (min-width: 1400px) {
+  .imageContainer {
+    padding: 6rem;
+  }
+}
+.faqTitle {
+  letter-spacing: -2px;
+}
+.sellerFaq:global(.accordion) {
+  --bs-accordion-border-color: #cfcfcf;
+}
+
+/* --------------------------------- */
+.successMessage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  background: #fff;
+  text-align: center;
+  padding: 1rem;
+}
+.successIcon path {
+  -webkit-animation: dash-check 0.5s ease-in-out 1s forwards;
+  animation: dash-check 0.5s ease-in-out 1s forwards;
+}
+
+.successIcon circle {
+  -webkit-animation: dash 1s ease-in-out forwards;
+  animation: dash 1s ease-in-out forwards;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dash-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --------------------------- */
+.error {
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  -webkit-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  font-size: 12px;
+  position: absolute;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  top: -20px;
+  right: -15px;
+  z-index: 2;
+  height: 25px;
+  line-height: 1;
+  background-color: #e34f4f;
+  color: #fff;
+  font-weight: normal;
+  display: inline-block;
+  padding: 6px 8px;
+}
+.error:after {
+  content: "";
+  position: absolute;
+  border-style: solid;
+  border-width: 0 6px 6px 0;
+  border-color: transparent #e34f4f;
+  display: block;
+  width: 0;
+  z-index: 1;
+  bottom: -6px;
+  left: 20%;
+}
+
+/* Header styles */
+.sellerHeader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  padding: 1rem 2rem;
+}
+
+.sellerHeaderInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: #1dbf73;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Mobile menu */
+.mobileHeader {
+  display: none;
+  padding: 1rem;
+  background: #fff;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobileMenuBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+@media (max-width: 991px) {
+  .sellerHeader {
+    display: none;
+  }
+  .mobileHeader {
+    display: flex;
+  }
+}
+
+/* Accordion styles */
+.accordion {
+  border: none;
+}
+
+.accordionItem {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.accordionButton {
+  width: 100%;
+  padding: 1rem;
+  background: #fff;
+  border: none;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordionButton:hover {
+  background: #f8f9fa;
+}
+
+.accordionContent {
+  padding: 0 1rem 1rem;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.accordionIcon {
+  transition: transform 0.2s;
+}
+
+.accordionIcon.open {
+  transform: rotate(180deg);
+}
+
+/* Form checkbox custom */
+.formCheckCustom {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.formCheckCustom:hover {
+  border-color: #1dbf73 !important;
+}
+
+.formCheckCustom.active {
+  border-color: #1dbf73 !important;
+  background-color: rgba(29, 191, 115, 0.05) !important;
+}
+
+/* Buttons */
+.btnThm {
+  background-color: #1dbf73;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnThm:hover {
+  background-color: #19a463;
+}
+
+.btnThm:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btnDark {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnDark:hover {
+  background-color: #444;
+}

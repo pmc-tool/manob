@@ -1,4 +1,4 @@
-// MIGRATION: Support Requests page from PackMyCode
+// MIGRATION: Support Requests page from manob.ai
 'use client';
 
 import { useState } from 'react';

@@ -1,4 +1,4 @@
-// MIGRATION: Category section from PackMyCode homepage
+// MIGRATION: Category section from manob.ai homepage
 // Redesigned as compact horizontal chips
 'use client';
 

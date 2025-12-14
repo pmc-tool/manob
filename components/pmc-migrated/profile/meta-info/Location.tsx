@@ -1,4 +1,4 @@
-// MIGRATION: Location component from PackMyCode
+// MIGRATION: Location component from manob.ai
 'use client';
 
 import { useState, useEffect } from 'react';

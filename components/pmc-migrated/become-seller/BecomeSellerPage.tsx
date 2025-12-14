@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Accordion from './Accordion';
-import WhyChoosePackMyCode from './WhyChoosePackMyCode';
+import WhyChooseSection from './WhyChoosePackMyCode';
 import SellSection from './SellSection';
 import ToolsSection from './ToolsSection';
 import PackmycodeWork from './PackmycodeWork';
@@ -20,12 +20,12 @@ const faqs = [
   {
     que: 'Do I need to pay to join as a seller?',
     description:
-      'No. There is no monthly fee to become a seller on PackMyCode. You only pay a commission when you make a sale.',
+      'No. There is no monthly fee to become a seller on manob.ai. You only pay a commission when you make a sale.',
   },
   {
     que: 'Can I sell both products and services from the same account?',
     description:
-      "Yes. That's what makes PackMyCode different. List digital products (code, templates, plugins) and offer development services (custom work, bug fixes, consulting) all from one profile.",
+      "Yes. That's what makes manob.ai different. List digital products (code, templates, plugins) and offer development services (custom work, bug fixes, consulting) all from one profile.",
   },
   {
     que: 'What is the commission and how does the 10% early-seller offer work?',
@@ -40,7 +40,7 @@ const faqs = [
   {
     que: 'What kind of projects do buyers usually post here?',
     description:
-      'Buyers on PackMyCode are looking for development work: custom web apps, mobile development, bug fixes, API integrations, code customizations, and ready-made solutions they can deploy.',
+      'Buyers on manob.ai are looking for development work: custom web apps, mobile development, bug fixes, API integrations, code customizations, and ready-made solutions they can deploy.',
   },
   {
     que: 'Is there any review or rating system for sellers?',
@@ -50,7 +50,7 @@ const faqs = [
   {
     que: 'Can I work with buyers from any country?',
     description:
-      'Yes. PackMyCode is a global marketplace. You can work with buyers worldwide, though payout options may vary by region.',
+      'Yes. manob.ai is a global marketplace. You can work with buyers worldwide, though payout options may vary by region.',
   },
   {
     que: 'How do payouts work?',
@@ -107,7 +107,7 @@ export default function BecomeSellerPage() {
       </div>
 
       {/* Sections */}
-      <WhyChoosePackMyCode />
+      <WhyChooseSection />
       <SellSection />
       <ToolsSection />
       <PackmycodeWork />

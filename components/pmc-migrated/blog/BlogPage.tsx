@@ -79,7 +79,7 @@ export default function BlogPage({ searchQuery = '', filterTag = '' }: BlogPageP
             <h1 className="blog-title fw-semibold text-3xl md:text-4xl leading-tight">
               Meet the minds,{' '}
               <span className="blog-text-rounded">discover</span> the ideas, and feel the energy
-              fueling the PackMyCode{' '}
+              fueling the manob.ai{' '}
               <span className="blog-text-underline">community</span>.
             </h1>
           </div>

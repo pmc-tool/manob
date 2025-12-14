@@ -1,4 +1,4 @@
-// MIGRATION: QuestionDetailPage component from PackMyCode
+// MIGRATION: QuestionDetailPage component from manob.ai
 'use client';
 
 import { useState, useEffect, useRef } from 'react';

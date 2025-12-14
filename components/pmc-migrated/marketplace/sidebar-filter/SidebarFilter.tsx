@@ -1,4 +1,4 @@
-// MIGRATION: SidebarFilter component - Left sidebar filter like PackMyCode
+// MIGRATION: SidebarFilter component - Left sidebar filter like manob.ai
 'use client';
 
 import { useState } from 'react';

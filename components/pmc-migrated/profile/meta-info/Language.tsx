@@ -1,4 +1,4 @@
-// MIGRATION: Language component from PackMyCode
+// MIGRATION: Language component from manob.ai
 'use client';
 
 import { useState, useEffect } from 'react';

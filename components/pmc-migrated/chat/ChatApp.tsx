@@ -1,4 +1,4 @@
-// MIGRATION: ChatApp main component from PackMyCode
+// MIGRATION: ChatApp main component from manob.ai
 'use client';
 
 import { useState, useEffect } from 'react';

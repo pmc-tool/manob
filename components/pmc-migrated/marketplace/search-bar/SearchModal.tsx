@@ -1,4 +1,4 @@
-// MIGRATION: SearchSuggestions modal from PackMyCode
+// MIGRATION: SearchSuggestions modal from manob.ai
 // Simplified version with CSS Modules
 'use client';
 

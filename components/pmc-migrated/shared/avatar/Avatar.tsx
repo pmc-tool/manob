@@ -1,4 +1,4 @@
-// MIGRATION: Avatar component from PackMyCode
+// MIGRATION: Avatar component from manob.ai
 'use client';
 
 import Image from 'next/image';

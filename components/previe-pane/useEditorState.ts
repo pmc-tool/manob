@@ -25,11 +25,15 @@ export function useEditorState(initialSrc: string) {
     textAlign: "",
     justifyContent: "",
     alignItems: "",
+    flexDirection: "",
+    gridTemplateColumns: "",
+    gridTemplateRows: "",
+    gap: "",
   });
   const [margin, setMargin] = useState<BoxSides>({ top: "", right: "", bottom: "", left: "" });
   const [padding, setPadding] = useState<BoxSides>({ top: "", right: "", bottom: "", left: "" });
   const [borders, setBorders] = useState({ width: "", style: "", radius: "" });
-  const [imgProps, setImgProps] = useState({ src: "", width: "", height: "", alt: "" });
+  const [imgProps, setImgProps] = useState({ src: "", width: "", height: "", alt: "", objectFit: "" });
   const [linkProps, setLinkProps] = useState({ href: "", targetBlank: false });
 
   const [selectedSummary, setSelectedSummary] = useState<string | null>(null);

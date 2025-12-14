@@ -1,4 +1,4 @@
-// MIGRATION: ReviewStars component from PackMyCode
+// MIGRATION: ReviewStars component from manob.ai
 // Uses lucide-react icons instead of react-bootstrap-icons
 'use client';
 

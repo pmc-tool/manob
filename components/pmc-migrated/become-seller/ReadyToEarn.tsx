@@ -32,7 +32,7 @@ export default function ReadyToEarn() {
               </Link>
             </div>
             <p className="text-white/75 mt-4 text-sm">
-              * Exclusive tech services and products, only on PackMyCode
+              * Exclusive tech services and products, only on manob.ai
             </p>
           </div>
           <div className="flex justify-center md:justify-end">

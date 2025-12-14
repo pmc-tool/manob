@@ -1,4 +1,4 @@
-// MIGRATION: ForumSearch component from PackMyCode
+// MIGRATION: ForumSearch component from manob.ai
 'use client';
 
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';

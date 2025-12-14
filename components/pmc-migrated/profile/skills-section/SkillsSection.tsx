@@ -1,4 +1,4 @@
-// MIGRATION: SkillsSection component from PackMyCode
+// MIGRATION: SkillsSection component from manob.ai
 'use client';
 
 import { useState, useEffect, useRef } from 'react';

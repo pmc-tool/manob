@@ -4,15 +4,18 @@ import { GiftOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown } from "antd";
 import { ChevronDown, Bell, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { PublishDropdown } from "./PublishDropdown"; // Import the separate component
 import { userMenuItems } from "./UserDropdown";
-import { LogoIcon } from "../icons/LogoIcon";
 import { useRenameModal } from "@/context/RenameModalContext";
 import { useState } from "react";
 import { NotificationDropdown } from "@/components/pmc-migrated/notifications";
 import { mockNotifications, getUnseenCount } from "@/lib/mocks/notifications.mock";
 import { ReferralPopup } from "@/components/pmc-migrated/referral";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Header() {
   const { openRenameModal } = useRenameModal();
@@ -21,6 +24,7 @@ export default function Header() {
   const [referralPopupOpen, setReferralPopupOpen] = useState(false);
   const router = useRouter();
   const { getCartItemCount } = useCart();
+  const { logout } = useAuth();
 
   const unseenCount = getUnseenCount(mockNotifications);
   const cartCount = getCartItemCount();
@@ -52,8 +56,9 @@ export default function Header() {
         router.push('/blog');
         break;
       case 'logout':
-        // TODO: Implement logout
-        console.log('Logout clicked');
+        logout();
+        toast.success('Logged out successfully');
+        router.push('/');
         break;
     }
   };
@@ -61,30 +66,16 @@ export default function Header() {
   return (
     <div className="flex items-center w-full">
       {/* LEFT SIDE: Logo + Title */}
-      <button className="group flex items-center gap-2 border-none text-foreground outline-none duration-150 ease-in-out hover:opacity-80 focus:outline-none md:min-w-0 md:shrink">
+      <Link href="/" className="group flex items-center gap-2 border-none text-foreground outline-none duration-150 ease-in-out hover:opacity-80 focus:outline-none md:min-w-0 md:shrink">
         {/* Logo */}
-        <LogoIcon />
-        {/* Title */}
-        <div className="flex w-full min-w-0 flex-col items-start gap-0 truncate">
-          <div className="flex min-w-0 items-center gap-1 truncate">
-            <p
-              className="hidden min-w-0 truncate text-sm font-medium leading-none md:block cursor-pointer"
-              onClick={() =>
-                openRenameModal({
-                  defaultName: "My Project",
-                  onRename: (newName) => console.log("Renamed to:", newName),
-                })
-              }
-            >
-              My Digital Showcase
-            </p>
-            <ChevronDown className="h-3 w-3 text-foreground/50" />
-          </div>
-          <p className="hidden w-full min-w-0 truncate text-left text-xs text-muted-foreground md:flex">
-            Previewing last saved version
-          </p>
-        </div>
-      </button>
+        <Image
+          src="/images/logo-manob-full.svg"
+          alt="manob.ai"
+          width={120}
+          height={34}
+          style={{ objectFit: 'contain' }}
+        />
+      </Link>
 
       {/* RIGHT SIDE ACTIONS */}
       <div className="flex items-center gap-1.5 ms-auto">

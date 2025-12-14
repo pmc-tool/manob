@@ -1,4 +1,4 @@
-// MIGRATION: NotificationDropdown component from PackMyCode
+// MIGRATION: NotificationDropdown component from manob.ai
 'use client';
 
 import { useState } from 'react';

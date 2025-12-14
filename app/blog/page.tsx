@@ -3,9 +3,9 @@ import { BlogPage } from '@/components/pmc-migrated/blog';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'PackMyCode Blog - Insights on Code, Digital Products & Tech Trends',
+  title: 'manob.ai Blog - Insights on Code, Digital Products & Tech Trends',
   description:
-    'Get expert tips, tutorials, and industry news on PackMyCode. Read blog posts and official publications to stay ahead in design, development, and freelancing.',
+    'Get expert tips, tutorials, and industry news on manob.ai. Read blog posts and official publications to stay ahead in design, development, and freelancing.',
 };
 
 interface BlogPageProps {

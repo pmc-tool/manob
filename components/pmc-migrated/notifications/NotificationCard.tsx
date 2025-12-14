@@ -1,4 +1,4 @@
-// MIGRATION: NotificationCard component from PackMyCode
+// MIGRATION: NotificationCard component from manob.ai
 'use client';
 
 import Image from 'next/image';

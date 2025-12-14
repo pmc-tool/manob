@@ -10,8 +10,8 @@ export async function generateMetadata({
   const { id } = await params;
   // In production, fetch product data and use real title/description
   return {
-    title: `Product Details | PackMyCode`,
-    description: 'View product details, reviews, and purchase options on PackMyCode marketplace.',
+    title: `Product Details | manob.ai`,
+    description: 'View product details, reviews, and purchase options on manob.ai marketplace.',
   };
 }
 

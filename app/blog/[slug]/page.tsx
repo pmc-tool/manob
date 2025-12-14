@@ -17,12 +17,12 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: 'Blog Post Not Found | PackMyCode',
+      title: 'Blog Post Not Found | manob.ai',
     };
   }
 
   return {
-    title: `${post.title} | PackMyCode Blog`,
+    title: `${post.title} | manob.ai Blog`,
     description: post.short_description,
   };
 }

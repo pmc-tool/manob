@@ -45,11 +45,11 @@ export function useElementInspector(editor: EditorState) {
       editor.setContentHTML("");
       editor.setTypography({ fontSize: "", fontWeight: "", lineHeight: "", color: "", fontFamily: "" });
       editor.setColors({ background: "", borderColor: "" });
-      editor.setLayout({ display: "", flexDirection: "", justifyContent: "", alignItems: "", width: "", height: "", gridTemplateColumns: "", gridTemplateRows: "", gap: "" });
+      editor.setLayout({ display: "", flexDirection: "", justifyContent: "", alignItems: "", width: "", height: "", textAlign: "", gridTemplateColumns: "", gridTemplateRows: "", gap: "" });
       editor.setMargin({ top: "", right: "", bottom: "", left: "" });
       editor.setPadding({ top: "", right: "", bottom: "", left: "" });
       editor.setBorders({ width: "", style: "", radius: "" });
-      editor.setImgProps({ src: "", width: "", height: "", alt: "" });
+      editor.setImgProps({ src: "", width: "", height: "", alt: "", objectFit: "" });
       editor.setLinkProps({ href: "", targetBlank: false });
       editor.setSelectedSummary(null);
       return;
@@ -82,6 +82,7 @@ export function useElementInspector(editor: EditorState) {
       alignItems: cs?.getPropertyValue("align-items") ?? "",
       width: cs?.getPropertyValue("width") ?? "",
       height: cs?.getPropertyValue("height") ?? "",
+      textAlign: cs?.getPropertyValue("text-align") ?? "",
       gridTemplateColumns: cs?.getPropertyValue("grid-template-columns") ?? "",
       gridTemplateRows: cs?.getPropertyValue("grid-template-rows") ?? "",
       gap: cs?.getPropertyValue("gap") ?? "",

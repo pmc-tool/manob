@@ -28,7 +28,9 @@
       "Bash(find:*)",
       "Bash(nvm list:*)",
       "Bash(lsof:*)",
-      "Bash(xargs kill -9)"
+      "Bash(xargs kill -9)",
+      "Bash(xargs sed:*)",
+      "Bash(git remote add:*)"
     ]
   }
 }

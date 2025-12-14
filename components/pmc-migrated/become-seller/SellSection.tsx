@@ -37,7 +37,7 @@ export default function SellSection() {
         {/* Left Side */}
         <div className="lg:col-span-1">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            What You Can Sell On PackMyCode
+            What You Can Sell On manob.ai
           </h2>
           <p className="text-gray-600">
             Sell everything from reusable code, templates, and plugins to full projects and SaaS

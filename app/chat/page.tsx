@@ -1,4 +1,4 @@
-// MIGRATION: Chat page from PackMyCode
+// MIGRATION: Chat page from manob.ai
 'use client';
 
 import { ChatApp } from '@/components/pmc-migrated/chat';

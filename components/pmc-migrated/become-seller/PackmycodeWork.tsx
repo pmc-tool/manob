@@ -1,4 +1,4 @@
-// How selling on PackMyCode works section
+// How selling on manob.ai works section
 'use client';
 
 import Image from 'next/image';
@@ -35,7 +35,7 @@ export default function PackmycodeWork() {
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="text-center mb-10">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">How selling on PackMyCode works</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">How selling on manob.ai works</h2>
         <p className="text-gray-500">
           Start your journey, publish offerings, gain visibility, deliver tasks, and grow your
           income.

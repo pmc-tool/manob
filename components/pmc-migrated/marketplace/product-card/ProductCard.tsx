@@ -1,4 +1,4 @@
-// MIGRATION: ProductCardGrid component from PackMyCode
+// MIGRATION: ProductCardGrid component from manob.ai
 // Uses lucide-react icons, CSS Modules, with cart integration
 'use client';
 

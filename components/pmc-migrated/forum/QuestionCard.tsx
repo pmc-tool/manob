@@ -1,4 +1,4 @@
-// MIGRATION: QuestionCard component from PackMyCode
+// MIGRATION: QuestionCard component from manob.ai
 'use client';
 
 import Link from 'next/link';

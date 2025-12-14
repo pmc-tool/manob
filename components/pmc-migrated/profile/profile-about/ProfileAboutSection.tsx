@@ -1,4 +1,4 @@
-// MIGRATION: ProfileAboutSection component from PackMyCode
+// MIGRATION: ProfileAboutSection component from manob.ai
 'use client';
 
 import { useState, useEffect } from 'react';

@@ -1,4 +1,4 @@
-// MIGRATION: MetaInfoSection component from PackMyCode
+// MIGRATION: MetaInfoSection component from manob.ai
 'use client';
 
 import { ReactNode } from 'react';
