@@ -26,6 +26,10 @@ const kalam = Kalam({
 export const metadata: Metadata = {
   title: "manob.ai | Human + AI Code Workspace",
   description: "manob.ai blends human engineers with AI to buy, modify, and deploy production-ready code together.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
