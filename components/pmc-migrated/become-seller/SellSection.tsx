@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 const items = [
   {
@@ -30,55 +31,124 @@ const items = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
 export default function SellSection() {
+  const leftItems = items.slice(0, 2);
+  const rightItems = items.slice(2, 4);
+
   return (
     <section className="container mx-auto px-4 py-16">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left Side */}
-        <div className="lg:col-span-1">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            What You Can Sell On manob.ai
-          </h2>
-          <p className="text-gray-600">
-            Sell everything from reusable code, templates, and plugins to full projects and SaaS
-            starters giving creators a powerful marketplace to share, monetize, and grow their
-            digital products.
-          </p>
-        </div>
+      {/* Header */}
+      <div className="text-center mb-12 max-w-2xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl md:text-3xl font-bold mb-4"
+        >
+          What You Can Sell On manob.ai
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-gray-600"
+        >
+          Sell everything from reusable code, templates, and plugins to full projects and SaaS
+          starters giving creators a powerful marketplace to share, monetize, and grow their
+          digital products.
+        </motion.p>
+      </div>
 
-        {/* Right Side - Timeline */}
-        <div className="lg:col-span-3 relative">
-          {/* Vertical Line */}
-          <div className="absolute left-7 top-0 w-0.5 h-full bg-red-500 hidden md:block" />
-
-          {/* Steps */}
-          {items.map((item) => (
-            <div key={item.id} className="flex items-start relative mb-8 md:mb-12">
-              {/* Number Badge */}
-              <div className="flex-shrink-0 w-14 h-11 bg-white rounded-lg flex items-center justify-center border-none z-10">
-                <span className="text-2xl font-bold text-gray-900">{item.id}</span>
+      {/* 2x2 Grid Layout */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-50px' }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+      >
+        {/* Left Column */}
+        <div className="flex flex-col gap-6">
+          {leftItems.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={cardVariants}
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex gap-4 items-start"
+            >
+              <div className="flex-shrink-0 w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+                <span className="text-xl font-bold text-red-500">{item.id}</span>
               </div>
-
-              {/* Content */}
-              <div className="ml-4 flex-1">
+              <div className="flex-1 min-w-0">
                 <h5 className="text-lg font-bold mb-1">{item.title}</h5>
                 <p className="text-gray-500 text-sm">{item.desc}</p>
               </div>
-
-              {/* Image */}
-              <div className="hidden lg:block ml-auto">
+              <div className="hidden sm:block flex-shrink-0">
                 <Image
                   src={item.img}
-                  width={300}
-                  height={200}
+                  width={120}
+                  height={80}
                   alt={item.title}
-                  className="rounded-xl"
+                  className="rounded-xl object-cover"
                 />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+
+        {/* Right Column */}
+        <div className="flex flex-col gap-6">
+          {rightItems.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={cardVariants}
+              whileHover={{ scale: 1.02 }}
+              className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex gap-4 items-start"
+            >
+              <div className="flex-shrink-0 w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+                <span className="text-xl font-bold text-red-500">{item.id}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h5 className="text-lg font-bold mb-1">{item.title}</h5>
+                <p className="text-gray-500 text-sm">{item.desc}</p>
+              </div>
+              <div className="hidden sm:block flex-shrink-0">
+                <Image
+                  src={item.img}
+                  width={120}
+                  height={80}
+                  alt={item.title}
+                  className="rounded-xl object-cover"
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }
