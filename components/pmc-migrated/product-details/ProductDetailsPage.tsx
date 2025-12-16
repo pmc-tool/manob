@@ -1,7 +1,7 @@
 // Product Details Page - Main component (matching original PMC design)
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FileText, MessageSquare, Star, Info, Loader2 } from 'lucide-react';
 import ItemHeader from './ItemHeader';
 import ProductPreview from './ProductPreview';
@@ -16,20 +16,17 @@ import CommentForm from './CommentForm';
 import RelatedProductsCarousel from './RelatedProductsCarousel';
 import useAddToCart from '@/hooks/useAddToCart';
 import {
+  useGetProductsQuery,
+  useGetPublicProductQuery,
+  useGetRelatedProductQuery,
+} from '@/state/services/home-service/public-product.service';
+import {
   ProductData,
   License,
   Review,
   Comment,
-  mockProduct,
-  mockLicenses,
-  mockReviews,
-  mockComments,
-  mockRelatedProducts,
-  mockReviewStats,
 } from '@/lib/mocks/product-details.mock';
 
-const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
-const API_URL_INV = process.env.NEXT_PUBLIC_API_URL_INV || '';
 const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
 
 // Helper to construct proper image URLs
@@ -44,102 +41,6 @@ const getImageUrl = (imagePath: string | undefined | null): string => {
   return `${S3_BUCKET}/${cleanPath}`;
 };
 
-// API Response interfaces
-interface ApiFeedProduct {
-  id: string;
-  product_name: string;
-  slug: string;
-  mrp: number;
-  price: number;
-  image: string;
-  short_description: string;
-  avg_rating: string;
-  total_reviews: number;
-  total_sales: number;
-  is_onsale: boolean;
-  is_liked: boolean;
-  updated_at: string;
-  primary_category?: { id: number; name: string; slug: string };
-  secondary_category?: { id: number; name: string; slug: string };
-  user?: {
-    sub: string;
-    first_name: string;
-    last_name: string;
-    user_name: string;
-    email: string;
-    profile_image: string;
-  };
-}
-
-interface ApiInvProduct {
-  id: string;
-  product_name: string;
-  short_description: string;
-  full_description: string;
-  product_demo_url: string;
-  product_doc_url: string;
-  price: number;
-  extended_price: number;
-  current_status: string;
-  created_at?: string;
-  author_id: string;
-  product_preview_file?: string;
-  thumbnail_images?: string[];
-}
-
-interface ApiReview {
-  id: string;
-  review_rating: string;
-  review_content: string;
-  reply_content?: string;
-  created_at: string;
-  reviewer_meta: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    user_name: string;
-    avatar: string;
-    member_since: string;
-  };
-}
-
-interface ApiComment {
-  id: string;
-  content: string;
-  created_at: string;
-  user_meta: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    user_name: string;
-    avatar: string;
-  };
-  replies?: Array<{
-    id: string;
-    content: string;
-    created_at: string;
-    is_author: boolean;
-    user_meta: {
-      first_name: string;
-      last_name: string;
-      user_name: string;
-      avatar: string;
-    };
-  }>;
-}
-
-interface ApiReviewStats {
-  total_reviews: number;
-  avg_rating: number;
-  rating_sequence: {
-    one_star: string;
-    two_star: string;
-    three_star: string;
-    four_star: string;
-    five_star: string;
-  };
-}
-
 interface ProductDetailsPageProps {
   slug: string;
 }
@@ -151,186 +52,113 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   const [reviewFilter, setReviewFilter] = useState('newest');
   const [commentFilter, setCommentFilter] = useState('newest');
 
-  // Data states
-  const [product, setProduct] = useState<ProductData | null>(null);
-  const [licenses, setLicenses] = useState<License[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [reviewStats, setReviewStats] = useState({ avg_rating: 0, total_reviews: 0, rating_sequence: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } });
-  const [relatedProducts, setRelatedProducts] = useState<typeof mockRelatedProducts>([]);
+  // Fetch products from API using RTK Query
+  const {
+    data: productsData,
+    isLoading: isLoadingProducts,
+    isError: isProductsError,
+    refetch: refetchProducts
+  } = useGetProductsQuery({
+    queryParams: {
+      page: 1,
+      limit: 50,
+      slug: slug
+    }
+  });
 
-  // Loading and error states
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Find product by slug from the items
+  const feedProduct = useMemo(() => {
+    const items = productsData?.items || [];
+    return items.find((item: any) => item.slug === slug) || items[0];
+  }, [productsData, slug]);
 
-  // Check if user is owner (mock for now)
-  const isOwner = false;
-  const isHiddenItem = product?.current_status !== 'PUBLISHED';
-  const hasPurchased = false;
+  // Fetch detailed product info if we have an ID
+  const { data: detailedProduct } = useGetPublicProductQuery(
+    { id: feedProduct?.id },
+    { skip: !feedProduct?.id }
+  );
 
-  // Fetch product data
-  const fetchProductData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // Fetch related products
+  const { data: relatedData } = useGetRelatedProductQuery(
+    { id: feedProduct?.id },
+    { skip: !feedProduct?.id }
+  );
 
-      // Step 1: Search for product by slug in feed API to get UUID and basic info
-      const feedResponse = await fetch(`${API_URL_FEED}/themes?search=${encodeURIComponent(slug.replace(/-/g, ' '))}&limit=50`);
-      if (!feedResponse.ok) throw new Error('Failed to fetch product');
+  // Map the data to ProductData format
+  const product: ProductData | null = useMemo(() => {
+    if (!feedProduct) return null;
 
-      const feedJson = await feedResponse.json();
-      const feedItems: ApiFeedProduct[] = feedJson.data?.items || [];
+    return {
+      id: feedProduct.id,
+      product_name: feedProduct.product_name,
+      short_description: feedProduct.short_description || detailedProduct?.short_description || '',
+      full_description: detailedProduct?.full_description || '',
+      product_preview_file_url: getImageUrl(feedProduct.image),
+      screenshots_urls: detailedProduct?.thumbnail_images?.map((img: string) => getImageUrl(img)) || [],
+      is_onsale: feedProduct.is_onsale,
+      regular_lic_price: feedProduct.price || detailedProduct?.price || 0,
+      regular_lic_fee: 0,
+      extended_lic_price: detailedProduct?.extended_price || (feedProduct.price || 0) * 5,
+      extended_lic_fee: 0,
+      discount_regular_price: feedProduct.mrp < feedProduct.price ? feedProduct.mrp : 0,
+      discount_extended_price: 0,
+      total_sales: feedProduct.total_sales || 0,
+      total_views: 0,
+      total_likes: 0,
+      is_liked: feedProduct.is_liked,
+      current_status: detailedProduct?.current_status || 'PUBLISHED',
+      product_attributes: [],
+      is_gutenberg_potimized: false,
+      is_high_resolution: true,
+      layout_columns: '4+',
+      layout_type: 'Responsive',
+      product_tags: [],
+      product_doc_url: detailedProduct?.product_doc_url || '',
+      updated_at: feedProduct.updated_at,
+      created_at: detailedProduct?.created_at || feedProduct.updated_at,
+      user_meta: {
+        sub: feedProduct.user?.sub || '',
+        first_name: feedProduct.user?.first_name || '',
+        last_name: feedProduct.user?.last_name || '',
+        user_name: feedProduct.user?.user_name || '',
+        profile_image: getImageUrl(feedProduct.user?.profile_image),
+        member_since: '',
+      },
+    };
+  }, [feedProduct, detailedProduct]);
 
-      // Find exact match by slug
-      const feedProduct = feedItems.find((item) => item.slug === slug);
-      if (!feedProduct) throw new Error('Product not found');
+  // Map licenses
+  const licenses: License[] = useMemo(() => {
+    if (!feedProduct) return [];
+    return [
+      {
+        type: 'Regular License',
+        lic_type: 'REGULAR',
+        price: feedProduct.price || detailedProduct?.price || 0,
+        oldPrice: feedProduct.is_onsale && feedProduct.mrp > feedProduct.price ? feedProduct.mrp : 0,
+        extendSupportPrice: (feedProduct.price || 0) * 0.3,
+        extendSupportOldPrice: 0,
+        description: 'Use, by you or one client, in a single end product which end users are not charged for.',
+      },
+      {
+        type: 'Extended License',
+        lic_type: 'EXTENDED',
+        price: detailedProduct?.extended_price || (feedProduct.price || 0) * 5,
+        oldPrice: 0,
+        extendSupportPrice: (detailedProduct?.extended_price || (feedProduct.price || 0) * 5) * 0.3,
+        extendSupportOldPrice: 0,
+        description: 'Use, by you or one client, in a single end product which end users can be charged for.',
+      },
+    ];
+  }, [feedProduct, detailedProduct]);
 
-      const productId = feedProduct.id;
-
-      // Step 2: Fetch detailed product info from inventory API
-      const invResponse = await fetch(`${API_URL_INV}/products/${productId}`);
-      let invProduct: ApiInvProduct | null = null;
-      if (invResponse.ok) {
-        const invJson = await invResponse.json();
-        invProduct = invJson.data;
-      }
-
-      // Step 3: Fetch reviews
-      const reviewsResponse = await fetch(`${API_URL_INV}/products/${productId}/reviews`);
-      const defaultReviewStats = { total_reviews: 0, avg_rating: 0, rating_sequence: { one_star: '0', two_star: '0', three_star: '0', four_star: '0', five_star: '0' } };
-      let reviewsData: { stats: ApiReviewStats | null; items: ApiReview[] } = {
-        stats: defaultReviewStats,
-        items: [],
-      };
-      if (reviewsResponse.ok) {
-        const reviewsJson = await reviewsResponse.json();
-        reviewsData = {
-          stats: reviewsJson.data?.stats || defaultReviewStats,
-          items: reviewsJson.data?.items || [],
-        };
-      }
-
-      // Step 4: Fetch comments
-      const commentsResponse = await fetch(`${API_URL_INV}/products/${productId}/comments?page=1&limit=20`);
-      let commentsData: ApiComment[] = [];
-      if (commentsResponse.ok) {
-        const commentsJson = await commentsResponse.json();
-        commentsData = commentsJson.data?.items || [];
-      }
-
-      // Step 5: Fetch related products (same category)
-      const relatedResponse = await fetch(`${API_URL_FEED}/themes?limit=4`);
-      let relatedItems: ApiFeedProduct[] = [];
-      if (relatedResponse.ok) {
-        const relatedJson = await relatedResponse.json();
-        relatedItems = (relatedJson.data?.items || []).filter((item: ApiFeedProduct) => item.id !== productId).slice(0, 4);
-      }
-
-      // Map feed + inventory data to ProductData
-      const mappedProduct: ProductData = {
-        id: feedProduct.id,
-        product_name: feedProduct.product_name,
-        short_description: feedProduct.short_description || invProduct?.short_description || '',
-        full_description: invProduct?.full_description || '',
-        product_preview_file_url: getImageUrl(feedProduct.image),
-        screenshots_urls: invProduct?.thumbnail_images?.map((img) => getImageUrl(img)) || [],
-        is_onsale: feedProduct.is_onsale,
-        regular_lic_price: feedProduct.price || invProduct?.price || 0,
-        regular_lic_fee: 0,
-        extended_lic_price: invProduct?.extended_price || feedProduct.price * 5 || 0,
-        extended_lic_fee: 0,
-        discount_regular_price: feedProduct.mrp < feedProduct.price ? feedProduct.mrp : 0,
-        discount_extended_price: 0,
-        total_sales: feedProduct.total_sales || 0,
-        total_views: 0,
-        total_likes: 0,
-        is_liked: feedProduct.is_liked,
-        current_status: invProduct?.current_status || 'PUBLISHED',
-        product_attributes: [],
-        is_gutenberg_potimized: false,
-        is_high_resolution: true,
-        layout_columns: '4+',
-        layout_type: 'Responsive',
-        product_tags: [],
-        product_doc_url: invProduct?.product_doc_url || '',
-        updated_at: feedProduct.updated_at,
-        created_at: invProduct?.created_at || feedProduct.updated_at,
-        user_meta: {
-          sub: feedProduct.user?.sub || '',
-          first_name: feedProduct.user?.first_name || '',
-          last_name: feedProduct.user?.last_name || '',
-          user_name: feedProduct.user?.user_name || '',
-          profile_image: getImageUrl(feedProduct.user?.profile_image),
-          member_since: '',
-        },
-      };
-
-      // Map licenses
-      const mappedLicenses: License[] = [
-        {
-          type: 'Regular License',
-          lic_type: 'REGULAR',
-          price: feedProduct.price || invProduct?.price || 0,
-          oldPrice: feedProduct.is_onsale && feedProduct.mrp > feedProduct.price ? feedProduct.mrp : 0,
-          extendSupportPrice: (feedProduct.price || 0) * 0.3,
-          extendSupportOldPrice: 0,
-          description: 'Use, by you or one client, in a single end product which end users are not charged for.',
-        },
-        {
-          type: 'Extended License',
-          lic_type: 'EXTENDED',
-          price: invProduct?.extended_price || (feedProduct.price || 0) * 5,
-          oldPrice: 0,
-          extendSupportPrice: ((invProduct?.extended_price || 0) || (feedProduct.price || 0) * 5) * 0.3,
-          extendSupportOldPrice: 0,
-          description: 'Use, by you or one client, in a single end product which end users can be charged for.',
-        },
-      ];
-
-      // Map reviews
-      const mappedReviews: Review[] = reviewsData.items.map((r) => ({
-        id: r.id,
-        user_name: `${r.reviewer_meta.first_name} ${r.reviewer_meta.last_name}`,
-        user_avatar: getImageUrl(r.reviewer_meta.avatar),
-        rating: parseFloat(r.review_rating) || 0,
-        content: r.review_content,
-        created_at: r.created_at,
-        author_reply: r.reply_content || undefined,
-      }));
-
-      // Map review stats
-      const ratingSeq = reviewsData.stats?.rating_sequence;
-      const mappedReviewStats = {
-        avg_rating: reviewsData.stats?.avg_rating || parseFloat(feedProduct.avg_rating) || 0,
-        total_reviews: reviewsData.stats?.total_reviews || feedProduct.total_reviews || 0,
-        rating_sequence: {
-          5: parseInt(ratingSeq?.five_star || '0') || 0,
-          4: parseInt(ratingSeq?.four_star || '0') || 0,
-          3: parseInt(ratingSeq?.three_star || '0') || 0,
-          2: parseInt(ratingSeq?.two_star || '0') || 0,
-          1: parseInt(ratingSeq?.one_star || '0') || 0,
-        },
-      };
-
-      // Map comments
-      const mappedComments: Comment[] = commentsData.map((c) => ({
-        id: c.id,
-        user_name: `${c.user_meta?.first_name || ''} ${c.user_meta?.last_name || ''}`.trim() || 'Anonymous',
-        user_avatar: getImageUrl(c.user_meta?.avatar),
-        content: c.content,
-        created_at: c.created_at,
-        replies: c.replies?.map((r) => ({
-          id: r.id,
-          user_name: `${r.user_meta?.first_name || ''} ${r.user_meta?.last_name || ''}`.trim() || 'Anonymous',
-          user_avatar: getImageUrl(r.user_meta?.avatar),
-          content: r.content,
-          created_at: r.created_at,
-          is_author: r.is_author,
-        })),
-      }));
-
-      // Map related products
-      const mappedRelated = relatedItems.map((item) => ({
+  // Map related products
+  const relatedProducts = useMemo(() => {
+    const items = relatedData?.items || productsData?.items || [];
+    return items
+      .filter((item: any) => item.id !== feedProduct?.id)
+      .slice(0, 4)
+      .map((item: any) => ({
         id: item.id,
         title: item.product_name,
         thumbnail_image: getImageUrl(item.image),
@@ -344,34 +172,21 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
           user_name: item.user?.user_name || '',
         },
       }));
+  }, [relatedData, productsData, feedProduct]);
 
-      // Set all states
-      setProduct(mappedProduct);
-      setLicenses(mappedLicenses);
-      setReviews(mappedReviews);
-      setReviewStats(mappedReviewStats);
-      setComments(mappedComments);
-      setRelatedProducts(mappedRelated);
-    } catch (err) {
-      console.error('Failed to fetch product, using mock data:', err);
-      // Use mock data as fallback
-      setProduct(mockProduct);
-      setLicenses(mockLicenses);
-      setReviews(mockReviews);
-      setReviewStats(mockReviewStats);
-      setComments(mockComments);
-      setRelatedProducts(mockRelatedProducts);
-      setError(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [slug]);
+  // Reviews and comments (empty for now, can be fetched separately)
+  const reviews: Review[] = [];
+  const comments: Comment[] = [];
+  const reviewStats = {
+    avg_rating: parseFloat(feedProduct?.avg_rating) || 0,
+    total_reviews: feedProduct?.total_reviews || 0,
+    rating_sequence: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+  };
 
-  useEffect(() => {
-    if (slug) {
-      fetchProductData();
-    }
-  }, [slug, fetchProductData]);
+  // Check if user is owner (mock for now)
+  const isOwner = false;
+  const isHiddenItem = product?.current_status !== 'PUBLISHED';
+  const hasPurchased = false;
 
   // Cart functionality
   const { addToCart, isLoading: cartLoading } = useAddToCart();
@@ -402,7 +217,7 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   };
 
   // Loading state
-  if (loading) {
+  if (isLoadingProducts) {
     return (
       <section className="pt-4">
         <div className="container mx-auto px-4">
@@ -416,19 +231,19 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   }
 
   // Error state
-  if (error || !product) {
+  if (isProductsError || !product) {
     return (
       <section className="pt-4">
         <div className="container mx-auto px-4">
           <div className="text-center py-20">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">
-              {error || 'Product not found'}
+              Product not found
             </h2>
             <p className="text-gray-500 mb-4">
               The product you&apos;re looking for could not be loaded.
             </p>
             <button
-              onClick={fetchProductData}
+              onClick={() => refetchProducts()}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Try Again
