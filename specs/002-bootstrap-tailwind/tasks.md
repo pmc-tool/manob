@@ -1,336 +1,279 @@
-# Tasks: Bootstrap to Tailwind Migration
+# Tasks: Module CSS to Tailwind CSS Migration
 
-**Input**: Design documents from `/specs/002-bootstrap-tailwind/`
-**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
+**Input**: Scan of all `*.module.css` files in the codebase
+**Goal**: Convert all remaining CSS modules to Tailwind CSS + Ant Design components
+
+**Status**: Marketplace components COMPLETED, 31 module.css files remaining
 
 **Tests**: Not requested - no test tasks included
 
-**Organization**: Tasks grouped by user story to enable independent implementation and verification
+**Organization**: Tasks grouped by page/area to enable independent implementation and verification
 
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (US1, US2, US3, US4, US5)
+- **[Story]**: Which area this task belongs to (US1=Shared, US2=Auth, US3=Profile, etc.)
 - Include exact file paths in descriptions
 
-## Path Conventions
+---
 
-- **Project type**: Next.js App Router
-- **CSS files**: `app/globals.css`, `components/**/*.module.css`
-- **Components**: `components/pmc-migrated/**/*.tsx`
+## Phase 1: Setup (COMPLETED)
+
+**Purpose**: Configuration and tooling preparation
+
+- [x] T001 Tailwind CSS 4 configuration with custom theme tokens
+- [x] T002 AntD theme provider configured in app/layout.tsx
+- [x] T003 globals.css reduced to ~270 lines with essential utilities
+
+**Checkpoint**: Foundation ready
 
 ---
 
-## Phase 1: Setup (Shared Infrastructure)
+## Phase 2: Marketplace Components (COMPLETED)
 
-**Purpose**: Configuration and tooling preparation before migration begins
+**Status**: All 15 marketplace module.css files converted and deleted
 
-- [x] T001 Create Tailwind CSS 4 configuration file at tailwind.config.ts with custom theme tokens (pmc-primary, pmc-link, background colors)
-- [x] T002 Configure AntD theme provider in app/layout.tsx with ConfigProvider using brand colors (colorPrimary: #e54d2e, borderRadius: 6)
-- [x] T003 [P] Create component migration tracking spreadsheet or checklist in specs/002-bootstrap-tailwind/migration-tracker.md
-- [x] T004 [P] Capture baseline screenshots of all pages for visual regression testing (marketplace, product-details, service-details, profile, checkout, settings)
-- [x] T005 [P] Add ESLint rule or script to detect Bootstrap class usage in components
+- [x] T004 ProductCard.tsx converted to Tailwind, ProductCard.module.css deleted
+- [x] T005 ServiceCard.tsx converted to Tailwind, ServiceCard.module.css deleted
+- [x] T006 SearchBar.tsx converted to Tailwind, SearchBar.module.css deleted
+- [x] T007 SearchModal.tsx converted to Tailwind, SearchModal.module.css deleted
+- [x] T008 SidebarFilter.tsx converted to Tailwind, SidebarFilter.module.css deleted
+- [x] T009 ListingToggle.tsx converted to Tailwind, ListingToggle.module.css deleted
+- [x] T010 Ribbon.tsx converted to Tailwind, Ribbon.module.css deleted
+- [x] T011 ReviewStars.tsx converted to Tailwind, ReviewStars.module.css deleted
+- [x] T012 ProductsCarousel.tsx converted to Tailwind, ProductsCarousel.module.css deleted
+- [x] T013 ServicesCarousel.tsx converted to Tailwind, ServicesCarousel.module.css deleted
+- [x] T014 ProductCardSkeleton.tsx converted to Tailwind, ProductCardSkeleton.module.css deleted
+- [x] T015 ServiceCardSkeleton.tsx converted to Tailwind, ServiceCardSkeleton.module.css deleted
+- [x] T016 FilterBar.module.css deleted
+- [x] T017 CategorySection.module.css deleted
+- [x] T018 page.module.css (marketplace) deleted
 
----
-
-## Phase 2: Foundational (Blocking Prerequisites)
-
-**Purpose**: Core infrastructure that MUST be complete before component migration
-
-**⚠️ CRITICAL**: No component migration can begin until globals.css foundation is established
-
-- [x] T006 Audit app/globals.css and document all sections with line ranges (Bootstrap utilities, custom classes, retain sections)
-- [x] T007 Create minimal globals.css structure in app/globals-new.css with only: @import "tailwindcss", @import "tw-animate-css", @import "@vscode/codicons/dist/codicon.css"
-- [x] T008 Extract essential CSS variables (@theme inline block) from current globals.css to globals-new.css
-- [x] T009 Extract Monaco editor overrides from globals.css to globals-new.css (required for code editor)
-- [x] T010 Create reusable button components at components/ui/pmc-button.tsx replacing .ud-btn, .btn-thm patterns with AntD Button
-- [x] T011 [P] Create reusable form input component at components/ui/pmc-input.tsx replacing .form-control with AntD Input
-- [x] T012 [P] Create reusable select component at components/ui/pmc-select.tsx replacing .form-select with AntD Select
-- [x] T013 [P] Create reusable modal component at components/ui/pmc-modal.tsx replacing Bootstrap modal patterns with AntD Modal
-
-**Checkpoint**: Foundation ready - globals.css structure established, reusable components created
+**Checkpoint**: Marketplace fully converted - 15 files removed, ~2000 lines CSS deleted
 
 ---
 
-## Phase 3: User Story 1 - Developer Removes Bootstrap from Component (Priority: P1) 🎯 MVP
+## Phase 3: Shared Components (Priority: P1) 🎯 NEXT
 
-**Goal**: Migrate core marketplace components from Bootstrap classes to Tailwind utilities
+**Goal**: Convert shared components used across multiple pages
 
-**Independent Test**: Visit /marketplace, verify all components render correctly with no Bootstrap classes
+**Independent Test**: Verify shared components render correctly across all pages
 
-### Marketplace Components Migration (14 components)
+### Implementation
 
-- [ ] T014 [P] [US1] Migrate ProductCard.tsx at components/pmc-migrated/marketplace/product-card/ - replace d-flex, col-*, btn-* with Tailwind
-- [ ] T015 [P] [US1] Migrate ServiceCard.tsx at components/pmc-migrated/marketplace/service-card/ - replace Bootstrap grid with Tailwind flex/grid
-- [ ] T016 [P] [US1] Migrate ProductsCarousel.tsx at components/pmc-migrated/marketplace/products-carousel/ - replace Bootstrap spacing with Tailwind
-- [ ] T017 [P] [US1] Migrate ProductCardSkeleton.tsx at components/pmc-migrated/marketplace/products-carousel/ - replace Bootstrap classes
-- [ ] T018 [P] [US1] Migrate ServicesCarousel.tsx at components/pmc-migrated/marketplace/services-carousel/ - replace Bootstrap classes
-- [ ] T019 [P] [US1] Migrate ServiceCardSkeleton.tsx at components/pmc-migrated/marketplace/services-carousel/ - replace Bootstrap classes
-- [ ] T020 [P] [US1] Migrate SearchBar.tsx at components/pmc-migrated/marketplace/search-bar/ - replace form-control with AntD Input
-- [ ] T021 [P] [US1] Migrate SearchModal.tsx at components/pmc-migrated/marketplace/search-bar/ - replace modal-* with AntD Modal
-- [ ] T022 [P] [US1] Migrate FilterBar.tsx at components/pmc-migrated/marketplace/filter-bar/ - replace d-flex, justify-content-* with Tailwind
-- [ ] T023 [P] [US1] Migrate SidebarFilter.tsx at components/pmc-migrated/marketplace/sidebar-filter/ - replace Bootstrap utilities
-- [ ] T024 [P] [US1] Migrate CategorySection.tsx at components/pmc-migrated/marketplace/category-section/ - replace row/col with Tailwind grid
-- [ ] T025 [P] [US1] Migrate ListingToggle.tsx at components/pmc-migrated/marketplace/listing-toggle/ - replace btn-* with AntD Button
-- [ ] T026 [P] [US1] Migrate ReviewStars.tsx at components/pmc-migrated/marketplace/review-stars/ - replace Bootstrap utilities
-- [ ] T027 [P] [US1] Migrate Ribbon.tsx at components/pmc-migrated/marketplace/ribbon/ - replace position-* with Tailwind
+- [ ] T019 [P] [US1] Convert Modal.tsx in components/pmc-migrated/shared/modal/, delete Modal.module.css
+- [ ] T020 [P] [US1] Convert Avatar.tsx in components/pmc-migrated/shared/avatar/, delete Avatar.module.css
+- [ ] T021 [P] [US1] Convert PageLayout.tsx in components/pmc-migrated/shared/page-layout/, delete PageLayout.module.css
+- [ ] T022 [P] [US1] Convert Search component in components/pmc-migrated/shared/search/, delete search.module.css
+- [ ] T023 [P] [US1] Convert Shorting component in components/pmc-migrated/shared/shorting/, delete shorting.module.css
 
-### Product/Service Details Components Migration
-
-- [ ] T028 [P] [US1] Migrate ProductDetailsPage.tsx at components/pmc-migrated/product-details/ - replace container, row, col-lg-* with Tailwind
-- [ ] T029 [P] [US1] Migrate ItemHeader.tsx at components/pmc-migrated/product-details/ - replace d-flex, align-items-* with Tailwind
-- [ ] T030 [P] [US1] Migrate ItemDescription.tsx at components/pmc-migrated/product-details/ - replace Bootstrap typography classes
-- [ ] T031 [P] [US1] Migrate PriceBox.tsx at components/pmc-migrated/product-details/ - replace btn-primary, form-* with AntD
-- [ ] T032 [P] [US1] Migrate Reviews.tsx at components/pmc-migrated/product-details/ - replace Bootstrap spacing and flex
-- [ ] T033 [P] [US1] Migrate Comments.tsx at components/pmc-migrated/product-details/ - replace Bootstrap utilities
-- [ ] T034 [P] [US1] Migrate CommentForm.tsx at components/pmc-migrated/product-details/ - replace form-control with AntD
-- [ ] T035 [P] [US1] Migrate ItemAttributes.tsx at components/pmc-migrated/product-details/ - replace Bootstrap grid
-- [ ] T036 [P] [US1] Migrate ItemSocialShare.tsx at components/pmc-migrated/product-details/ - replace d-flex with Tailwind
-- [ ] T037 [P] [US1] Migrate ProductPreview.tsx at components/pmc-migrated/product-details/ - replace Bootstrap classes
-- [ ] T038 [P] [US1] Migrate RelatedProductsCarousel.tsx at components/pmc-migrated/product-details/ - replace Bootstrap classes
-- [ ] T039 [P] [US1] Migrate CommunityBadgesCard.tsx at components/pmc-migrated/product-details/ - replace Bootstrap card classes
-
-### Service Details Components Migration
-
-- [ ] T040 [P] [US1] Migrate ServiceDetailsPage.tsx at components/pmc-migrated/service-details/ - replace container, row, col with Tailwind
-- [ ] T041 [P] [US1] Migrate ServiceHeader.tsx at components/pmc-migrated/service-details/ - replace d-flex, justify-content with Tailwind
-- [ ] T042 [P] [US1] Migrate ServiceDescription.tsx at components/pmc-migrated/service-details/ - replace Bootstrap typography
-- [ ] T043 [P] [US1] Migrate ServicePackages.tsx at components/pmc-migrated/service-details/ - replace Bootstrap tabs, btn-* with AntD
-- [ ] T044 [P] [US1] Migrate PackageComparisonTable.tsx at components/pmc-migrated/service-details/ - replace Bootstrap table with AntD Table
-- [ ] T045 [P] [US1] Migrate PackageDetails.tsx at components/pmc-migrated/service-details/ - replace Bootstrap card
-- [ ] T046 [P] [US1] Migrate ServiceGallery.tsx at components/pmc-migrated/service-details/ - replace Bootstrap grid
-- [ ] T047 [P] [US1] Migrate ServiceFAQ.tsx at components/pmc-migrated/service-details/ - replace Bootstrap accordion with AntD Collapse
-- [ ] T048 [P] [US1] Migrate ServiceReviews.tsx at components/pmc-migrated/service-details/ - replace Bootstrap spacing
-- [ ] T049 [P] [US1] Migrate SellerCard.tsx at components/pmc-migrated/service-details/ - replace Bootstrap card with Tailwind
-- [ ] T050 [P] [US1] Migrate OrderCartSidebar.tsx at components/pmc-migrated/service-details/ - replace Bootstrap utilities
-- [ ] T051 [P] [US1] Migrate RelatedServicesCarousel.tsx at components/pmc-migrated/service-details/ - replace Bootstrap carousel
-- [ ] T052 [P] [US1] Migrate ServiceSocialShare.tsx at components/pmc-migrated/service-details/ - replace d-flex with Tailwind
-- [ ] T053 [P] [US1] Migrate InputSpinner.tsx at components/pmc-migrated/service-details/ - replace form-control with AntD InputNumber
-
-**Checkpoint**: Core marketplace and detail pages migrated - verify at /marketplace, /product-details/[slug], /service-details/[slug]
+**Checkpoint**: Shared components ready - 5 files
 
 ---
 
-## Phase 4: User Story 2 - Developer Removes Custom Global CSS (Priority: P1)
+## Phase 4: Auth Pages (Priority: P2)
 
-**Goal**: Remove custom global CSS classes from components and delete definitions from globals.css
+**Goal**: Convert authentication page styles to Tailwind
 
-**Independent Test**: Verify globals.css contains only Tailwind directives and essential overrides
+**Independent Test**: Login, signup, password recovery pages render correctly
 
-### Profile Components Migration (5 components + CSS Modules)
+### Implementation
 
-- [ ] T054 [P] [US2] Migrate ProfileCard.tsx at components/pmc-migrated/profile/profile-card/ - remove custom CSS classes, delete ProfileCard.module.css
-- [ ] T055 [P] [US2] Migrate ProfileHeaderSection.tsx at components/pmc-migrated/profile/profile-header/ - remove custom classes, delete module.css
-- [ ] T056 [P] [US2] Migrate ProfileAboutSection.tsx at components/pmc-migrated/profile/profile-about/ - remove custom classes, delete module.css
-- [ ] T057 [P] [US2] Migrate SkillsSection.tsx at components/pmc-migrated/profile/skills-section/ - remove custom classes, delete module.css
-- [ ] T058 [P] [US2] Migrate MetaInfoSection.tsx at components/pmc-migrated/profile/meta-info/ - remove custom classes, delete module.css
+- [ ] T024 [US2] Convert auth styles in app/auth/ pages to Tailwind, delete app/auth/auth.module.css
 
-### Checkout Components Migration (9 components + CSS Modules)
-
-- [ ] T059 [P] [US2] Migrate Cart.tsx at components/pmc-migrated/checkout/ - remove ud-btn, btn-thm, use AntD Button
-- [ ] T060 [P] [US2] Migrate CartItem.tsx at components/pmc-migrated/checkout/ - remove custom cart-item classes
-- [ ] T061 [P] [US2] Migrate Stepper.tsx at components/pmc-migrated/checkout/ - replace with AntD Steps, delete Stepper.module.css
-- [ ] T062 [P] [US2] Migrate Payment.tsx at components/pmc-migrated/checkout/ - remove form-control, btn-*, use AntD
-- [ ] T063 [P] [US2] Migrate BillingModal.tsx at components/pmc-migrated/checkout/ - replace modal-* with AntD Modal
-- [ ] T064 [P] [US2] Migrate CheckoutComplete.tsx at components/pmc-migrated/checkout/ - remove custom classes
-- [ ] T065 [P] [US2] Migrate PmcStripe.tsx at components/pmc-migrated/checkout/ - remove custom classes, delete module.css
-- [ ] T066 [P] [US2] Migrate PmcWallet.tsx at components/pmc-migrated/checkout/ - remove custom classes
-- [ ] T067 [P] [US2] Migrate InputSpinner.tsx at components/pmc-migrated/checkout/ - replace with AntD InputNumber
-
-### Shared Components Migration (7 components + CSS Modules)
-
-- [ ] T068 [P] [US2] Migrate Modal.tsx at components/pmc-migrated/shared/modal/ - replace with AntD Modal, delete Modal.module.css
-- [ ] T069 [P] [US2] Migrate Avatar.tsx at components/pmc-migrated/shared/avatar/ - remove custom classes, delete Avatar.module.css
-- [ ] T070 [P] [US2] Migrate PageLayout.tsx at components/pmc-migrated/shared/page-layout/ - replace container, delete module.css
-- [ ] T071 [P] [US2] Migrate LoadingState.tsx at components/pmc-migrated/shared/ - replace with AntD Spin
-- [ ] T072 [P] [US2] Migrate ErrorBoundary.tsx at components/pmc-migrated/shared/ - replace alert-* with AntD Alert
-- [ ] T073 [P] [US2] Migrate sidebar-filter.tsx at components/pmc-migrated/shared/sidebar-filter/ - remove custom classes
-- [ ] T074 [P] [US2] Migrate search.tsx at components/pmc-migrated/shared/search/ - replace form-control with AntD
-
-### Global CSS Cleanup
-
-- [ ] T075 [US2] Remove Bootstrap-compatible utilities section (lines 543-700) from app/globals.css
-- [ ] T076 [US2] Remove Bootstrap grid system section (lines 1068-1259) from app/globals.css
-- [ ] T077 [US2] Remove Bootstrap modal styles section (lines 1388-1509) from app/globals.css
-- [ ] T078 [US2] Remove Bootstrap button styles section (lines 1511-1565) from app/globals.css
-- [ ] T079 [US2] Remove custom button classes (.ud-btn, .btn-thm, .btn-soft-*) from app/globals.css
-- [ ] T080 [US2] Remove font size utilities (.fz12, .fz14, etc.) from app/globals.css
-- [ ] T081 [US2] Remove background color utilities (.bgc-*) from app/globals.css
-- [ ] T082 [US2] Replace app/globals.css with app/globals-new.css (swap files)
-
-**Checkpoint**: globals.css reduced to ~50 lines, all custom classes removed from components
+**Checkpoint**: Auth pages converted - 1 file
 
 ---
 
-## Phase 5: User Story 3 - Developer Applies Ant Design Patterns (Priority: P2)
+## Phase 5: Profile Components (Priority: P3)
 
-**Goal**: Ensure migrated components follow AntD design patterns for consistency
+**Goal**: Convert profile section components to Tailwind
 
-**Independent Test**: Compare button, form, modal styling against Ant Design documentation
+**Independent Test**: Profile page displays correctly with all sections
 
-### Form Components with AntD Patterns
+### Implementation
 
-- [ ] T083 [P] [US3] Update seller-registration forms at components/pmc-migrated/seller-registration/ to use AntD Form, Input, Select patterns
-- [ ] T084 [P] [US3] Migrate RegistrationStart.tsx with AntD Form layout and validation
-- [ ] T085 [P] [US3] Migrate ChooseCategories.tsx with AntD Checkbox.Group or Select
-- [ ] T086 [P] [US3] Migrate Skills.tsx with AntD Tag or Select mode="tags"
-- [ ] T087 [P] [US3] Migrate SellerStepper.tsx with AntD Steps component
-- [ ] T088 [P] [US3] Migrate SellFormPrompt.tsx with AntD Alert or Card
-- [ ] T089 [P] [US3] Migrate SellerHeader.tsx with AntD typography patterns
+- [ ] T025 [P] [US3] Convert ProfileHeaderSection.tsx, delete ProfileHeaderSection.module.css
+- [ ] T026 [P] [US3] Convert ProfileAboutSection.tsx, delete ProfileAboutSection.module.css
+- [ ] T027 [P] [US3] Convert MetaInfoSection.tsx, delete MetaInfoSection.module.css
+- [ ] T028 [P] [US3] Convert SkillsSection.tsx, delete SkillsSection.module.css
+- [ ] T029 [P] [US3] Convert ProfileCard.tsx, delete ProfileCard.module.css
+- [ ] T030 [US3] Convert my-profile page, delete app/my-profile/page.module.css
 
-### Settings Pages with AntD Patterns
-
-- [ ] T090 [P] [US3] Migrate SecurityPage.tsx at components/pmc-migrated/settings/ with AntD Form, Switch
-- [ ] T091 [P] [US3] Migrate NotificationPage.tsx with AntD Switch, Checkbox patterns
-- [ ] T092 [P] [US3] Migrate LoginActivityPage.tsx with AntD Table for activity list
-- [ ] T093 [P] [US3] Migrate SettingsNav.tsx with AntD Menu component
-
-### Forum Components with AntD Patterns
-
-- [ ] T094 [P] [US3] Migrate QuestionsPage.tsx at components/pmc-migrated/forum/ with AntD List, Pagination
-- [ ] T095 [P] [US3] Migrate QuestionCard.tsx with AntD Card component
-- [ ] T096 [P] [US3] Migrate QuestionDetailPage.tsx with AntD Typography, Divider
-- [ ] T097 [P] [US3] Migrate AskQuestionPage.tsx with AntD Form, Input.TextArea
-- [ ] T098 [P] [US3] Migrate CommentCard.tsx with AntD Comment or Card
-- [ ] T099 [P] [US3] Migrate ForumSidebar.tsx with AntD Menu or Card patterns
-- [ ] T100 [P] [US3] Migrate ForumSearch.tsx with AntD Input.Search
-
-### Chat Components with AntD Patterns
-
-- [ ] T101 [P] [US3] Migrate ChatApp.tsx at components/pmc-migrated/chat/ with AntD Layout
-- [ ] T102 [P] [US3] Migrate ChatList.tsx with AntD List component
-- [ ] T103 [P] [US3] Migrate ChatContent.tsx with AntD layout patterns
-- [ ] T104 [P] [US3] Migrate MessageInput.tsx with AntD Input.TextArea, Button
-- [ ] T105 [P] [US3] Migrate UserInfoSidebar.tsx with AntD Descriptions or Card
-
-**Checkpoint**: All interactive components follow AntD patterns - consistent look and feel
+**Checkpoint**: Profile pages converted - 6 files
 
 ---
 
-## Phase 6: User Story 4 - Developer Handles Repeated Styling Patterns (Priority: P2)
+## Phase 6: Job List & Details (Priority: P4)
 
-**Goal**: Extract repeated patterns into reusable components or Tailwind config
+**Goal**: Convert job listing pages and components to Tailwind
 
-**Independent Test**: Search codebase for duplicate styling patterns, verify extraction
+**Independent Test**: Job list page, job cards, and job details display correctly
 
-### Home Page Components (8 components)
+### Implementation
 
-- [ ] T106 [P] [US4] Migrate HomePage.tsx at components/pmc-migrated/home/ - identify repeated patterns
-- [ ] T107 [P] [US4] Migrate HeroSection.tsx - extract hero layout as reusable pattern
-- [ ] T108 [P] [US4] Migrate HowItWorksSection.tsx - use consistent card pattern
-- [ ] T109 [P] [US4] Migrate ShowcaseSection.tsx - use consistent grid pattern
-- [ ] T110 [P] [US4] Migrate ServicesSection.tsx - reuse ServiceCard component
-- [ ] T111 [P] [US4] Migrate CodePacksSection.tsx - reuse ProductCard component
-- [ ] T112 [P] [US4] Migrate CTASection.tsx - extract CTA pattern as component
-- [ ] T113 [P] [US4] Migrate MobileAppSection.tsx - use consistent layout
+- [ ] T031 [P] [US4] Convert JobCard in components/pmc-migrated/job-list/job-card.tsx, delete JobCard.module.css
+- [ ] T032 [P] [US4] Convert JobListPage.tsx, delete JobListPage.module.css
+- [ ] T033 [P] [US4] Convert JobDetailDrawer.tsx, delete JobDetailDrawer.module.css
+- [ ] T034 [P] [US4] Convert JobDetailsPage.tsx, delete JobDetailsPage.module.css
+- [ ] T035 [US4] Convert JobPost page, delete app/user/job-post/JobPost.module.css
 
-### Blog Components (8 components)
-
-- [ ] T114 [P] [US4] Migrate BlogPage.tsx at components/pmc-migrated/blog/ - use AntD List
-- [ ] T115 [P] [US4] Migrate BlogHeroCard.tsx - extract hero card pattern
-- [ ] T116 [P] [US4] Migrate BlogFeaturedCard.tsx - use consistent card styling
-- [ ] T117 [P] [US4] Migrate BlogGridCard.tsx - use consistent card styling
-- [ ] T118 [P] [US4] Migrate BlogDetails.tsx - use AntD Typography
-- [ ] T119 [P] [US4] Migrate RelatedPosts.tsx - reuse BlogGridCard
-- [ ] T120 [P] [US4] Migrate ShareArticle.tsx - extract social share pattern
-- [ ] T121 [P] [US4] Migrate Newsletter.tsx - use AntD Form, Input
-
-### Job List Components (2 components)
-
-- [ ] T122 [P] [US4] Migrate JobListPage.tsx at components/pmc-migrated/job-list/ - use AntD List
-- [ ] T123 [P] [US4] Migrate job-card.tsx - extract job card as reusable component
-
-### Other Feature Components
-
-- [ ] T124 [P] [US4] Migrate DashboardHome.tsx at components/pmc-migrated/dashboard-home/ - use AntD Card, Statistic
-- [ ] T125 [P] [US4] Migrate NotificationDropdown.tsx at components/pmc-migrated/notifications/ - use AntD Dropdown, List
-- [ ] T126 [P] [US4] Migrate NotificationCard.tsx - use consistent card pattern
-- [ ] T127 [P] [US4] Migrate ReferralPopup.tsx at components/pmc-migrated/referral/ - use AntD Modal
-
-### Become Seller Components (7 components)
-
-- [ ] T128 [P] [US4] Migrate BecomeSellerPage.tsx at components/pmc-migrated/become-seller/ - structure with reusable sections
-- [ ] T129 [P] [US4] Migrate WhyChoosePackMyCode.tsx - use consistent feature card pattern
-- [ ] T130 [P] [US4] Migrate PackmycodeWork.tsx - use consistent step pattern
-- [ ] T131 [P] [US4] Migrate SellSection.tsx - reuse section layout
-- [ ] T132 [P] [US4] Migrate ToolsSection.tsx - use consistent icon card pattern
-- [ ] T133 [P] [US4] Migrate ReadyToEarn.tsx - reuse CTA pattern
-- [ ] T134 [P] [US4] Migrate Accordion.tsx - replace with AntD Collapse
-
-### Product Components (4 components)
-
-- [ ] T135 [P] [US4] Migrate ProductGrid.tsx at components/pmc-migrated/product/ - use Tailwind grid
-- [ ] T136 [P] [US4] Migrate CategoryList.tsx - use AntD Menu or List
-- [ ] T137 [P] [US4] Migrate ProductCard.tsx - ensure matches marketplace ProductCard
-- [ ] T138 [P] [US4] Migrate SearchResults.tsx - use AntD List, Empty
-
-### Tailwind Config Updates
-
-- [ ] T139 [US4] Add brand colors to tailwind.config.ts theme.extend.colors (pmc-primary, pmc-link, grays)
-- [ ] T140 [US4] Add custom border-radius to tailwind.config.ts (pmc: 0.625rem)
-- [ ] T141 [US4] Document all custom Tailwind tokens in specs/002-bootstrap-tailwind/tailwind-tokens.md
-
-**Checkpoint**: Repeated patterns extracted, Tailwind config extended with custom tokens
+**Checkpoint**: Job pages converted - 5 files
 
 ---
 
-## Phase 7: User Story 5 - Accessibility and Responsiveness Preserved (Priority: P1)
+## Phase 7: Product & Service List Pages (Priority: P5)
 
-**Goal**: Verify all components maintain accessibility and responsive behavior
+**Goal**: Convert product and service list pages to Tailwind
 
-**Independent Test**: Tab through all interactive elements, test at 375px/768px/1280px viewports
+**Independent Test**: Product list and service list pages render correctly
 
-### Accessibility Audit
+### Implementation
 
-- [ ] T142 [US5] Audit all Button components for focus-visible styling across codebase
-- [ ] T143 [US5] Audit all form inputs for proper label association and focus states
-- [ ] T144 [US5] Audit all Modal components for focus trap and ARIA attributes
-- [ ] T145 [US5] Audit all navigation components for keyboard accessibility
-- [ ] T146 [US5] Fix any accessibility issues found in audit (create sub-tasks as needed)
+- [ ] T036 [P] [US5] Convert product-list page, delete app/product-list/page.module.css
+- [ ] T037 [P] [US5] Convert service-list page, delete app/service-list/page.module.css
 
-### Responsive Layout Verification
-
-- [ ] T147 [US5] Test /marketplace page at 375px, 768px, 1280px viewports
-- [ ] T148 [US5] Test /product-details/[slug] page responsiveness
-- [ ] T149 [US5] Test /service-details/[slug] page responsiveness
-- [ ] T150 [US5] Test /my-profile page responsiveness
-- [ ] T151 [US5] Test /checkout page responsiveness
-- [ ] T152 [US5] Test /settings/* pages responsiveness
-- [ ] T153 [US5] Test / (home) page responsiveness
-- [ ] T154 [US5] Fix any responsive layout issues found (create sub-tasks as needed)
-
-**Checkpoint**: All pages accessible via keyboard, responsive across all breakpoints
+**Checkpoint**: List pages converted - 2 files
 
 ---
 
-## Phase 8: Polish & Cross-Cutting Concerns
+## Phase 8: Checkout Components (Priority: P6)
 
-**Purpose**: Final cleanup and validation
+**Goal**: Convert checkout flow components to Tailwind
 
-### CSS Module Cleanup
+**Independent Test**: Checkout stepper and payment forms display correctly
 
-- [ ] T155 [P] Delete unused CSS Module files in components/pmc-migrated/marketplace/ (after migration verified)
-- [ ] T156 [P] Delete unused CSS Module files in components/pmc-migrated/profile/ (after migration verified)
-- [ ] T157 [P] Delete unused CSS Module files in components/pmc-migrated/shared/ (after migration verified)
-- [ ] T158 [P] Delete unused CSS Module files in components/pmc-migrated/checkout/ (after migration verified)
-- [ ] T159 [P] Delete app/marketplace/page.module.css (after migration verified)
-- [ ] T160 [P] Delete app/service-list/page.module.css (after migration verified)
-- [ ] T161 [P] Delete app/my-profile/page.module.css (after migration verified)
-- [ ] T162 [P] Delete app/auth/auth.module.css (after migration verified)
+### Implementation
 
-### Documentation Updates
+- [ ] T038 [P] [US6] Convert Stepper.tsx, delete Stepper.module.css
+- [ ] T039 [P] [US6] Convert PmcStripe.tsx, delete PmcStripe.module.css
 
-- [ ] T163 [P] Document CSS Module exceptions (max 5) in specs/002-bootstrap-tailwind/css-module-exceptions.md
-- [ ] T164 [P] Update migration-tracker.md with final component status
-- [ ] T165 Compare post-migration screenshots against baseline for visual regression
+**Checkpoint**: Checkout components converted - 2 files
 
-### Final Validation
+---
 
-- [ ] T166 Run grep for any remaining Bootstrap classes: grep -rE "d-flex|btn-primary|col-lg|modal-dialog" components/
-- [ ] T167 Run grep for any remaining custom global classes: grep -rE "ud-btn|btn-thm|fz[0-9]+" components/
-- [ ] T168 Verify globals.css line count is ≤100 lines
-- [ ] T169 Run npm run build to verify no build errors
-- [ ] T170 Measure build output size for comparison with baseline
+## Phase 9: Settings & Notifications (Priority: P7)
+
+**Goal**: Convert settings and notifications to Tailwind
+
+**Independent Test**: Settings page and notifications display correctly
+
+### Implementation
+
+- [ ] T040 [P] [US7] Convert settings styles, delete settings.module.css
+- [ ] T041 [P] [US7] Convert notifications, delete notifications.module.css
+
+**Checkpoint**: Settings/Notifications converted - 2 files
+
+---
+
+## Phase 10: Support Pages (Priority: P8)
+
+**Goal**: Convert support pages to Tailwind
+
+**Independent Test**: Support pages display correctly
+
+### Implementation
+
+- [ ] T042 [P] [US8] Convert support-requests page, delete app/support-requests/page.module.css
+- [ ] T043 [P] [US8] Convert support-contact page, delete app/support-contact/page.module.css
+
+**Checkpoint**: Support pages converted - 2 files
+
+---
+
+## Phase 11: Seller Registration (Priority: P9)
+
+**Goal**: Convert seller registration flow to Tailwind
+
+**Independent Test**: Seller registration wizard displays correctly
+
+### Implementation
+
+- [ ] T044 [US9] Convert SellerRegistration components, delete SellerRegistration.module.css
+
+**Checkpoint**: Seller registration converted - 1 file
+
+---
+
+## Phase 12: Dashboard Home (Priority: P10)
+
+**Goal**: Convert dashboard home to Tailwind
+
+**Independent Test**: Dashboard home displays correctly
+
+### Implementation
+
+- [ ] T045 [US10] Convert DashboardHome, delete DashboardHome.module.css
+
+**Checkpoint**: Dashboard home converted - 1 file
+
+---
+
+## Phase 13: Service Details (Priority: P11)
+
+**Goal**: Convert service details order cart sidebar to Tailwind
+
+**Independent Test**: Service details order cart displays correctly
+
+### Implementation
+
+- [ ] T046 [US11] Convert OrderCartSidebar.tsx, delete OrderCartSidebar.module.css
+
+**Checkpoint**: Service details converted - 1 file
+
+---
+
+## Phase 14: Home Page (Priority: P12)
+
+**Goal**: Convert home page components to Tailwind
+
+**Independent Test**: Home page displays correctly
+
+### Implementation
+
+- [ ] T047 [US12] Convert home styles, delete home.module.css
+
+**Checkpoint**: Home page converted - 1 file
+
+---
+
+## Phase 15: Forum (Priority: P13)
+
+**Goal**: Convert forum components to Tailwind
+
+**Independent Test**: Forum pages display correctly
+
+### Implementation
+
+- [ ] T048 [US13] Convert forum styles, delete forum.module.css
+
+**Checkpoint**: Forum converted - 1 file
+
+---
+
+## Phase 16: Chat (Priority: P14) ⚠️ CAUTION
+
+**Goal**: Convert chat components to Tailwind (CAREFUL - previously had scroll issues)
+
+**Independent Test**: Chat interface displays correctly with proper scroll and input visibility
+
+### Implementation
+
+- [ ] T049 [US14] Convert chat styles, delete chat.module.css (PRESERVE scroll/layout behavior!)
+
+**Checkpoint**: Chat converted - 1 file
+
+---
+
+## Phase 17: Final Validation
+
+**Purpose**: Verify all module.css files are removed
+
+- [ ] T050 Run `find . -name "*.module.css" -path "*/pmc-migrated/*"` to verify no files remain
+- [ ] T051 Run `npm run build` to verify no build errors
+- [ ] T052 Manual testing of all converted pages
+- [ ] T053 Git commit with summary of all conversions
 
 ---
 
@@ -338,107 +281,69 @@
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all component migration
-- **User Story 1 (Phase 3)**: Depends on Phase 2 (reusable components created)
-- **User Story 2 (Phase 4)**: Can run in parallel with US1, shares globals.css work
-- **User Story 3 (Phase 5)**: Depends on Phase 3-4 (components exist to apply patterns)
-- **User Story 4 (Phase 6)**: Can run in parallel with US3
-- **User Story 5 (Phase 7)**: Depends on Phase 3-6 (components must be migrated first)
-- **Polish (Phase 8)**: Depends on all user stories complete
-
-### User Story Dependencies
-
-- **User Story 1 (P1)**: After Foundational - Core marketplace migration
-- **User Story 2 (P1)**: After Foundational - Can parallel with US1, coordinated globals.css changes
-- **User Story 3 (P2)**: After US1/US2 components exist - Applies AntD patterns
-- **User Story 4 (P2)**: After US1/US2 - Extracts patterns from migrated components
-- **User Story 5 (P1)**: After US1-4 - Verifies accessibility/responsiveness
-
-### Within Each User Story
-
-- All tasks marked [P] can run in parallel (different files)
-- Tasks without [P] have sequential dependencies
-- Complete all [P] tasks in a story before dependent tasks
+- **Phase 1-2 (Setup + Marketplace)**: COMPLETED
+- **Phase 3 (Shared)**: Can start immediately - BLOCKS pages that use shared components
+- **Phase 4-16**: All depend on Phase 3 (Shared Components)
+  - Can proceed in parallel (different pages/components)
+  - Or sequentially in priority order
+- **Phase 17 (Validation)**: Depends on all phases complete
 
 ### Parallel Opportunities
 
-- **Phase 1**: T003, T004, T005 can run in parallel
-- **Phase 2**: T011, T012, T013 can run in parallel (after T010)
-- **Phase 3-6**: All tasks marked [P] within each story can run in parallel
-- **Phase 7**: T147-T154 can run in parallel
-- **Phase 8**: T155-T164 can run in parallel
-
----
-
-## Parallel Example: User Story 1 (Marketplace)
-
-```bash
-# Launch all marketplace component migrations together:
-Task: "Migrate ProductCard.tsx"
-Task: "Migrate ServiceCard.tsx"
-Task: "Migrate ProductsCarousel.tsx"
-Task: "Migrate ServicesCarousel.tsx"
-Task: "Migrate SearchBar.tsx"
-Task: "Migrate FilterBar.tsx"
-Task: "Migrate CategorySection.tsx"
-# ... all 14 components in parallel
-```
-
----
-
-## Implementation Strategy
-
-### MVP First (User Stories 1+2 Only)
-
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational
-3. Complete Phase 3: User Story 1 (Marketplace core)
-4. Complete Phase 4: User Story 2 (Global CSS cleanup)
-5. **STOP and VALIDATE**: Test /marketplace, /product-details, /service-details
-6. Deploy/demo if ready
-
-### Incremental Delivery
-
-1. Setup + Foundational → Foundation ready
-2. Add US1 (Marketplace) → Test → Deploy (MVP!)
-3. Add US2 (Global CSS) → globals.css minimized → Deploy
-4. Add US3 (AntD patterns) → Consistent design → Deploy
-5. Add US4 (Extract patterns) → Maintainable code → Deploy
-6. Add US5 (A11y/Responsive) → Quality validated → Deploy
-7. Each story adds value without breaking previous
-
-### Suggested MVP Scope
-
-**Phase 1-4 (US1 + US2)**: Core migration delivering:
-- All Bootstrap classes removed from core components
-- globals.css reduced to minimal Tailwind config
-- Visual parity maintained
+After Phase 3 (Shared Components) is complete, ALL remaining phases can run in parallel:
+- Different developers can work on different pages simultaneously
+- Within each phase, [P] marked tasks can run in parallel
 
 ---
 
 ## Summary
 
-| Metric | Value |
-|--------|-------|
-| Total Tasks | 170 |
-| Phase 1 (Setup) | 5 tasks |
-| Phase 2 (Foundational) | 8 tasks |
-| Phase 3 (US1 - Bootstrap removal) | 40 tasks |
-| Phase 4 (US2 - Custom CSS removal) | 29 tasks |
-| Phase 5 (US3 - AntD patterns) | 23 tasks |
-| Phase 6 (US4 - Pattern extraction) | 36 tasks |
-| Phase 7 (US5 - A11y/Responsive) | 13 tasks |
-| Phase 8 (Polish) | 16 tasks |
-| Parallel opportunities | ~150 tasks marked [P] |
+| Phase | Area | Files | Priority | Status |
+|-------|------|-------|----------|--------|
+| 1-2 | Setup + Marketplace | 18 | - | DONE |
+| 3 | Shared Components | 5 | P1 | NEXT |
+| 4 | Auth Pages | 1 | P2 | Pending |
+| 5 | Profile Components | 6 | P3 | Pending |
+| 6 | Job List & Details | 5 | P4 | Pending |
+| 7 | Product/Service List | 2 | P5 | Pending |
+| 8 | Checkout | 2 | P6 | Pending |
+| 9 | Settings/Notifications | 2 | P7 | Pending |
+| 10 | Support Pages | 2 | P8 | Pending |
+| 11 | Seller Registration | 1 | P9 | Pending |
+| 12 | Dashboard Home | 1 | P10 | Pending |
+| 13 | Service Details | 1 | P11 | Pending |
+| 14 | Home Page | 1 | P12 | Pending |
+| 15 | Forum | 1 | P13 | Pending |
+| 16 | Chat | 1 | P14 | Pending |
+| **Remaining** | | **31** | | |
+
+---
+
+## Implementation Strategy
+
+### Recommended Order for Single Developer
+
+1. **Shared Components (Phase 3)** - Must do first, used by other pages
+2. **Auth Pages (Phase 4)** - High visibility, simple
+3. **Profile (Phase 5)** - User-facing, 6 files
+4. **Job List (Phase 6)** - Core feature, 5 files
+5. **Product/Service List (Phase 7)** - Core feature, 2 files
+6. **Checkout (Phase 8)** - Critical flow, 2 files
+7. Continue with remaining in priority order...
+8. **Chat (Phase 16)** - Do last, requires careful testing
+
+### File Count Summary
+
+- **Completed**: 18 files (marketplace)
+- **Remaining**: 31 files
+- **Total**: 49 module.css files to convert
 
 ---
 
 ## Notes
 
 - [P] tasks = different files, no dependencies - can run in parallel
-- [Story] label maps task to specific user story for traceability
-- Verify visual parity after each phase checkpoint
+- [Story] label maps task to specific area for traceability
+- Chat component (Phase 16) requires special care - previously had scroll issues
 - Commit after each component migration
 - Stop at any checkpoint to validate independently
-- Avoid: modifying same file in parallel tasks
