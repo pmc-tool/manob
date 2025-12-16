@@ -1,255 +1,290 @@
-// Purchased Products Page - User's purchased items
 "use client";
-
+import { Card, Button, Dropdown, Tag, Skeleton, Pagination } from "antd";
+import type { MenuProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { Download, Eye, Star, Calendar, Package, CheckCircle, FileCode, ShoppingBag } from "lucide-react";
-import { Skeleton, Empty, Button, Dropdown } from "antd";
-import type { MenuProps } from "antd";
+import { useState } from "react";
+import { Download, Eye, Star, FileCode, FileText, Package } from "lucide-react";
+import { useGetPurchaseProductsQuery } from "@/state/services/user-service/purchase-items.service";
+import { dateFormat } from "@/utils/dateFormat";
+import { useSelector } from "react-redux";
 
-interface PurchasedProduct {
-  id: string;
-  name: string;
-  image: string;
-  author: string;
-  authorAvatar: string;
-  category: string;
-  purchaseDate: string;
-  price: number;
-  licenseType: string;
-  downloadCount: number;
-  rating: number;
-  reviewCount: number;
-  slug: string;
-  version: string;
-  lastUpdate: string;
-}
-
-// Mock data - will come from API
-const mockPurchasedProducts: PurchasedProduct[] = [
+// Mock data for development
+const mockPurchasedProducts = [
   {
-    id: "1",
-    name: "Modern Dashboard UI Kit",
-    image: "/images/listings/product-draft-default.png",
-    author: "DesignStudio",
-    authorAvatar: "https://i.pravatar.cc/150?img=1",
-    category: "UI Kits",
-    purchaseDate: "2024-01-15",
-    price: 49,
-    licenseType: "Regular",
-    downloadCount: 3,
-    rating: 4.8,
-    reviewCount: 124,
-    slug: "modern-dashboard-ui-kit",
-    version: "2.1.0",
-    lastUpdate: "2024-01-20",
+    id: "prod-001",
+    product_name: "Premium React Admin Dashboard",
+    product_preview_file: null,
+    slug: "premium-react-admin-dashboard",
+    primary_category_name: "Admin Templates",
+    author_name: "TechCraft Studio",
+    creator_meta: { user_name: "techcraft" },
+    avg_rating: 4.8,
+    total_reviews: 124,
+    lics: [{ id: "lic-001", license_code: "PMC-2024-XXXX-XXXX", meta: { license_type: "Regular" }, created_at: "2024-12-10T10:30:00Z" }],
   },
   {
-    id: "2",
-    name: "E-commerce Website Template",
-    image: "/images/listings/product-draft-default.png",
-    author: "WebCraft",
-    authorAvatar: "https://i.pravatar.cc/150?img=2",
-    category: "Templates",
-    purchaseDate: "2024-01-10",
-    price: 79,
-    licenseType: "Extended",
-    downloadCount: 5,
-    rating: 4.9,
-    reviewCount: 89,
-    slug: "ecommerce-website-template",
-    version: "3.0.2",
-    lastUpdate: "2024-01-18",
+    id: "prod-002",
+    product_name: "E-commerce Website Complete Package",
+    product_preview_file: null,
+    slug: "ecommerce-website-package",
+    primary_category_name: "Website Templates",
+    author_name: "WebDev Pro",
+    creator_meta: { user_name: "webdevpro" },
+    avg_rating: 4.9,
+    total_reviews: 89,
+    lics: [{ id: "lic-002", license_code: "PMC-2024-YYYY-YYYY", meta: { license_type: "Extended" }, created_at: "2024-12-05T14:20:00Z" }],
   },
   {
-    id: "3",
-    name: "Mobile App Starter Kit",
-    image: "/images/listings/product-draft-default.png",
-    author: "AppDevs",
-    authorAvatar: "https://i.pravatar.cc/150?img=3",
-    category: "Code",
-    purchaseDate: "2024-01-05",
-    price: 129,
-    licenseType: "Regular",
-    downloadCount: 2,
-    rating: 4.7,
-    reviewCount: 56,
-    slug: "mobile-app-starter-kit",
-    version: "1.5.0",
-    lastUpdate: "2024-01-12",
+    id: "prod-003",
+    product_name: "Mobile App UI Kit - iOS & Android",
+    product_preview_file: null,
+    slug: "mobile-app-ui-kit",
+    primary_category_name: "UI Kits",
+    author_name: "DesignMaster",
+    creator_meta: { user_name: "designmaster" },
+    avg_rating: 4.7,
+    total_reviews: 56,
+    lics: [{ id: "lic-003", license_code: "PMC-2024-ZZZZ-ZZZZ", meta: { license_type: "Regular" }, created_at: "2024-11-28T09:15:00Z" }],
   },
 ];
 
-export default function PurchasedProductsPage() {
-  const [products, setProducts] = useState<PurchasedProduct[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function PurchasedProducts() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const token = useSelector((state: any) => state.auth?.accessToken);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      setProducts(mockPurchasedProducts);
-      setIsLoading(false);
-    };
-    loadProducts();
-  }, []);
+  const { data: apiData, isLoading, error } = useGetPurchaseProductsQuery({
+    page: currentPage,
+    limit: "10",
+  });
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+  // Use mock data if API returns no data
+  const purchasedItems = apiData && apiData.length > 0 ? apiData : mockPurchasedProducts;
+  const totalCount = apiData?.pagination?.total_count || mockPurchasedProducts.length;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
-  const getDownloadItems = (product: PurchasedProduct): MenuProps["items"] => [
+  const handleDownloadAll = async (itemId: string, filename: string) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL_INV}/purchase-list/products/${itemId}/download`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(data);
+      link.download = `${filename}_${new Date().getTime()}`;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download error:", error);
+    }
+  };
+
+  const handleDownloadCertificateText = (lics: any[]) => {
+    let textContent = "";
+    lics?.forEach((lic: any, index: number) => {
+      textContent += `Purchase Code #${index + 1}: ${lic?.license_code}\n`;
+    });
+    const blob = new Blob([textContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "certificate.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const getDropdownItems = (item: any): MenuProps["items"] => [
     {
-      key: "main",
-      label: "Main Files",
+      key: "files",
+      label: "All Files & Documentation",
       icon: <FileCode size={14} />,
+      onClick: () => handleDownloadAll(item?.lics?.[0]?.id, item?.slug),
     },
     {
-      key: "license",
-      label: "License Certificate",
-      icon: <CheckCircle size={14} />,
+      key: "code",
+      label: "Purchase Code (Text)",
+      icon: <FileText size={14} />,
+      onClick: () => handleDownloadCertificateText(item?.lics),
     },
   ];
 
-  return (
-    <div className="purchased-page">
-      {/* Page Header */}
-      <div className="purchased-page__header">
-        <div className="purchased-page__header-content">
-          <div className="purchased-page__icon">
-            <ShoppingBag size={24} />
-          </div>
-          <div>
-            <h1 className="purchased-page__title">My Purchases</h1>
-            <p className="purchased-page__subtitle">
-              {isLoading ? "Loading..." : `${products.length} products purchased`}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="purchased-page__content">
-        {isLoading ? (
-          <div className="purchased-page__grid">
+  if (isLoading) {
+    return (
+      <section className="pt-4 pb-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-6">
+              <Skeleton.Input active style={{ width: 200 }} />
+            </div>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="purchase-card purchase-card--skeleton">
-                <Skeleton.Image active style={{ width: "100%", height: 180 }} />
-                <div className="purchase-card__body">
-                  <Skeleton active paragraph={{ rows: 3 }} />
+              <Card key={i} className="mb-4">
+                <div className="flex gap-4">
+                  <Skeleton.Image active style={{ width: 180, height: 120 }} />
+                  <div className="flex-1">
+                    <Skeleton active paragraph={{ rows: 3 }} />
+                  </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
-        ) : products.length === 0 ? (
-          <div className="purchased-page__empty">
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={
-                <div className="purchased-page__empty-text">
-                  <h3>No purchases yet</h3>
-                  <p>Start exploring our marketplace to find amazing products</p>
-                </div>
-              }
-            />
-            <Link href="/marketplace">
+        </div>
+      </section>
+    );
+  }
+
+  if (purchasedItems.length === 0) {
+    return (
+      <section className="pt-4 pb-8">
+        <div className="container mx-auto px-4 text-center">
+          <Image
+            src="/images/empty-icon/purchased-products.svg"
+            alt="Not Found"
+            width={150}
+            height={150}
+            className="mx-auto"
+          />
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold">No Purchased Products Yet</h3>
+            <p className="text-gray-500 mt-1">
+              You haven't purchased any products yet. Start exploring our
+              <br className="hidden sm:block" /> collection and find something you love!
+            </p>
+            <Link href="/marketplace" className="inline-block mt-4">
               <Button type="primary" size="large">
                 Browse Marketplace
               </Button>
             </Link>
           </div>
-        ) : (
-          <div className="purchased-page__grid">
-            {products.map((product) => (
-              <div key={product.id} className="purchase-card">
-                {/* Card Image */}
-                <div className="purchase-card__image">
-                  <Link href={`/product-details/${product.slug}`}>
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      width={400}
-                      height={220}
-                      className="purchase-card__img"
-                      unoptimized
-                    />
-                  </Link>
-                  <div className="purchase-card__license">
-                    {product.licenseType}
-                  </div>
-                </div>
+        </div>
+      </section>
+    );
+  }
 
-                {/* Card Body */}
-                <div className="purchase-card__body">
-                  {/* Title & Author */}
-                  <div className="purchase-card__header">
-                    <h3 className="purchase-card__title">
-                      <Link href={`/product-details/${product.slug}`}>
-                        {product.name}
-                      </Link>
-                    </h3>
-                    <div className="purchase-card__author">
+  return (
+    <section className="pt-4 pb-8">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+              <Package size={20} className="text-green-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-medium">Purchased Products</h1>
+              <p className="text-gray-500 text-sm">{totalCount} products</p>
+            </div>
+          </div>
+
+          {/* Products List */}
+          <div className="space-y-4">
+            {purchasedItems.map((item: any) => (
+              <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Product Image */}
+                  <div className="sm:w-44 h-32 relative flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                    <Link href={`/product-details/${item.slug}`}>
                       <Image
-                        src={product.authorAvatar}
-                        alt={product.author}
-                        width={20}
-                        height={20}
-                        className="purchase-card__author-avatar"
+                        src={
+                          item.product_preview_file
+                            ? `${process.env.NEXT_PUBLIC_S3BUCKET}/${item.product_preview_file}`
+                            : "/images/listings/product-draft-default.png"
+                        }
+                        alt={item.product_name}
+                        fill
+                        className="object-cover"
                         unoptimized
                       />
-                      <span>by <strong>{product.author}</strong></span>
-                    </div>
+                    </Link>
                   </div>
 
-                  {/* Meta Info */}
-                  <div className="purchase-card__meta">
-                    <div className="purchase-card__meta-item">
-                      <Calendar size={14} />
-                      <span>Purchased {formatDate(product.purchaseDate)}</span>
-                    </div>
-                    <div className="purchase-card__meta-item">
-                      <Star size={14} className="text-warning" fill="#ffc107" />
-                      <span>{product.rating} ({product.reviewCount})</span>
-                    </div>
-                  </div>
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        {/* Category */}
+                        <p className="text-sm text-gray-500 mb-1">{item.primary_category_name}</p>
 
-                  {/* Version & Update */}
-                  <div className="purchase-card__version">
-                    <span className="purchase-card__version-tag">v{product.version}</span>
-                    <span className="purchase-card__update">Updated {formatDate(product.lastUpdate)}</span>
-                  </div>
+                        {/* Title */}
+                        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-1">
+                          <Link href={`/product-details/${item.slug}`} className="hover:text-primary">
+                            {item.product_name}
+                          </Link>
+                        </h3>
 
-                  {/* Footer */}
-                  <div className="purchase-card__footer">
-                    <div className="purchase-card__price">
-                      <span className="purchase-card__price-value">${product.price}</span>
-                      <span className="purchase-card__downloads">{product.downloadCount} downloads</span>
-                    </div>
-                    <div className="purchase-card__actions">
-                      <Link href={`/product-details/${product.slug}`}>
-                        <Button icon={<Eye size={16} />} />
-                      </Link>
-                      <Dropdown
-                        menu={{ items: getDownloadItems(product) }}
-                        trigger={["click"]}
-                        placement="bottomRight"
-                      >
-                        <Button type="primary" icon={<Download size={16} />}>
-                          Download
-                        </Button>
-                      </Dropdown>
+                        {/* Author & Rating */}
+                        <div className="flex items-center gap-4 text-sm mb-3">
+                          <span className="text-gray-600">
+                            by{" "}
+                            <Link href={`/${item.creator_meta?.user_name}`} className="font-medium hover:text-primary">
+                              {item.author_name}
+                            </Link>
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <Star size={14} className="text-yellow-400" fill="#facc15" />
+                            <span className="font-medium">{item.avg_rating || 0}</span>
+                            <span className="text-gray-400">({item.total_reviews || 0})</span>
+                          </div>
+                        </div>
+
+                        {/* License Info */}
+                        {item.lics?.[0] && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Tag color="blue">{item.lics[0].meta?.license_type || "Regular"} License</Tag>
+                            <span className="text-gray-400">
+                              Purchased {dateFormat(item.lics[0].created_at)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 sm:flex-col sm:items-end">
+                        <Link href={`/product-details/${item.slug}`}>
+                          <Button icon={<Eye size={16} />}>View</Button>
+                        </Link>
+                        <Dropdown
+                          menu={{ items: getDropdownItems(item) }}
+                          trigger={["click"]}
+                          placement="bottomRight"
+                        >
+                          <Button type="primary" icon={<Download size={16} />}>
+                            Download
+                          </Button>
+                        </Dropdown>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
-        )}
+
+          {/* Pagination */}
+          {totalCount > 10 && (
+            <div className="flex justify-center mt-6">
+              <Pagination
+                current={currentPage}
+                total={totalCount}
+                pageSize={10}
+                onChange={handlePageChange}
+                showSizeChanger={false}
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
