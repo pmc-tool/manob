@@ -1,6 +1,6 @@
 "use client";
-import { Card, Button, Tag, Avatar, Skeleton, Upload, message, Input } from "antd";
-import { ChevronLeft, Clock, X, Image as ImageIcon } from "lucide-react";
+import { Card, Button, Tag, Avatar, Skeleton, Upload, message, Input, Descriptions } from "antd";
+import { ChevronLeft, Clock, X, ImagePlus, Headset, MessageSquare, Send } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -20,12 +20,12 @@ const mockSupportDetails = {
   name: "John Doe",
   email: "john@example.com",
   subject: "Unable to download purchased product",
-  message: "<p>I purchased a product yesterday but I'm unable to download it. The download button doesn't work and I get an error message. Please help me resolve this issue.</p>",
+  message: "<p>I purchased a product yesterday but I'm unable to download it. The download button doesn't work and I get an error message saying 'Download failed'. I've tried multiple browsers but the issue persists.</p><p>Please help me resolve this issue as soon as possible.</p>",
   priority: "HIGH",
   status: "IN_PROGRESS",
   support_center: "PRODUCT-SUPPORT-CENTER",
   problemCategoryData: JSON.stringify({ title: "Download Issue" }),
-  product_data: JSON.stringify({ product_id: "prod-001", product_name: "Premium React Dashboard" }),
+  product_data: JSON.stringify({ product_id: "prod-001", product_name: "Premium React Dashboard Template" }),
   attachment: [],
   created_at: "2024-12-15T10:30:00Z",
   updated_at: "2024-12-16T14:20:00Z",
@@ -34,10 +34,10 @@ const mockSupportDetails = {
 const mockReplies = [
   {
     id: "reply-001",
-    reply: "<p>Thank you for contacting us. We are looking into your issue and will get back to you shortly.</p>",
+    reply: "<p>Thank you for contacting us. We are looking into your issue and will get back to you shortly. Our team is investigating the download server.</p>",
     user_meta: {
-      first_name: "Support",
-      last_name: "Team",
+      first_name: "Sarah",
+      last_name: "Johnson",
       profile_image: null,
     },
     images: [],
@@ -45,10 +45,10 @@ const mockReplies = [
   },
   {
     id: "reply-002",
-    reply: "<p>We have identified the issue. Please try clearing your browser cache and try again. Let us know if the problem persists.</p>",
+    reply: "<p>We have identified the issue with the download server. It has been fixed now. Please try clearing your browser cache and attempt the download again.</p><p>If the problem persists, please let us know and we'll provide you with an alternative download link.</p>",
     user_meta: {
-      first_name: "Tech",
-      last_name: "Support",
+      first_name: "Mike",
+      last_name: "Chen",
       profile_image: null,
     },
     images: [],
@@ -57,13 +57,28 @@ const mockReplies = [
 ];
 
 const getStatusColor = (status: string) => {
-  switch (status) {
+  switch (status?.toUpperCase()) {
     case "PENDING":
       return "orange";
     case "IN_PROGRESS":
-      return "blue";
+      return "processing";
     case "SOLVED":
     case "CLOSED":
+      return "success";
+    case "REJECTED":
+      return "error";
+    default:
+      return "default";
+  }
+};
+
+const getPriorityColor = (priority: string) => {
+  switch (priority?.toUpperCase()) {
+    case "HIGH":
+      return "red";
+    case "MEDIUM":
+      return "orange";
+    case "LOW":
       return "green";
     default:
       return "default";
@@ -71,16 +86,24 @@ const getStatusColor = (status: string) => {
 };
 
 const getSupportCenterLabel = (center: string) => {
-  if (center === "PRODUCT-SUPPORT-CENTER") return "Product";
-  if (center === "SELLER-SUPPORT-CENTER") return "Seller";
-  return "PMC";
+  if (center === "PRODUCT-SUPPORT-CENTER") return "Product Support";
+  if (center === "SELLER-SUPPORT-CENTER") return "Seller Support";
+  return "PMC Support";
+};
+
+const formatDateTime = (dateString: string) => {
+  const date = new Date(dateString);
+  return {
+    date: date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+    time: date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+  };
 };
 
 export default function MySupportDetailsPage() {
   const params = useParams();
   const id = params?.id as string;
 
-  const [htmlDescription, setHtmlDescription] = useState("");
+  const [replyText, setReplyText] = useState("");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [filesData, setFilesData] = useState<File[]>([]);
   const [messageError, setMessageError] = useState("");
@@ -105,6 +128,9 @@ export default function MySupportDetailsPage() {
     ? JSON.parse(supportDetails.product_data)
     : null;
 
+  const createdDateTime = formatDateTime(supportDetails?.created_at);
+  const updatedDateTime = formatDateTime(supportDetails?.updated_at);
+
   const handleFileUpload = (file: File) => {
     if (file.type.startsWith("image/")) {
       setFilesData([...filesData, file]);
@@ -112,7 +138,7 @@ export default function MySupportDetailsPage() {
     } else {
       message.error("Please upload a valid image file.");
     }
-    return false; // Prevent auto upload
+    return false;
   };
 
   const handleRemoveImage = (index: number) => {
@@ -121,13 +147,13 @@ export default function MySupportDetailsPage() {
   };
 
   const replyHandler = async () => {
-    if (!htmlDescription.trim()) {
+    if (!replyText.trim()) {
       setMessageError("Reply is required");
       return;
     }
 
     const formData = new FormData();
-    formData.append("reply_data", `<p>${htmlDescription}</p>`);
+    formData.append("reply_data", `<p>${replyText}</p>`);
     filesData.forEach((file) => {
       formData.append("files", file);
     });
@@ -143,7 +169,7 @@ export default function MySupportDetailsPage() {
 
   useEffect(() => {
     if (replySubmitted?.status === true) {
-      setHtmlDescription("");
+      setReplyText("");
       setFilesData([]);
       setPreviewUrls([]);
       setIsSaving(false);
@@ -152,17 +178,20 @@ export default function MySupportDetailsPage() {
   }, [replySubmitted]);
 
   useEffect(() => {
-    if (htmlDescription.trim()) {
+    if (replyText.trim()) {
       setMessageError("");
     }
-  }, [htmlDescription]);
+  }, [replyText]);
 
   if (detailsLoading) {
     return (
       <section className="pt-4 pb-8">
-        <div className="container mx-auto px-4">
-          <Skeleton active paragraph={{ rows: 2 }} />
-          <Card className="mt-4">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <Skeleton active paragraph={{ rows: 1 }} className="mb-4" />
+          <Card className="mb-4">
+            <Skeleton active paragraph={{ rows: 4 }} />
+          </Card>
+          <Card>
             <Skeleton active paragraph={{ rows: 6 }} />
           </Card>
         </div>
@@ -172,259 +201,248 @@ export default function MySupportDetailsPage() {
 
   return (
     <section className="pt-4 pb-8">
-      <div className="container mx-auto px-4">
-        {/* Back Link */}
-        <Link
-          href="/support-requests"
-          className="inline-flex items-center gap-2 font-semibold text-gray-700 hover:text-primary mb-4"
-        >
-          <ChevronLeft size={20} />
-          Ticket Details
-        </Link>
+      <div className="container mx-auto px-4 max-w-5xl">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <Link
+            href="/support-requests"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+          >
+            <ChevronLeft size={20} />
+            <span className="font-medium">Back to Support Requests</span>
+          </Link>
+          <Tag color={getStatusColor(supportDetails?.status)} className="text-sm px-3 py-1">
+            {supportDetails?.status?.replaceAll("_", " ")}
+          </Tag>
+        </div>
 
-        {/* Ticket Info Card */}
+        {/* Ticket Header Card */}
         <Card className="mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Name:</span>
-                <span className="font-semibold">{supportDetails?.name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Email Address:</span>
-                <span className="font-semibold">{supportDetails?.email}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Category:</span>
-                <span className="font-semibold">{problemCate?.title || "General"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Priority:</span>
-                <span className="font-semibold">{supportDetails?.priority}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Support Center:</span>
-                <span className="font-semibold">
-                  {getSupportCenterLabel(supportDetails?.support_center)}
-                </span>
-              </div>
+          <div className="flex items-start gap-4 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Headset size={24} className="text-primary" />
             </div>
-
-            {/* Divider */}
-            <div className="hidden md:block border-l border-gray-200" />
-
-            {/* Right Column */}
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Ticket Id:</span>
-                <span className="font-semibold">{supportDetails?.ticket_id}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Created At:</span>
-                <span className="font-semibold">
-                  {new Date(supportDetails?.created_at).toDateString()},{" "}
-                  <span className="text-gray-500 font-normal">
-                    {new Date(supportDetails?.created_at).toLocaleTimeString()}
-                  </span>
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Last Activity:</span>
-                <span className="font-semibold">
-                  {new Date(supportDetails?.updated_at).toDateString()},{" "}
-                  <span className="text-gray-500 font-normal">
-                    {new Date(supportDetails?.updated_at).toLocaleTimeString()}
-                  </span>
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-500">Status:</span>
-                <Tag color={getStatusColor(supportDetails?.status)}>
-                  {supportDetails?.status?.replaceAll("_", " ")}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm text-gray-500">Ticket #{supportDetails?.ticket_id}</span>
+                <Tag color={getPriorityColor(supportDetails?.priority)} className="m-0">
+                  {supportDetails?.priority} Priority
                 </Tag>
               </div>
+              <h1 className="text-xl font-semibold text-gray-900 mb-1">{supportDetails?.subject}</h1>
+              <p className="text-sm text-gray-500">
+                {getSupportCenterLabel(supportDetails?.support_center)} • {problemCate?.title || "General Inquiry"}
+              </p>
             </div>
           </div>
+
+          <Descriptions column={{ xs: 1, sm: 2, md: 2 }} size="small" className="ticket-info">
+            <Descriptions.Item label="Requester">{supportDetails?.name}</Descriptions.Item>
+            <Descriptions.Item label="Email">{supportDetails?.email}</Descriptions.Item>
+            <Descriptions.Item label="Created">
+              {createdDateTime.date} at {createdDateTime.time}
+            </Descriptions.Item>
+            <Descriptions.Item label="Last Updated">
+              {updatedDateTime.date} at {updatedDateTime.time}
+            </Descriptions.Item>
+          </Descriptions>
         </Card>
 
-        {/* Product Information */}
+        {/* Product Reference */}
         {productData?.product_id && (
-          <Card className="mb-4" title="Product">
-            <Link
-              href={`/product-details/${productData.product_id}`}
-              target="_blank"
-              className="text-lg font-semibold text-primary hover:underline"
-            >
-              {productData.product_name}
-            </Link>
+          <Card className="mb-4" size="small">
+            <div className="flex items-center gap-3">
+              <span className="text-gray-500 text-sm">Related Product:</span>
+              <Link
+                href={`/product-details/${productData.product_id}`}
+                target="_blank"
+                className="text-primary hover:underline font-medium"
+              >
+                {productData.product_name}
+              </Link>
+            </div>
           </Card>
         )}
 
-        {/* Original Message */}
-        <Card className="mb-4" title={supportDetails?.name}>
-          <div className="mb-4">
-            <h4 className="font-semibold mb-2">Subject</h4>
-            <p className="text-gray-700">{supportDetails?.subject}</p>
-          </div>
-
-          <div className="mb-4">
-            <h4 className="font-semibold mb-2">Full Description</h4>
-            <div
-              className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: supportDetails?.message }}
-            />
-          </div>
-
-          {supportDetails?.attachment?.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {supportDetails.attachment.map((item: any, index: number) => (
-                <div key={index} className="relative">
-                  <div className="border rounded overflow-hidden">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_S3BUCKET}/${item?.url}`}
-                      alt={`Attachment ${index + 1}`}
-                      width={192}
-                      height={135}
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                </div>
-              ))}
+        {/* Conversation Thread */}
+        <Card
+          className="mb-4"
+          title={
+            <div className="flex items-center gap-2">
+              <MessageSquare size={18} />
+              <span>Conversation</span>
+              <span className="text-gray-400 font-normal text-sm">({replies.length + 1} messages)</span>
             </div>
-          )}
-        </Card>
-
-        {/* Reply History */}
-        <Card className="mb-4" title="Ticket Reply History">
-          {replies?.length === 0 ? (
-            <p className="text-gray-500">No replies yet.</p>
-          ) : (
-            <div className="space-y-6">
-              {replies.map((reply: any) => (
-                <div key={reply.id} className="border-b border-gray-100 pb-4 last:border-0">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Avatar
-                      size={48}
-                      src={
-                        reply.user_meta?.profile_image
-                          ? `${process.env.NEXT_PUBLIC_S3BUCKET}/${reply.user_meta.profile_image}`
-                          : "/images/user-placeholder.jpg"
-                      }
-                    />
-                    <div>
-                      <h5 className="font-semibold">
-                        {reply.user_meta?.first_name} {reply.user_meta?.last_name}
-                      </h5>
-                      <div className="flex items-center gap-2 text-gray-500 text-sm">
-                        <Clock size={14} />
-                        <span>
-                          {new Date(reply.updated_at).toDateString()},{" "}
-                          {new Date(reply.updated_at).toLocaleTimeString()}
-                        </span>
+          }
+        >
+          {/* Original Message */}
+          <div className="pb-6 border-b border-gray-100">
+            <div className="flex gap-3">
+              <Avatar size={40} className="bg-primary flex-shrink-0">
+                {supportDetails?.name?.charAt(0)?.toUpperCase()}
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold text-gray-900">{supportDetails?.name}</span>
+                  <Tag color="blue" className="m-0 text-xs">Author</Tag>
+                </div>
+                <div className="flex items-center gap-1 text-gray-400 text-xs mb-3">
+                  <Clock size={12} />
+                  <span>{createdDateTime.date} at {createdDateTime.time}</span>
+                </div>
+                <div
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: supportDetails?.message }}
+                />
+                {supportDetails?.attachment?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {supportDetails.attachment.map((item: any, index: number) => (
+                      <div key={index} className="border rounded-lg overflow-hidden">
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_S3BUCKET}/${item?.url}`}
+                          alt={`Attachment ${index + 1}`}
+                          width={160}
+                          height={120}
+                          className="object-cover"
+                          unoptimized
+                        />
                       </div>
-                    </div>
+                    ))}
                   </div>
-
-                  <div
-                    className="prose prose-sm max-w-none ml-14"
-                    dangerouslySetInnerHTML={{ __html: reply.reply }}
-                  />
-
-                  {reply.images?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3 ml-14">
-                      {reply.images.map((img: any, index: number) => (
-                        <div key={index} className="border rounded overflow-hidden">
-                          <Image
-                            src={`${process.env.NEXT_PUBLIC_S3BUCKET}/${img?.url}`}
-                            alt={`Reply image ${index + 1}`}
-                            width={192}
-                            height={135}
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                )}
+              </div>
             </div>
-          )}
+          </div>
+
+          {/* Replies */}
+          {replies.map((reply: any) => {
+            const replyDateTime = formatDateTime(reply.updated_at);
+            return (
+              <div key={reply.id} className="py-6 border-b border-gray-100 last:border-0">
+                <div className="flex gap-3">
+                  <Avatar
+                    size={40}
+                    src={
+                      reply.user_meta?.profile_image
+                        ? `${process.env.NEXT_PUBLIC_S3BUCKET}/${reply.user_meta.profile_image}`
+                        : undefined
+                    }
+                    className="bg-green-500 flex-shrink-0"
+                  >
+                    {reply.user_meta?.first_name?.charAt(0)?.toUpperCase()}
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900">
+                        {reply.user_meta?.first_name} {reply.user_meta?.last_name}
+                      </span>
+                      <Tag color="green" className="m-0 text-xs">Support</Tag>
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-400 text-xs mb-3">
+                      <Clock size={12} />
+                      <span>{replyDateTime.date} at {replyDateTime.time}</span>
+                    </div>
+                    <div
+                      className="text-gray-700 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: reply.reply }}
+                    />
+                    {reply.images?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {reply.images.map((img: any, index: number) => (
+                          <div key={index} className="border rounded-lg overflow-hidden">
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_S3BUCKET}/${img?.url}`}
+                              alt={`Reply image ${index + 1}`}
+                              width={160}
+                              height={120}
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </Card>
 
         {/* Reply Form */}
-        <Card title="Reply">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-            {/* Upload Area */}
-            <div className="lg:col-span-1">
+        <Card
+          title={
+            <div className="flex items-center gap-2">
+              <Send size={18} />
+              <span>Send Reply</span>
+            </div>
+          }
+        >
+          {/* Attachments */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-sm font-medium text-gray-700">Attachments</span>
+              <span className="text-xs text-gray-400">(Optional)</span>
+            </div>
+            <div className="flex flex-wrap gap-3">
               <Upload.Dragger
                 accept="image/jpeg,image/png"
                 beforeUpload={handleFileUpload}
                 showUploadList={false}
-                className="!border-dashed"
+                className="!w-32 !h-24 !m-0"
               >
-                <div className="p-4">
-                  <ImageIcon size={40} className="mx-auto text-primary mb-2" strokeWidth={1} />
-                  <p className="text-sm text-gray-600">Drag preview images here...</p>
-                  <p className="text-xs text-gray-400">(Only *.png, *.jpg files)</p>
+                <div className="flex flex-col items-center justify-center h-full">
+                  <ImagePlus size={24} className="text-gray-400 mb-1" />
+                  <span className="text-xs text-gray-500">Add Image</span>
                 </div>
               </Upload.Dragger>
-            </div>
-
-            {/* Preview Images */}
-            <div className="lg:col-span-3">
-              <div className="flex flex-wrap gap-2">
-                {previewUrls.map((url, index) => (
-                  <div key={index} className="relative">
-                    <div className="border rounded overflow-hidden">
-                      <Image
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        width={192}
-                        height={135}
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
-                      onClick={() => handleRemoveImage(index)}
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {previewUrls.map((url, index) => (
+                <div key={index} className="relative w-32 h-24">
+                  <Image
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    fill
+                    className="object-cover rounded-lg border"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 shadow-sm"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Reply Text Area */}
+          {/* Message Input */}
           <div className="mb-4">
-            <h4 className="font-semibold mb-2">
-              Reply Ticket<span className="text-red-500">*</span>
-            </h4>
+            <div className="flex items-center gap-1 mb-2">
+              <span className="text-sm font-medium text-gray-700">Your Reply</span>
+              <span className="text-red-500">*</span>
+            </div>
             <TextArea
-              rows={6}
-              value={htmlDescription}
-              onChange={(e) => setHtmlDescription(e.target.value)}
+              rows={5}
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
               placeholder="Type your reply here..."
-              className="!resize-none"
+              status={messageError ? "error" : undefined}
             />
-            {messageError && <p className="text-red-500 text-sm mt-1">{messageError}</p>}
+            {messageError && <p className="text-red-500 text-xs mt-1">{messageError}</p>}
           </div>
 
-          {/* Submit Button */}
-          <div className="text-right">
+          {/* Submit */}
+          <div className="flex justify-end">
             <Button
               type="primary"
               size="large"
+              icon={<Send size={16} />}
               loading={isSaving}
               onClick={replyHandler}
             >
-              {isSaving ? "Saving..." : "Submit"}
+              Send Reply
             </Button>
           </div>
         </Card>
