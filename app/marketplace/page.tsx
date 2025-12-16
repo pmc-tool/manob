@@ -9,19 +9,11 @@ import { SidebarFilter, type ActiveFilters } from '@/components/pmc-migrated/mar
 import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
 import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
-import { mockCategories } from '@/lib/mocks/categories.mock';
 import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
-import { useGetProductsQuery } from '@/state/services/home-service/public-product.service';
+import { useGetProductsQuery, useGetFilterOptionsQuery } from '@/state/services/home-service/public-product.service';
 
 // Services still use mock data for now
 const allServices = [...mockFeaturedServices, ...mockTrendingServices];
-
-// Filter categories
-const filterCategories = mockCategories.map((cat, index) => ({
-  id: cat.slug,
-  label: cat.title,
-  count: ((index + 1) * 17) % 89 + 10,
-}));
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
@@ -40,6 +32,19 @@ export default function MarketplacePage() {
     priceRange: null,
     rating: null,
   });
+
+  // Fetch filter options from API
+  const { data: filterOptions } = useGetFilterOptionsQuery();
+
+  // Map API filter options to sidebar format
+  const filterCategories = useMemo(() => {
+    const categories = filterOptions?.categories || filterOptions?.primary_categories || [];
+    return categories.map((cat: any) => ({
+      id: String(cat.id),
+      label: cat.name || cat.title,
+      count: cat.count || cat.product_count || 0,
+    }));
+  }, [filterOptions]);
 
   // Build query params with filters
   const queryParams = useMemo(() => {
