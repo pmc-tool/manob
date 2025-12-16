@@ -21,7 +21,7 @@ interface ServiceCardProps {
   rating: number;
   reviews: number;
   authorImg?: string;
-  authorName: string;
+  authorName?: string;
   price: number;
   discountPrice?: number;
   trendingStatus?: boolean;
@@ -42,7 +42,7 @@ export default function ServiceCard({
   rating,
   reviews,
   authorImg,
-  authorName,
+  authorName = '',
   price,
   discountPrice = 0,
   trendingStatus,

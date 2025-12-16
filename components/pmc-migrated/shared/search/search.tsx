@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import styles from "./search.module.css";
 
 interface Props {
   title?: string;
@@ -42,11 +43,11 @@ Props) {
 
   return (
     <>
-      {title && <h4 className="mb-0 fz21 text-capitalize">{title}</h4>}
-      {description && <p className="lh-base text-capitalize">{description}</p>}
-      <form className="search-box position-relative">
+      {title && <h4 className="mb-0 text-xl capitalize">{title}</h4>}
+      {description && <p className="leading-normal capitalize">{description}</p>}
+      <form className={`relative ${styles.searchBox}`}>
         <input
-          className="form-control"
+          className={`w-full border rounded-lg px-4 py-3 pr-32 outline-none focus:border-primary ${styles.searchInput}`}
           type="search"
           name="search"
           autoComplete="off"
@@ -57,15 +58,15 @@ Props) {
           // onChange={(e) => setInputValue(e.target.value)}
         />
         <button
-          className="align-items-center bdrs4 btn-search btn-thm2 d-flex gap-2 justify-content-center position-absolute top-50 translate-middle-y ud-btn"
+          className={`flex items-center gap-2 justify-center absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-4 py-2 rounded ${styles.searchButton}`}
           type="submit"
         >
           <Search size={18} />
-          <span className="d-none d-sm-block">Search</span>
+          <span className="hidden sm:block">Search</span>
         </button>
       </form>
-      <div className="fz14 mt-2 text-capitalize">
-        <strong className="text-dark">{count} </strong>{" "}
+      <div className="text-sm mt-2 capitalize">
+        <strong className="text-gray-900">{count} </strong>{" "}
         {infoText}
       </div>
     </>

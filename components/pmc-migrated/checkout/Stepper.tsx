@@ -22,7 +22,7 @@ const Stepper: React.FC<StepperProps> = ({
 }) => {
   return (
     <div
-      className="align-items-center border-bottom d-flex mb-3 mb-md-4 pb-3 pb-md-4 stepper-header table-responsive"
+      className="flex items-center border-b mb-3 md:mb-4 pb-3 md:pb-4 overflow-x-auto"
       role="tablist"
     >
       {steps.map((step, index) => (
@@ -35,7 +35,7 @@ const Stepper: React.FC<StepperProps> = ({
           >
             <button
               type="button"
-              className={`align-items-center bg-transparent border-0 d-flex fw-bold fz14 justify-content-center text-nowrap gap-2 ${
+              className={`flex items-center bg-transparent border-0 font-bold text-sm justify-center whitespace-nowrap gap-2 ${
                 styles.stepTrigger
               } ${index === currentStep ? styles.active : ""}`}
               role="tab"
@@ -43,7 +43,7 @@ const Stepper: React.FC<StepperProps> = ({
               id={`${step.id}-trigger`}
             >
               <span
-                className={`align-items-center d-flex justify-content-center rounded-circle text-white ${styles.stepperCircle}`}
+                className={`flex items-center justify-center rounded-full text-white ${styles.stepperCircle}`}
               >
                 {index + 1}
               </span>
@@ -51,7 +51,7 @@ const Stepper: React.FC<StepperProps> = ({
             </button>
           </div>
           {index < steps.length - 1 && (
-            <div className={`flex-shrink-0 ${styles.line}`}>
+            <div className={`shrink-0 ${styles.line}`}>
               <ChevronRight size={16} />
             </div>
           )}

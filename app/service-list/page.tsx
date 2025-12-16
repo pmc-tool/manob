@@ -1,27 +1,70 @@
-// MIGRATION: Service list page with filters
+// MIGRATION: Service list page with real API data
 'use client';
 
-import { Suspense, useState, useMemo } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
-import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
-import { mockCategories } from '@/lib/mocks/categories.mock';
 import styles from './page.module.css';
 
-// MOCK: Combine all services for the list
-const allServices = [...mockFeaturedServices, ...mockTrendingServices];
+const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
+const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
 
-// MOCK: Filter categories for the dropdown
-const filterCategories = mockCategories.map((cat) => ({
-  id: cat.slug,
-  label: cat.title,
-  count: Math.floor(Math.random() * 50) + 5,
-}));
+// API Response interface
+interface ApiService {
+  id: string;
+  service_title: string;
+  slug: string;
+  thumbnail_image: string;
+  price: number;
+  mrp: number;
+  avg_rating: string;
+  total_reviews: number;
+  total_sales: number;
+  is_onsale: boolean;
+  is_liked: boolean;
+  primary_category?: { id: number; name: string; slug: string };
+  secondary_category?: { id: number; name: string; slug: string };
+  package_details?: {
+    basic?: { price: number; mrp: number; delivery_time: number };
+    standard?: { price: number; mrp: number; delivery_time: number };
+    premium?: { price: number; mrp: number; delivery_time: number };
+  };
+  user?: {
+    sub: string;
+    first_name: string;
+    last_name: string;
+    user_name: string;
+    profile_image: string;
+  };
+}
+
+interface MappedService {
+  id: string;
+  title: string;
+  slug: string;
+  thumbnail_image: string;
+  price: number;
+  mrp: number;
+  avg_rating: number;
+  total_reviews: number;
+  total_sales: number;
+  is_onsale: boolean;
+  is_liked: boolean;
+  is_trending: boolean;
+  category?: string;
+  category_id?: string;
+  creator?: {
+    full_name: string;
+    user_name: string;
+    profile_image: string;
+  };
+}
 
 export default function ServiceListPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>}>
       <ServiceListContent />
     </Suspense>
   );
@@ -29,7 +72,6 @@ export default function ServiceListPage() {
 
 function ServiceListContent() {
   const searchParams = useSearchParams();
-  const initialFilter = searchParams.get('filter');
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     categories: [],
@@ -38,52 +80,128 @@ function ServiceListContent() {
     sortBy: 'newest',
   });
 
-  // MOCK: Filter and sort services
-  const filteredServices = useMemo(() => {
-    let result = [...allServices];
+  // Data states
+  const [services, setServices] = useState<MappedService[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    // Filter by category
-    if (activeFilters.categories.length > 0) {
-      result = result.filter((s) =>
-        activeFilters.categories.includes(s.category_id || '')
-      );
-      // If no matches (mock data), show all
-      if (result.length === 0) result = [...allServices];
+  // Map API service to our format
+  const mapService = (item: ApiService): MappedService => ({
+    id: item.id,
+    title: item.service_title,
+    slug: item.slug,
+    thumbnail_image: item.thumbnail_image ? `${S3_BUCKET}/${item.thumbnail_image}` : '',
+    price: item.package_details?.basic?.price || item.price || 0,
+    mrp: item.package_details?.basic?.mrp || item.mrp || 0,
+    avg_rating: parseFloat(item.avg_rating) || 0,
+    total_reviews: item.total_reviews || 0,
+    total_sales: item.total_sales || 0,
+    is_onsale: item.is_onsale || false,
+    is_liked: item.is_liked || false,
+    is_trending: (item.total_sales || 0) > 3,
+    category: item.primary_category?.name,
+    category_id: item.primary_category?.slug,
+    creator: item.user
+      ? {
+          full_name: `${item.user.first_name} ${item.user.last_name}`,
+          user_name: item.user.user_name,
+          profile_image: item.user.profile_image ? `${S3_BUCKET}/${item.user.profile_image}` : '',
+        }
+      : undefined,
+  });
+
+  // Fetch services from API
+  const fetchServices = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      params.set('page', '1');
+      params.set('limit', '50');
+
+      const response = await fetch(`${API_URL_FEED}/services?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch services');
+
+      const json = await response.json();
+      let items: ApiService[] = json.data?.items || [];
+
+      // Map to our format
+      let serviceList = items.map(mapService);
+
+      // Set categories from aggregations if available
+      if (json.data?.aggregations?.categories) {
+        setCategories(
+          json.data.aggregations.categories.map((cat: { id: number; name: string; slug: string; item_count: number }) => ({
+            id: cat.slug,
+            label: cat.name,
+            count: cat.item_count || 0,
+          }))
+        );
+      } else {
+        // Extract unique categories from services
+        const uniqueCategories = new Map<string, { label: string; count: number }>();
+        serviceList.forEach((s) => {
+          if (s.category_id && s.category) {
+            const existing = uniqueCategories.get(s.category_id);
+            uniqueCategories.set(s.category_id, {
+              label: s.category,
+              count: (existing?.count || 0) + 1,
+            });
+          }
+        });
+        setCategories(
+          Array.from(uniqueCategories.entries()).map(([id, { label, count }]) => ({ id, label, count }))
+        );
+      }
+
+      // Client-side filters
+      if (activeFilters.priceRange) {
+        serviceList = serviceList.filter(
+          (s) => s.price >= activeFilters.priceRange!.min && s.price <= activeFilters.priceRange!.max
+        );
+      }
+
+      if (activeFilters.rating) {
+        serviceList = serviceList.filter((s) => s.avg_rating >= activeFilters.rating!);
+      }
+
+      if (activeFilters.categories.length > 0) {
+        serviceList = serviceList.filter((s) =>
+          activeFilters.categories.includes(s.category_id || '')
+        );
+      }
+
+      // Client-side sort
+      switch (activeFilters.sortBy) {
+        case 'popular':
+          serviceList.sort((a, b) => b.total_sales - a.total_sales);
+          break;
+        case 'price-low':
+          serviceList.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          serviceList.sort((a, b) => b.price - a.price);
+          break;
+        case 'rating':
+          serviceList.sort((a, b) => b.avg_rating - a.avg_rating);
+          break;
+      }
+
+      setServices(serviceList);
+    } catch (err) {
+      console.error('Failed to fetch services:', err);
+      setError('Failed to load services. Please try again.');
+      setServices([]);
+    } finally {
+      setLoading(false);
     }
-
-    // Filter by price
-    if (activeFilters.priceRange) {
-      result = result.filter(
-        (s) => s.price >= activeFilters.priceRange!.min && s.price <= activeFilters.priceRange!.max
-      );
-    }
-
-    // Filter by rating
-    if (activeFilters.rating) {
-      result = result.filter((s) => s.avg_rating >= activeFilters.rating!);
-    }
-
-    // Sort
-    switch (activeFilters.sortBy) {
-      case 'popular':
-        result.sort((a, b) => b.total_sales - a.total_sales);
-        break;
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        result.sort((a, b) => b.avg_rating - a.avg_rating);
-        break;
-      default:
-        // newest - keep original order
-        break;
-    }
-
-    return result;
   }, [activeFilters]);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
 
   return (
     <div className={styles.container}>
@@ -95,17 +213,32 @@ function ServiceListContent() {
 
       {/* Filter Bar */}
       <FilterBar
-        categories={filterCategories}
+        categories={categories}
         activeFilters={activeFilters}
         onFiltersChange={setActiveFilters}
-        totalResults={filteredServices.length}
+        totalResults={services.length}
         listingType="services"
       />
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className={styles.emptyState}>
+          <p>{error}</p>
+          <button onClick={fetchServices}>Try again</button>
+        </div>
+      )}
+
       {/* Service Grid */}
-      {filteredServices.length > 0 ? (
+      {!loading && !error && services.length > 0 && (
         <div className={styles.grid}>
-          {filteredServices.map((service) => (
+          {services.map((service) => (
             <ServiceCard
               key={service.id}
               id={service.id}
@@ -128,7 +261,10 @@ function ServiceListContent() {
             />
           ))}
         </div>
-      ) : (
+      )}
+
+      {/* Empty State */}
+      {!loading && !error && services.length === 0 && (
         <div className={styles.emptyState}>
           <p>No services found matching your filters.</p>
           <button onClick={() => setActiveFilters({ categories: [], priceRange: null, rating: null, sortBy: 'newest' })}>

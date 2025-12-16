@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { X } from "lucide-react";
 import { useSellerWizard } from "@/context/SellerWizardContext";
 import { Skill } from "@/lib/mocks/seller.mock";
 import styles from "./SellerRegistration.module.css";
+import { PmcButton, SecondaryButton } from "@/components/ui/pmc-button";
 
 interface SkillsProps {
   skills: Skill[];
@@ -104,85 +106,78 @@ export default function Skills({ skills }: SkillsProps) {
             </div>
             <h3 className="mb-1" style={{ fontSize: "26px" }}>
               Your seller profile has been
-              <br className="d-none d-lg-block" /> created successfully!
+              <br className="hidden lg:block" /> created successfully!
             </h3>
             <div className="text-muted">
               Your account is ready — you&apos;ll be redirected to your seller
-              <br className="d-none d-lg-block" /> dashboard in 5 seconds.
+              <br className="hidden lg:block" /> dashboard in 5 seconds.
             </div>
           </div>
         )}
         {!successMessage && (
           <>
-            <div className="mb-2 text-danger fw-semibold">
+            <div className="mb-2 text-red-600 font-semibold">
               Select minimum 1 skill
             </div>
             <div className="border rounded p-3 mb-3">
-              <div className="d-flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2">
                 {customSkills.length === 0 ? (
-                  <span className="text-muted" style={{ fontSize: "14px" }}>
+                  <span className="text-gray-500 text-sm">
                     No skills selected yet. Click on skills below to add them.
                   </span>
                 ) : (
                   customSkills.map((skill) => (
                     <span
                       key={skill.id}
-                      className="badge bg-primary d-flex align-items-center text-capitalize"
-                      style={{ padding: "0.5rem" }}
+                      className="bg-primary text-white flex items-center capitalize rounded px-2 py-1 text-sm"
                     >
                       {skill.skill_name}
                       <button
                         type="button"
-                        className="btn-close btn-close-white btn-sm ms-2"
+                        className="ml-2 hover:opacity-80"
                         onClick={() =>
                           setCustomSkills(
                             customSkills.filter((s) => s.id !== skill.id)
                           )
                         }
-                        style={{ fontSize: "0.6rem" }}
-                      ></button>
+                      >
+                        <X size={14} />
+                      </button>
                     </span>
                   ))
                 )}
               </div>
             </div>
-            <div className="row g-2 mb-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6 gap-2 mb-3">
               {skills.map((skill) => {
                 const isActive = customSkills.some((s) => s.id === skill.id);
                 return (
-                  <div
+                  <button
                     key={skill.id}
-                    className="col-6 col-sm-4 col-md-3 col-lg-2"
+                    type="button"
+                    className={`w-full border rounded py-2 px-3 text-sm transition-colors ${
+                      isActive
+                        ? "bg-primary text-white border-primary"
+                        : "bg-gray-50 hover:bg-gray-100 border-gray-200"
+                    }`}
+                    onClick={() => toggleSkill(skill)}
                   >
-                    <button
-                      type="button"
-                      className={`btn w-100 border ${
-                        isActive ? "btn-primary text-white" : "btn-light"
-                      }`}
-                      onClick={() => toggleSkill(skill)}
-                      style={{ fontSize: "13px" }}
-                    >
-                      {skill.name}
-                    </button>
-                  </div>
+                    {skill.name}
+                  </button>
                 );
               })}
             </div>
-            <div className={`d-flex gap-2 ${styles.btnContainer}`}>
-              <button
-                type="button"
-                onClick={prevStep}
-                className={styles.btnDark}
-              >
+            <div className={`flex gap-2 ${styles.btnContainer}`}>
+              <SecondaryButton onClick={prevStep}>
                 Back
-              </button>
-              <button
-                type="submit"
-                className={styles.btnThm}
+              </SecondaryButton>
+              <PmcButton
+                variant="primary"
+                htmlType="submit"
                 disabled={isSaving}
               >
                 {isSaving ? "Publishing..." : "Publish"}
-              </button>
+              </PmcButton>
             </div>
           </>
         )}

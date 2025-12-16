@@ -7,6 +7,7 @@ import { Skeleton } from 'antd';
 import CartItem from './CartItem';
 import { useCart } from '@/context/CartContext';
 import { licenseOptions } from '@/lib/mocks/cart.mock';
+import { PmcButton } from '@/components/ui/pmc-button';
 
 interface CartProps {
   onProceedToCheckout?: () => void;
@@ -178,16 +179,16 @@ export default function Cart({ onProceedToCheckout }: CartProps) {
                     ${cartTotals.total_payable.toFixed(2)}
                   </span>
                 </div>
-                {/* btn-thm d-block ud-btn w-100 mt-4 */}
-                <button
+                <PmcButton
+                  variant="primary"
+                  fullWidth
                   disabled={!hasSelectedItems}
-                  type="button"
-                  className="ud-btn btn-thm w-full mt-4 flex items-center justify-center gap-2"
                   onClick={handleProceedToCheckout}
+                  icon={<ArrowRight className="h-4 w-4" />}
+                  className="mt-4"
                 >
                   Proceed to checkout
-                  <ArrowRight className="h-4 w-4" />
-                </button>
+                </PmcButton>
               </div>
             </div>
           </div>

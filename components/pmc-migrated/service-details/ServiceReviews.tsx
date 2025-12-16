@@ -119,14 +119,14 @@ export default function ServiceReviews({
     <div className="service-reviews mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="fz20 font-bold">
+        <h3 className="text-xl font-bold">
           Reviews <span className="text-gray-500 font-normal">({totalReviews})</span>
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Sort by</span>
           <select
             onChange={(e) => onFilterChange(e.target.value)}
-            className="form-select form-select-sm"
+            className="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <option value="newest">Most Recent</option>
             <option value="highest_rating">Highest Rating</option>

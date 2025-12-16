@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, message } from 'antd';
+import { message } from 'antd';
+import { PmcInput } from '@/components/ui/pmc-input';
+import { PmcButton } from '@/components/ui/pmc-button';
 
 interface NewsletterProps {
   className?: string;
@@ -59,26 +61,27 @@ export default function Newsletter({ className = '' }: NewsletterProps) {
       <form onSubmit={handleSubmit}>
         <div className="mt-4">
           <div className="relative">
-            <Input
+            <PmcInput
               type="email"
               placeholder="Your Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              status={error ? 'error' : ''}
+              status={error ? 'error' : undefined}
               className="rounded-lg"
             />
             {error && (
               <span className="text-red-500 text-xs mt-1 block">{error}</span>
             )}
           </div>
-          <Button
-            type="primary"
+          <PmcButton
+            variant="primary"
             htmlType="submit"
             loading={loading}
-            className="w-full mt-2 ud-btn btn-thm rounded-lg"
+            fullWidth
+            className="mt-2 rounded-lg"
           >
             Submit
-          </Button>
+          </PmcButton>
         </div>
       </form>
     </div>

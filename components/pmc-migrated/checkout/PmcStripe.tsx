@@ -20,29 +20,29 @@ export default function PmcStripe({
   };
 
   return (
-    <div className="p-3 p-xl-4 w-100 border rounded-3 bg-white mb-3 mt-4">
-      <div className="row g-4 justify-content-between">
-        <div className="col-sm-auto">
-          <h5 className="d-block mb-2">Secure Card Payment</h5>
-          <div className="form-check">
+    <div className="p-3 xl:p-4 w-full border rounded-lg bg-white mb-3 mt-4">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="sm:w-auto">
+          <h5 className="block mb-2 font-semibold">Secure Card Payment</h5>
+          <div className="flex items-center gap-2">
             <input
-              className="form-check-input"
+              className="w-4 h-4 accent-primary cursor-pointer"
               type="radio"
               name="paymentMethod"
               id="pay-by-pmc-stripe"
               onChange={payByStripe}
             />
-            <label className="form-check-label" htmlFor="pay-by-pmc-stripe">
+            <label className="text-sm" htmlFor="pay-by-pmc-stripe">
               <span>Total Price: ${payAbleAmount.toFixed(2)}</span>
             </label>
           </div>
         </div>
-        <div className="col-sm col-xxl-6">
+        <div className="sm:flex-1 2xl:w-1/2">
           <div
-            className={`d-inline-block border p-3 rounded-3 position-relative pt-4`}
+            className={`inline-block border p-3 rounded-lg relative pt-4`}
           >
-            <div className={`fst-italic fz13 ${styles.stripeBadgeText}`}>
-              <span className="me-1">Powered by</span>
+            <div className={`italic text-[13px] ${styles.stripeBadgeText}`}>
+              <span className="mr-1">Powered by</span>
               <Image
                 src="/images/stripe-dark.png"
                 alt="Stripe"
@@ -54,7 +54,7 @@ export default function PmcStripe({
             <Image
               src="/images/stripe-badge-transparent.png"
               alt="Stripe Badge"
-              className="img-fluid"
+              className="max-w-full h-auto"
               width={200}
               height={26}
               unoptimized

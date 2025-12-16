@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Columns, ArrowUpRight, Image as ImageIcon, Tag, Zap } from 'lucide-react';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface ProductPreviewProps {
   previewImage: string;
@@ -125,22 +126,17 @@ export default function ProductPreview({
 
         {/* Action Buttons - matching original: d-flex flex-wrap gap-2 justify-content-center mt-2 mt-sm-3 */}
         <div className="flex flex-wrap gap-2 justify-center mt-2 sm:mt-3">
-          <Link
-            href={previewLink}
-            target="_blank"
-            className="ud-btn btn-thm px-4 py-2 rounded-2"
-          >
-            Live Preview
-            <Columns size={18} className="ms-2 inline-block" />
+          <Link href={previewLink} target="_blank">
+            <PmcButton variant="primary" icon={<Columns size={18} />}>
+              Live Preview
+            </PmcButton>
           </Link>
-          <button
-            type="button"
+          <SecondaryButton
             onClick={() => openLightbox(0)}
-            className="ud-btn btn-soft-primary px-4 py-2 rounded-2"
+            icon={<ImageIcon size={18} />}
           >
             Screenshots
-            <ImageIcon size={18} className="ms-2 inline-block" />
-          </button>
+          </SecondaryButton>
         </div>
       </div>
 

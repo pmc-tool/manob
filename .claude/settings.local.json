@@ -32,7 +32,8 @@
       "Bash(xargs sed:*)",
       "Bash(git remote add:*)",
       "Bash(git push:*)",
-      "Bash(npm show:*)"
+      "Bash(npm show:*)",
+      "Bash(xargs -I {} sh -c 'echo \"\"===== {} =====\"\" && head -80 \"\"{}\"\"')"
     ]
   }
 }

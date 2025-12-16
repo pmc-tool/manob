@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Review, timeAgo } from '@/lib/mocks/product-details.mock';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
+import { PmcTextArea } from '@/components/ui/pmc-input';
 
 interface RatingSequence {
   5: number;
@@ -129,26 +131,24 @@ function SingleReview({
               </button>
             ) : (
               <div className="space-y-2">
-                <textarea
+                <PmcTextArea
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="Write your reply..."
-                  className="w-full p-3 border rounded-md text-sm form-control"
                   rows={3}
                 />
                 <div className="flex gap-2">
-                  <button onClick={handleSubmitReply} className="ud-btn btn-thm py-2 rounded-md">
+                  <PmcButton variant="primary" onClick={handleSubmitReply}>
                     Submit Reply
-                  </button>
-                  <button
+                  </PmcButton>
+                  <SecondaryButton
                     onClick={() => {
                       setShowReplyForm(false);
                       setReplyContent('');
                     }}
-                    className="ud-btn btn-soft-primary py-2 rounded-md"
                   >
                     Cancel
-                  </button>
+                  </SecondaryButton>
                 </div>
               </div>
             )}
@@ -180,13 +180,12 @@ export default function Reviews({
             <span className="fw-bold">{totalReviews}</span> Reviews.
           </h4>
         </div>
-        <div className="flex-shrink-0">
-          {/* Original: align-items-center d-flex dark-color gap-2 text-nowrap */}
-          <div className="flex items-center dark-color gap-2 text-nowrap">
+        <div className="shrink-0">
+          <div className="flex items-center text-gray-900 gap-2 whitespace-nowrap">
             <span>Sort by</span>
             <select
               onChange={(e) => onFilterChange(e.target.value)}
-              className="form-select form-select-sm"
+              className="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="newest">Newest</option>
               <option value="highest_rating">Highest Rating</option>

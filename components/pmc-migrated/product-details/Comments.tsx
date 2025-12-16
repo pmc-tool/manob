@@ -5,6 +5,9 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { CornerDownRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Comment, timeAgo } from '@/lib/mocks/product-details.mock';
+import { PmcButton } from '@/components/ui/pmc-button';
+import { PmcTextArea } from '@/components/ui/pmc-input';
+import { PmcSelect } from '@/components/ui/pmc-select';
 
 interface CommentsProps {
   comments: Comment[];
@@ -119,17 +122,16 @@ function SingleComment({
             </button>
           </div>
           <div className="mb-3">
-            <textarea
+            <PmcTextArea
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
               placeholder="Leave a comment"
-              className="form-control w-full p-3 border rounded-md"
               rows={4}
             />
           </div>
-          <button onClick={handleSubmitReply} className="ud-btn btn-thm py-2 rounded-md">
+          <PmcButton variant="primary" onClick={handleSubmitReply}>
             Reply
-          </button>
+          </PmcButton>
         </div>
       )}
     </div>
@@ -155,10 +157,16 @@ export default function Comments({
         </h4>
         <div className="flex items-center gap-2 text-nowrap">
           <span className="text-sm text-gray-700">Sort by</span>
-          <select onChange={(e) => onFilterChange(e.target.value)} className="form-select form-select-sm">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-          </select>
+          <PmcSelect
+            onChange={(value) => onFilterChange(value as string)}
+            defaultValue="newest"
+            options={[
+              { value: 'newest', label: 'Newest' },
+              { value: 'oldest', label: 'Oldest' },
+            ]}
+            fullWidth={false}
+            style={{ width: 120 }}
+          />
         </div>
       </div>
 

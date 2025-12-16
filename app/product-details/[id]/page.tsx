@@ -1,4 +1,4 @@
-// Product Details page
+// Product Details page - Fetches real data from API
 import { ProductDetailsPage } from '@/components/pmc-migrated/product-details';
 import { Metadata } from 'next';
 
@@ -8,9 +8,10 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  // In production, fetch product data and use real title/description
+  // Convert slug to title format for SEO
+  const title = id.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   return {
-    title: `Product Details | manob.ai`,
+    title: `${title} | manob.ai`,
     description: 'View product details, reviews, and purchase options on manob.ai marketplace.',
   };
 }
@@ -18,8 +19,6 @@ export async function generateMetadata({
 export default async function ProductDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  // In production, fetch product data here using the id
-  // const product = await fetchProduct(id);
-
-  return <ProductDetailsPage />;
+  // Pass the slug to ProductDetailsPage which fetches real data
+  return <ProductDetailsPage slug={id} />;
 }

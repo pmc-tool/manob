@@ -3,7 +3,16 @@
 
 import type { ApiError } from './types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+// Microservice URLs
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const API_URL_INV = process.env.NEXT_PUBLIC_API_URL_INV || '';
+const API_URL_CORE = process.env.NEXT_PUBLIC_API_URL_CORE || '';
+const API_URL_ACC = process.env.NEXT_PUBLIC_API_URL_ACC || '';
+const API_URL_JOBS = process.env.NEXT_PUBLIC_API_URL_JOBS || '';
+const API_URL_ORDER = process.env.NEXT_PUBLIC_API_URL_ORDER || '';
+const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
+
+export { API_URL_INV, API_URL_CORE, API_URL_ACC, API_URL_JOBS, API_URL_ORDER, API_URL_FEED };
 
 // CONTRACT: Storage keys match PMC pattern exactly
 const AUTH_TOKEN_KEY = 'pmc_access_token';

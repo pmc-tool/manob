@@ -59,29 +59,29 @@ function CheckboxFilter({
   return (
     <div>
       {showSearch && (
-        <div className="position-relative mb-3">
+        <div className="relative mb-3">
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm pr-8"
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Search size={14} className="position-absolute end-0 top-50 translate-middle-y me-2 text-muted" />
+          <Search size={14} className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 text-gray-400" />
         </div>
       )}
-      <div className="d-flex flex-column gap-2" style={{ maxHeight: "200px", overflowY: "auto" }}>
+      <div className="flex flex-col gap-2" style={{ maxHeight: "200px", overflowY: "auto" }}>
         {filteredOptions.map((option) => (
-          <label key={option.id} className="d-flex align-items-center gap-2 cursor-pointer">
+          <label key={option.id} className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              className="form-check-input m-0"
+              className="w-4 h-4 accent-primary cursor-pointer m-0"
               checked={selected.includes(option.id)}
               onChange={(e) => handleChange(option.id, e.target.checked)}
             />
-            <span className="fz14 text-dark">{option.title}</span>
+            <span className="text-sm text-gray-900">{option.title}</span>
             {option.count !== undefined && (
-              <span className="text-muted fz12 ms-auto">({option.count})</span>
+              <span className="text-gray-500 text-xs ml-auto">({option.count})</span>
             )}
           </label>
         ))}
@@ -105,12 +105,12 @@ function RangeFilter({
 
   return (
     <div>
-      <div className="d-flex gap-2 mb-3">
+      <div className="flex gap-2 mb-3">
         <div className="flex-1">
-          <label className="fz12 text-muted mb-1">Min</label>
+          <label className="text-xs text-gray-500 mb-1 block">Min</label>
           <input
             type="number"
-            className="form-control form-control-sm"
+            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
             value={min}
             onChange={(e) => {
               setMin(Number(e.target.value));
@@ -119,10 +119,10 @@ function RangeFilter({
           />
         </div>
         <div className="flex-1">
-          <label className="fz12 text-muted mb-1">Max</label>
+          <label className="text-xs text-gray-500 mb-1 block">Max</label>
           <input
             type="number"
-            className="form-control form-control-sm"
+            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
             value={max}
             onChange={(e) => {
               setMax(Number(e.target.value));
@@ -133,7 +133,7 @@ function RangeFilter({
       </div>
       <input
         type="range"
-        className="form-range"
+        className="w-full accent-primary"
         min={minValue}
         max={maxValue}
         value={max}
@@ -174,11 +174,11 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({
           className="bg-transparent border-0 border-bottom card rounded-0 mb-4"
         >
           <div
-            className="bg-transparent border-0 card-header pb-4 pt-0 px-0 rounded-0"
+            className="bg-transparent border-0 pb-4 pt-0 px-0 rounded-none"
             id={`heading${index + 1}`}
           >
             <button
-              className="border-0 btn btn-collapse fw-bold fz13 text-uppercase p-0 position-relative text-start w-100 collapse-title d-flex justify-content-between align-items-center"
+              className="border-0 bg-transparent font-bold text-xs uppercase p-0 relative text-left w-full flex justify-between items-center"
               type="button"
               onClick={() => toggleSection(index)}
             >

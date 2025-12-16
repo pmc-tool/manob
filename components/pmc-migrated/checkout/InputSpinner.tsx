@@ -41,10 +41,10 @@ const InputSpinner: React.FC<InputSpinnerProps> = ({
   };
 
   return (
-    <div className="align-items-center d-flex gap-1 input-number">
+    <div className="flex items-center gap-1">
       <button
         type="button"
-        className="btn btn-outline-secondary btn-sm px-2"
+        className="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={handleDecrement}
         disabled={value <= min}
       >
@@ -52,8 +52,7 @@ const InputSpinner: React.FC<InputSpinnerProps> = ({
       </button>
       <input
         type="text"
-        className="form-control form-control-sm text-center"
-        style={{ width: "50px" }}
+        className="w-[50px] text-center border border-gray-300 rounded py-1 text-sm"
         value={value}
         onChange={handleInputChange}
         min={min}
@@ -62,7 +61,7 @@ const InputSpinner: React.FC<InputSpinnerProps> = ({
       />
       <button
         type="button"
-        className="btn btn-outline-secondary btn-sm px-2"
+        className="px-2 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={handleIncrement}
         disabled={value >= max}
       >

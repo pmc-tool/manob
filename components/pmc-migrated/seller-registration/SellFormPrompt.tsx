@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useSellerWizard } from "@/context/SellerWizardContext";
 import { sellerPurposeOptions, sellerFaqItems } from "@/lib/mocks/seller.mock";
 import styles from "./SellerRegistration.module.css";
+import { PmcButton, SecondaryButton } from "@/components/ui/pmc-button";
 
 function Accordion({ items }: { items: { que: string; description: string }[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -73,17 +74,17 @@ export default function SellFormPrompt() {
 
   return (
     <form onSubmit={handleStartSetup}>
-      <div className="row align-items-center g-0">
-        <div className="col-12 col-lg-5 col-xxl-4 d-none d-lg-block">
+      <div className="flex items-center">
+        <div className="hidden lg:block lg:w-5/12 2xl:w-1/3">
           <div
-            className={`d-flex align-items-start vh-100 justify-content-center flex-column ${styles.imageContainer}`}
+            className={`flex items-start h-screen justify-center flex-col ${styles.imageContainer}`}
           >
             <div className="mb-4">
-              <h3 className={`fw-semibold ${styles.faqTitle}`} style={{ fontSize: "2rem" }}>
+              <h3 className={`font-semibold ${styles.faqTitle}`} style={{ fontSize: "2rem" }}>
                 Frequently Asked
                 <br /> Questions from New Sellers
               </h3>
-              <p className="text-muted" style={{ fontSize: "14px" }}>
+              <p className="text-gray-500" style={{ fontSize: "14px" }}>
                 This FAQ section helps new sellers quickly find answers to
                 common questions about starting, selling, and managing their
                 products. It&apos;s designed to guide beginners through essential
@@ -94,94 +95,89 @@ export default function SellFormPrompt() {
           </div>
         </div>
         {/* Form Panel */}
-        <div className={`${styles.formContent} col-12 col-lg-7 col-xxl-8`}>
-          <div className="container-lg">
-            <div className="row">
-              <div className="col-md-10 col-xl-8 col-xxl-6 offset-md-1 offset-xl-2">
-                <div className="mb-4">
-                  <h2 className="fw-bold">What do you want to sell?</h2>
-                  <p className="text-muted">
-                    Ready to start selling on manob.ai? Whether you&apos;re a
-                    freelancer, designer, or developer, we&apos;ve got you covered.
-                  </p>
-                </div>
+        <div className={`${styles.formContent} w-full lg:w-7/12 2xl:w-2/3`}>
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="max-w-lg mx-auto">
+              <div className="mb-4">
+                <h2 className="font-bold">What do you want to sell?</h2>
+                <p className="text-gray-500">
+                  Ready to start selling on manob.ai? Whether you&apos;re a
+                  freelancer, designer, or developer, we&apos;ve got you covered.
+                </p>
+              </div>
 
-                <div>
-                  {selectionError && (
-                    <div className="text-danger fw-medium mb-2">
-                      Please select at least one option.
+              <div>
+                {selectionError && (
+                  <div className="text-red-500 font-medium mb-2">
+                    Please select at least one option.
+                  </div>
+                )}
+
+                {sellerPurposeOptions.map((option) => (
+                  <label
+                    key={option.key}
+                    className={`flex items-center p-3 w-full border rounded bg-white mb-3 cursor-pointer relative ${
+                      selectedProducts.includes(option.key)
+                        ? "border-green-500 bg-green-50"
+                        : ""
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 mr-3 accent-primary cursor-pointer"
+                      checked={selectedProducts.includes(option.key)}
+                      onChange={() => toggleSelection(option.key)}
+                    />
+                    <div>
+                      <span className="block font-medium">
+                        {option.title}
+                      </span>
+                      <span className="block text-gray-500" style={{ fontSize: "14px" }}>
+                        {option.description}
+                      </span>
                     </div>
-                  )}
-
-                  {sellerPurposeOptions.map((option) => (
-                    <label
-                      key={option.key}
-                      className={`d-flex align-items-center p-3 w-100 border rounded bg-white mb-3 cursor-pointer position-relative ${
-                        selectedProducts.includes(option.key)
-                          ? "border-success bg-light"
-                          : ""
-                      }`}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <input
-                        type="checkbox"
-                        className="form-check-input me-3 ms-0"
-                        checked={selectedProducts.includes(option.key)}
-                        onChange={() => toggleSelection(option.key)}
-                      />
-                      <div>
-                        <span className="d-block fw-medium">
-                          {option.title}
-                        </span>
-                        <span className="d-block text-muted" style={{ fontSize: "14px" }}>
-                          {option.description}
-                        </span>
-                      </div>
-                    </label>
-                  ))}
-                </div>
-                <em className="d-block mb-3 text-secondary" style={{ fontSize: "14px" }}>
-                  Maximize your earning potential by combining both services and
-                  digital products. Offer your skills to clients while also
-                  building assets that sell repeatedly.
-                </em>
-
-                <div className="form-check mb-3">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="terms"
-                    checked={termsAccepted}
-                    onChange={(e) => setTermsAccepted(e.target.checked)}
-                    required
-                  />
-                  <label className="form-check-label" htmlFor="terms">
-                    I agree with the manob.ai{" "}
-                    <Link
-                      className="fw-semibold text-decoration-underline text-primary"
-                      href="/terms"
-                    >
-                      terms and conditions
-                    </Link>
                   </label>
-                </div>
-                <div className={`d-flex gap-2 ${styles.btnContainer}`}>
-                  <button
-                    type="button"
-                    onClick={prevStep}
-                    className={styles.btnDark}
-                    disabled={isSaving}
+                ))}
+              </div>
+              <em className="block mb-3 text-gray-600" style={{ fontSize: "14px" }}>
+                Maximize your earning potential by combining both services and
+                digital products. Offer your skills to clients while also
+                building assets that sell repeatedly.
+              </em>
+
+              <div className="flex items-center gap-2 mb-3">
+                <input
+                  className="w-4 h-4 accent-primary cursor-pointer"
+                  type="checkbox"
+                  id="terms"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  required
+                />
+                <label className="text-sm" htmlFor="terms">
+                  I agree with the manob.ai{" "}
+                  <Link
+                    className="font-semibold underline text-primary"
+                    href="/terms"
                   >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    className={styles.btnThm}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? "Continuing..." : "Continue"}
-                  </button>
-                </div>
+                    terms and conditions
+                  </Link>
+                </label>
+              </div>
+              <div className={`flex gap-2 ${styles.btnContainer}`}>
+                <SecondaryButton
+                  onClick={prevStep}
+                  disabled={isSaving}
+                >
+                  Back
+                </SecondaryButton>
+                <PmcButton
+                  variant="primary"
+                  htmlType="submit"
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Continuing..." : "Continue"}
+                </PmcButton>
               </div>
             </div>
           </div>

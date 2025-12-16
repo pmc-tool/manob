@@ -1,30 +1,18 @@
 // MIGRATION: Marketplace page with LEFT SIDEBAR filter, toggle, products/services grid
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Search, ArrowUpDown } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Search, ArrowUpDown, Loader2 } from 'lucide-react';
 import { ListingToggle, type ListingType } from '@/components/pmc-migrated/marketplace/listing-toggle';
 import { SidebarFilter, type ActiveFilters } from '@/components/pmc-migrated/marketplace/sidebar-filter';
-// import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar'; // TOP BAR STYLE (commented)
 import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
 import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
-// MOCK: Using mock data until real API is connected
-import { mockCategories } from '@/lib/mocks/categories.mock';
-import { mockFeaturedProducts, mockTrendingProducts } from '@/lib/mocks/products.mock';
-import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
+import { handleError } from '@/lib/api/error-handler';
 import styles from './page.module.css';
 
-// MOCK: Combine products and services
-const allProducts = [...mockFeaturedProducts, ...mockTrendingProducts];
-const allServices = [...mockFeaturedServices, ...mockTrendingServices];
-
-// MOCK: Filter categories with deterministic counts (avoid hydration mismatch)
-const filterCategories = mockCategories.map((cat, index) => ({
-  id: cat.slug,
-  label: cat.title,
-  count: ((index + 1) * 17) % 89 + 10, // Deterministic pseudo-random: 27, 44, 61, 78, 6, 23...
-}));
+const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
+const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
 
 const SORT_OPTIONS = [
   { id: 'newest', label: 'Newest' },
@@ -33,6 +21,50 @@ const SORT_OPTIONS = [
   { id: 'price-high', label: 'Price: High to Low' },
   { id: 'rating', label: 'Highest Rated' },
 ];
+
+// Map API response to our Product format
+interface ApiProduct {
+  id: string;
+  product_name: string;
+  slug: string;
+  image: string;
+  price: number;
+  mrp: number;
+  avg_rating: string;
+  total_reviews: number;
+  total_sales: number;
+  is_onsale: boolean;
+  is_liked: boolean;
+  short_description: string;
+  primary_category?: { id: number; name: string; slug: string };
+  secondary_category?: { id: number; name: string; slug: string };
+  user?: {
+    sub: string;
+    first_name: string;
+    last_name: string;
+    user_name: string;
+    profile_image: string;
+  };
+}
+
+interface MappedProduct {
+  id: string;
+  title: string;
+  slug: string;
+  thumbnail_image: string;
+  price: number;
+  mrp: number;
+  avg_rating: number;
+  total_reviews: number;
+  total_sales: number;
+  is_onsale: boolean;
+  is_liked: boolean;
+  is_trending: boolean;
+  is_pixi_compatible: boolean;
+  creator: string;
+  category?: string;
+  category_id?: string;
+}
 
 export default function MarketplacePage() {
   const [listingType, setListingType] = useState<ListingType>('products');
@@ -44,71 +76,172 @@ export default function MarketplacePage() {
     rating: null,
   });
 
-  // Filter and sort products
-  const filteredProducts = useMemo(() => {
-    let result = [...allProducts];
+  // Data states
+  const [products, setProducts] = useState<MappedProduct[]>([]);
+  const [services, setServices] = useState<MappedProduct[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>([]);
 
-    if (activeFilters.priceRange) {
-      result = result.filter(
-        (p) => p.price >= activeFilters.priceRange!.min && p.price <= activeFilters.priceRange!.max
-      );
+  // Loading states
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingServices, setLoadingServices] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Map API product to our format
+  const mapProduct = (item: ApiProduct): MappedProduct => ({
+    id: item.id,
+    title: item.product_name,
+    slug: item.slug,
+    thumbnail_image: item.image ? `${S3_BUCKET}/${item.image}` : '',
+    price: item.price,
+    mrp: item.mrp,
+    avg_rating: parseFloat(item.avg_rating) || 0,
+    total_reviews: item.total_reviews || 0,
+    total_sales: item.total_sales || 0,
+    is_onsale: item.is_onsale || false,
+    is_liked: item.is_liked || false,
+    is_trending: (item.total_sales || 0) > 5,
+    is_pixi_compatible: false,
+    creator: item.user ? `${item.user.first_name} ${item.user.last_name}` : '',
+    category: item.primary_category?.name,
+    category_id: item.primary_category?.slug,
+  });
+
+  // Fetch products from feed API
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoadingProducts(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      params.set('page', '1');
+      params.set('limit', '50');
+
+      const response = await fetch(`${API_URL_FEED}/themes?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch');
+
+      const json = await response.json();
+      let items: ApiProduct[] = json.data?.items || [];
+
+      // Map to our format
+      let productList = items.map(mapProduct);
+
+      // Set categories from aggregations
+      if (json.data?.aggregations?.categories) {
+        setCategories(
+          json.data.aggregations.categories.map((cat: { id: number; name: string; slug: string; item_count: number }) => ({
+            id: cat.slug,
+            label: cat.name,
+            count: cat.item_count || 0,
+          }))
+        );
+      }
+
+      // Client-side filters
+      if (activeFilters.priceRange) {
+        productList = productList.filter(
+          (p) => p.price >= activeFilters.priceRange!.min && p.price <= activeFilters.priceRange!.max
+        );
+      }
+
+      if (activeFilters.rating) {
+        productList = productList.filter((p) => p.avg_rating >= activeFilters.rating!);
+      }
+
+      if (activeFilters.categories.length > 0) {
+        productList = productList.filter((p) =>
+          activeFilters.categories.includes(p.category_id || '')
+        );
+      }
+
+      // Client-side sort
+      switch (sortBy) {
+        case 'popular':
+          productList.sort((a, b) => b.total_sales - a.total_sales);
+          break;
+        case 'price-low':
+          productList.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          productList.sort((a, b) => b.price - a.price);
+          break;
+        case 'rating':
+          productList.sort((a, b) => b.avg_rating - a.avg_rating);
+          break;
+      }
+
+      setProducts(productList);
+    } catch (err) {
+      console.error('Failed to fetch products:', err);
+      setError('Failed to load products. Please try again.');
+      setProducts([]);
+    } finally {
+      setLoadingProducts(false);
     }
+  }, [sortBy, activeFilters]);
 
-    if (activeFilters.rating) {
-      result = result.filter((p) => p.avg_rating >= activeFilters.rating!);
+  // Fetch services (using same endpoint for now, can be changed later)
+  const fetchServices = useCallback(async () => {
+    try {
+      setLoadingServices(true);
+      setError(null);
+
+      // TODO: Replace with actual services endpoint when available
+      const response = await fetch(`${API_URL_FEED}/themes?page=1&limit=50`);
+      if (!response.ok) throw new Error('Failed to fetch');
+
+      const json = await response.json();
+      let items: ApiProduct[] = json.data?.items || [];
+
+      let serviceList = items.map(mapProduct);
+
+      // Client-side filters
+      if (activeFilters.priceRange) {
+        serviceList = serviceList.filter(
+          (s) => s.price >= activeFilters.priceRange!.min && s.price <= activeFilters.priceRange!.max
+        );
+      }
+
+      if (activeFilters.rating) {
+        serviceList = serviceList.filter((s) => s.avg_rating >= activeFilters.rating!);
+      }
+
+      // Client-side sort
+      switch (sortBy) {
+        case 'popular':
+          serviceList.sort((a, b) => b.total_sales - a.total_sales);
+          break;
+        case 'price-low':
+          serviceList.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          serviceList.sort((a, b) => b.price - a.price);
+          break;
+        case 'rating':
+          serviceList.sort((a, b) => b.avg_rating - a.avg_rating);
+          break;
+      }
+
+      setServices(serviceList);
+    } catch (err) {
+      console.error('Failed to fetch services:', err);
+      setError('Failed to load services. Please try again.');
+      setServices([]);
+    } finally {
+      setLoadingServices(false);
     }
+  }, [sortBy, activeFilters]);
 
-    switch (sortBy) {
-      case 'popular':
-        result.sort((a, b) => b.total_sales - a.total_sales);
-        break;
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        result.sort((a, b) => b.avg_rating - a.avg_rating);
-        break;
+  // Fetch data when listing type, sort, or filters change
+  useEffect(() => {
+    if (listingType === 'products') {
+      fetchProducts();
+    } else {
+      fetchServices();
     }
+  }, [listingType, fetchProducts, fetchServices]);
 
-    return result;
-  }, [activeFilters, sortBy]);
-
-  // Filter and sort services
-  const filteredServices = useMemo(() => {
-    let result = [...allServices];
-
-    if (activeFilters.priceRange) {
-      result = result.filter(
-        (s) => s.price >= activeFilters.priceRange!.min && s.price <= activeFilters.priceRange!.max
-      );
-    }
-
-    if (activeFilters.rating) {
-      result = result.filter((s) => s.avg_rating >= activeFilters.rating!);
-    }
-
-    switch (sortBy) {
-      case 'popular':
-        result.sort((a, b) => b.total_sales - a.total_sales);
-        break;
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        result.sort((a, b) => b.avg_rating - a.avg_rating);
-        break;
-    }
-
-    return result;
-  }, [activeFilters, sortBy]);
-
-  const currentItems = listingType === 'products' ? filteredProducts : filteredServices;
+  const currentItems = listingType === 'products' ? products : services;
+  const isLoading = listingType === 'products' ? loadingProducts : loadingServices;
 
   // Reset filters when switching listing type
   const handleToggle = (type: ListingType) => {
@@ -140,7 +273,7 @@ export default function MarketplacePage() {
       <div className={styles.mainContent}>
         {/* Left Sidebar Filter */}
         <SidebarFilter
-          categories={filterCategories}
+          categories={categories}
           activeFilters={activeFilters}
           onFiltersChange={setActiveFilters}
         />
@@ -150,7 +283,7 @@ export default function MarketplacePage() {
           {/* Sort Bar */}
           <div className={styles.sortBar}>
             <span className={styles.resultCount}>
-              {currentItems.length} {listingType}
+              {isLoading ? 'Loading...' : `${currentItems.length} ${listingType}`}
             </span>
             <div className={styles.sortSelect}>
               <ArrowUpDown size={14} />
@@ -164,11 +297,28 @@ export default function MarketplacePage() {
             </div>
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !isLoading && (
+            <div className={styles.emptyState}>
+              <p>{error}</p>
+              <button onClick={listingType === 'products' ? fetchProducts : fetchServices}>
+                Try again
+              </button>
+            </div>
+          )}
+
           {/* Grid */}
-          {currentItems.length > 0 ? (
+          {!isLoading && !error && currentItems.length > 0 && (
             <div className={styles.grid}>
               {listingType === 'products'
-                ? filteredProducts.map((product) => (
+                ? products.map((product) => (
                     <ProductCard
                       key={product.id}
                       id={product.id}
@@ -188,21 +338,21 @@ export default function MarketplacePage() {
                       isPixiCompatible={product.is_pixi_compatible}
                     />
                   ))
-                : filteredServices.map((service) => (
+                : services.map((service) => (
                     <ServiceCard
                       key={service.id}
                       id={service.id}
                       slug={service.slug}
                       img={service.thumbnail_image}
-                      author={service.creator?.full_name}
-                      authorProfileLink={`/${service.creator?.user_name}`}
+                      author={service.creator}
+                      authorProfileLink="#"
                       category={service.category}
                       categoryId={service.category_id}
                       title={service.title}
                       rating={service.avg_rating}
                       reviews={service.total_reviews}
-                      authorImg={service.creator?.profile_image}
-                      authorName={service.creator?.full_name}
+                      authorImg=""
+                      authorName={service.creator}
                       price={service.price}
                       discountPrice={service.mrp && service.mrp < service.price ? service.mrp : 0}
                       isOnSale={service.is_onsale}
@@ -212,7 +362,10 @@ export default function MarketplacePage() {
                     />
                   ))}
             </div>
-          ) : (
+          )}
+
+          {/* Empty State */}
+          {!isLoading && !error && currentItems.length === 0 && (
             <div className={styles.emptyState}>
               <p>No {listingType} found matching your filters.</p>
               <button

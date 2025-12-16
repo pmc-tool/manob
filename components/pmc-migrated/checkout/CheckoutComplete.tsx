@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { useEffect } from "react";
+import { PmcButton } from "@/components/ui/pmc-button";
 
 interface CheckoutCompleteProps {
   totalPrice: number;
@@ -40,12 +41,16 @@ export default function CheckoutComplete({
               purchase. <u>You can now:</u>
             </p>
           </div>
-          <div className="d-grid d-sm-flex gap-2 justify-content-center">
-            <Link className="ud-btn btn-thm" href="/marketplace">
-              Go back shopping
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Link href="/marketplace">
+              <PmcButton variant="primary">
+                Go back shopping
+              </PmcButton>
             </Link>
-            <Link className="ud-btn btn-dark" href="/user/purchased-products">
-              See your Purchased Products
+            <Link href="/user/purchased-products">
+              <PmcButton variant="secondary">
+                See your Purchased Products
+              </PmcButton>
             </Link>
           </div>
         </div>

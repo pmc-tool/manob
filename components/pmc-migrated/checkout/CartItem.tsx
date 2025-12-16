@@ -69,39 +69,38 @@ const CartItem: React.FC<CartItemProps> = ({
     licenseOptions.find((opt) => opt.value === selectedLicense)?.title || "";
 
   return (
-    <li className="align-middle bg-white border-bottom cart-item items mb-4 odd pb-4 position-relative">
+    <li className="align-middle bg-white border-b border-gray-200 mb-4 pb-4 relative">
       {/* Remove Button */}
       <button
         type="button"
-        className="bg-white end-0 fw-medium fz13 position-absolute px-3 py-2 rounded-4 text-muted top-0 border-0 d-flex align-items-center gap-1"
+        className="bg-white absolute right-0 top-0 font-medium text-[13px] px-3 py-2 rounded-2xl text-gray-500 border-0 flex items-center gap-1 cursor-pointer hover:text-red-500"
         onClick={() => onRemove(id)}
-        style={{ cursor: "pointer" }}
       >
         Remove
         <X size={18} />
       </button>
 
-      <div className="row g-3 align-items-center justify-content-between">
-        <div className="col-sm d-flex">
-          <div className="row g-3">
-            <div className="col-sm-5">
-              <div className="d-flex gap-1 align-items-center">
-                <div className="form-check">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="flex-1 flex w-full">
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <div className="sm:w-2/5">
+              <div className="flex gap-2 items-center">
+                <div className="flex items-center">
                   <input
-                    className="form-check-input"
+                    className="w-4 h-4 accent-primary cursor-pointer"
                     checked={is_checked}
                     onChange={() => checkedToggle(!is_checked, id)}
                     type="checkbox"
                   />
                 </div>
                 {/* Product Image */}
-                <div>
+                <div className="flex-1">
                   <Link href={`/product-details/${itemNumber}`}>
                     <Image
                       src={imageUrl || "/images/listings/product-draft-default.png"}
                       width={590}
                       height={300}
-                      className="h-100 w-100 object-fit-cover rounded"
+                      className="w-full h-auto object-cover rounded"
                       alt={title}
                       unoptimized
                     />
@@ -109,19 +108,19 @@ const CartItem: React.FC<CartItemProps> = ({
                 </div>
               </div>
             </div>
-            <div className="col-sm-7">
+            <div className="sm:w-3/5">
               {/* Product Title */}
-              <h3 className="fw-medium fz18 item-title mb-2">
-                <Link href={`/product-details/${itemNumber}`}>{title}</Link>
+              <h3 className="font-medium text-[18px] mb-2">
+                <Link href={`/product-details/${itemNumber}`} className="text-gray-900 hover:text-primary">{title}</Link>
               </h3>
-              <div className="fst-italic fz14 text-black-50">
+              <div className="italic text-[14px] text-gray-500">
                 by{" "}
-                <Link className="fw-medium fst-normal" href={profileLink}>
+                <Link className="font-medium not-italic text-gray-700 hover:text-primary" href={profileLink}>
                   {author}
                 </Link>
               </div>
-              <div className="d-flex align-items-center gap-2 mt-2">
-                <span>Qty:</span>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-gray-600">Qty:</span>
                 <InputSpinner
                   min={minQuantity}
                   max={maxQuantity}
@@ -133,54 +132,55 @@ const CartItem: React.FC<CartItemProps> = ({
             </div>
           </div>
         </div>
-        <div className="col-sm-auto">
-          <hr className="opacity-100 mt-2 d-sm-none" />
-          <div className="align-items-center d-flex justify-content-center">
+        <div className="w-full sm:w-auto">
+          <hr className="opacity-100 mt-2 sm:hidden border-gray-200" />
+          <div className="flex items-center justify-center sm:justify-end">
             {/* Original Price (strikethrough if on sale) */}
             {isOnSale && (
-              <div className="fw-normal fz19 text-black-50 text-decoration-line-through me-2">
-                <sup className="fz14">$</sup>
+              <div className="font-normal text-[19px] text-gray-400 line-through mr-2">
+                <sup className="text-[14px]">$</sup>
                 {selectedLicense === "REGULAR"
                   ? original_regular_price
                   : original_extended_price}
               </div>
             )}
             {/* Current Price */}
-            <div className="fw-medium fz27 text-thm">
-              <sup className="fz14">$</sup>
+            <div className="font-medium text-[27px] text-primary">
+              <sup className="text-[14px]">$</sup>
               {selectedLicense === "REGULAR" ? price : extended_price}
             </div>
           </div>
-          <select
-            className="border-primary-soft bgc-thm8 form-select form-select-sm fw-medium pe-3 ps-2 rounded-3 text-thm"
-            aria-label="Select License"
-            value={selectedLicense}
-            onChange={(e) => onLicenseChange(id, e.target.value)}
-            style={{ width: width > 0 ? `${width}px` : "auto" }}
-          >
-            {licenseOptions.map((option, index) => (
-              <option key={index} value={option.value}>
-                {option.title}
-              </option>
-            ))}
-          </select>
+          <div className="flex justify-center sm:justify-end mt-2">
+            <select
+              className="border border-primary/30 bg-primary/10 text-sm font-medium px-2 py-1.5 rounded-lg text-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/30 pr-6"
+              aria-label="Select License"
+              value={selectedLicense}
+              onChange={(e) => onLicenseChange(id, e.target.value)}
+              style={{ width: width > 0 ? `${width}px` : "auto" }}
+            >
+              {licenseOptions.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.title}
+                </option>
+              ))}
+            </select>
 
-          {/* Hidden span to calculate width */}
-          <span
-            ref={spanRef}
-            className="position-absolute visibility-hidden"
-            style={{
-              whiteSpace: "pre",
-              fontWeight: 500,
-              paddingLeft: "0.5rem",
-              paddingRight: "1.5rem",
-              fontSize: "0.875rem",
-              fontFamily: "inherit",
-              visibility: "hidden",
-            }}
-          >
-            {selectedTitle}
-          </span>
+            {/* Hidden span to calculate width */}
+            <span
+              ref={spanRef}
+              className="absolute invisible"
+              style={{
+                whiteSpace: "pre",
+                fontWeight: 500,
+                paddingLeft: "0.5rem",
+                paddingRight: "1.5rem",
+                fontSize: "0.875rem",
+                fontFamily: "inherit",
+              }}
+            >
+              {selectedTitle}
+            </span>
+          </div>
         </div>
       </div>
     </li>

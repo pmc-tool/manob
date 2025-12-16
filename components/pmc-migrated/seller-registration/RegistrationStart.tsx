@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSellerWizard } from "@/context/SellerWizardContext";
 import { registrationSteps } from "@/lib/mocks/seller.mock";
 import styles from "./SellerRegistration.module.css";
+import { PmcButton } from "@/components/ui/pmc-button";
 
 export default function RegistrationStart() {
   const [isSaving, setIsSaving] = useState(false);
@@ -21,53 +22,50 @@ export default function RegistrationStart() {
 
   return (
     <form onSubmit={handleStartSetup}>
-      <div className="row align-items-center g-0">
-        <div className="col-12 col-lg-5 col-xxl-4 d-none d-lg-block">
+      <div className="flex items-center">
+        <div className="hidden lg:block lg:w-5/12 2xl:w-1/3">
           <div
-            className={`d-flex align-items-center vh-100 justify-content-center flex-column ${styles.imageContainer}`}
+            className={`flex items-center h-screen justify-center flex-col ${styles.imageContainer}`}
           >
             <img
-              className="img-fluid"
+              className="max-w-full"
               src="/images/become-seller/overviewhero.png"
               alt="Overview Hero"
-              style={{ maxWidth: "100%" }}
             />
           </div>
         </div>
-        <div className={`${styles.formContent} col-12 col-lg-7 col-xxl-8`}>
-          <div className="container-lg">
-            <div className="row">
-              <div className="col-md-10 col-xl-8 col-xxl-6 offset-md-1 offset-xl-2">
-                <h1 className={`fw-bold mb-5 ${styles.headerTitle}`}>
-                  Start Earning In Just
-                  <br className="d-none d-lg-block" /> A Few Steps
-                </h1>
-                <div className="d-flex flex-column gap-4">
-                  {registrationSteps.map((item) => (
-                    <div className="d-flex gap-3" key={item.title}>
-                      <div className="flex-shrink-0">
-                        <img src={item.url} alt="" height={46} />
-                      </div>
-                      <div>
-                        <h5 className="fw-semibold mb-1" style={{ fontSize: "17px" }}>
-                          {item.title}
-                        </h5>
-                        <p className="mb-0 text-muted lh-base" style={{ fontSize: "14px" }}>
-                          {item.description}
-                        </p>
-                      </div>
+        <div className={`${styles.formContent} w-full lg:w-7/12 2xl:w-2/3`}>
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="max-w-lg mx-auto">
+              <h1 className={`font-bold mb-5 ${styles.headerTitle}`}>
+                Start Earning In Just
+                <br className="hidden lg:block" /> A Few Steps
+              </h1>
+              <div className="flex flex-col gap-4">
+                {registrationSteps.map((item) => (
+                  <div className="flex gap-3" key={item.title}>
+                    <div className="flex-shrink-0">
+                      <img src={item.url} alt="" height={46} />
                     </div>
-                  ))}
-                </div>
-                <div className={`d-flex gap-2 ${styles.btnContainer}`}>
-                  <button
-                    type="submit"
-                    className={styles.btnThm}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? "Continuing..." : "Start Setup"}
-                  </button>
-                </div>
+                    <div>
+                      <h5 className="font-semibold mb-1 text-[17px]">
+                        {item.title}
+                      </h5>
+                      <p className="mb-0 text-gray-500 leading-relaxed text-sm">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className={`flex gap-2 ${styles.btnContainer}`}>
+                <PmcButton
+                  variant="primary"
+                  htmlType="submit"
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Continuing..." : "Start Setup"}
+                </PmcButton>
               </div>
             </div>
           </div>

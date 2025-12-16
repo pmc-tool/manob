@@ -39,7 +39,7 @@ export default function SellerStepper({ steps }: StepperProps) {
       </div>
 
       <div
-        className="position-fixed bottom-0 w-100 shadow-lg bg-white justify-content-center align-items-center d-none d-lg-flex"
+        className="fixed bottom-0 w-full shadow-lg bg-white justify-center items-center hidden lg:flex"
         role="tablist"
         style={{ zIndex: 100 }}
       >
@@ -53,23 +53,22 @@ export default function SellerStepper({ steps }: StepperProps) {
           >
             <button
               type="button"
-              className={`align-items-center bg-transparent border-0 d-flex fw-bold justify-content-center text-nowrap ${
+              className={`flex items-center bg-transparent border-0 font-bold justify-center whitespace-nowrap text-sm ${
                 styles.stepTrigger
               } ${index === currentStep ? styles.active : ""}`}
               role="tab"
               aria-controls={step.id}
               id={`${step.id}-trigger`}
-              style={{ fontSize: "14px" }}
             >
               <span
-                className={`rounded-0 ${styles.bordersWidth} ${
+                className={`rounded-none ${styles.bordersWidth} ${
                   index <= currentStep
                     ? styles.activeBorder
                     : styles.inActiveBorder
                 }`}
               ></span>
               <span
-                className={`align-items-center d-flex justify-content-center rounded-circle text-white ${styles.stepperCircle}`}
+                className={`flex items-center justify-center rounded-full text-white ${styles.stepperCircle}`}
               >
                 {index + 1}
               </span>

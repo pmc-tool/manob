@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Check, ShoppingCart, ChevronRight } from 'lucide-react';
 import { License, formatPrice } from '@/lib/mocks/product-details.mock';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface PriceBoxProps {
   licenses: License[];
@@ -106,17 +107,19 @@ export default function PriceBox({
                 <div className="flex-grow ml-3">
                   <h6 className="font-semibold">You have bought this item.</h6>
                   <div className="flex flex-wrap gap-2">
-                    <Link href="/freelancer-list" className="ud-btn btn-thm fz13 px-3 py-2 rounded-lg font-medium">
-                      Hire Freelancer
+                    <Link href="/freelancer-list">
+                      <PmcButton variant="primary" className="text-sm">
+                        Hire Freelancer
+                      </PmcButton>
                     </Link>
                     <div className="relative flex-grow">
-                      <button
-                        type="button"
+                      <SecondaryButton
                         onClick={() => setDownloadDropdownOpen(!downloadDropdownOpen)}
-                        className="ud-btn btn-soft-primary dropdown-toggle fz13 px-3 py-2 rounded-3 fw-medium w-full"
+                        fullWidth
+                        className="text-sm"
                       >
                         Download
-                      </button>
+                      </SecondaryButton>
                       {downloadDropdownOpen && dropdownItems && (
                         <ul className="absolute right-0 mt-1 w-full bg-white rounded-lg shadow-lg border z-10">
                           {dropdownItems.map((item, index) => (
@@ -145,14 +148,12 @@ export default function PriceBox({
           <div className="flex flex-wrap items-center gap-2 justify-between">
             {/* License dropdown - Original: dropdown license-dropdown */}
             <div className="license-dropdown relative">
-              <button
+              <SecondaryButton
                 id="license-button"
-                type="button"
                 onClick={() => setLicenseDropdownOpen(!licenseDropdownOpen)}
-                className="ud-btn btn-soft-primary dropdown-toggle px-3 py-2 rounded-2"
               >
                 {selectedLicense?.type || 'Select License'}
-              </button>
+              </SecondaryButton>
               {licenseDropdownOpen && (
                 <ul className="absolute left-0 mt-1 w-80 bg-white rounded-lg shadow-lg border z-10">
                   {licenses.map((license) => (
@@ -263,14 +264,14 @@ export default function PriceBox({
 
           {/* Add to Cart Button */}
           <div className="grid gap-2">
-            <button
+            <PmcButton
+              variant="primary"
               onClick={handleAddToCart}
               disabled={!canAddToCart}
-              className={`ud-btn btn-thm ${!canAddToCart ? 'opacity-50 cursor-not-allowed' : ''}`}
+              icon={<ShoppingCart size={18} />}
             >
               Add To Cart
-              <ShoppingCart size={18} className="ms-2 inline-block" />
-            </button>
+            </PmcButton>
           </div>
 
           <div className="font-mono italic fz13 mt-1 text-center text-gray-500">
@@ -286,23 +287,19 @@ export default function PriceBox({
         }`}
       >
         <div className="container mx-auto px-4">
-          <button
-            type="button"
+          <PmcButton
+            variant="primary"
+            fullWidth
             onClick={handleAddToCart}
             disabled={!canAddToCart}
-            className={`ud-btn btn-thm w-full py-2 flex items-center justify-center gap-2 ${
-              !canAddToCart ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            icon={<ShoppingCart size={20} />}
           >
             Add To Cart
-            <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="currentColor" viewBox="0 0 576 512">
-              <path d="M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM252 160c0 11 9 20 20 20l44 0 0 44c0 11 9 20 20 20s20-9 20-20l0-44 44 0c11 0 20-9 20-20s-9-20-20-20l-44 0 0-44c0-11-9-20-20-20s-20 9-20 20l0 44-44 0c-11 0-20 9-20 20z" />
-            </svg>
-            <span className="fz19">
+            <span className="text-lg ml-2">
               <sup>$</sup>
               {formatPrice(totalPrice)}
             </span>
-          </button>
+          </PmcButton>
         </div>
       </div>
     </>

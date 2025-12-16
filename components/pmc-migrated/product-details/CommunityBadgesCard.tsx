@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, MessageCircle, BadgeCheck } from 'lucide-react';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface Badge {
   badge_icon: string;
@@ -63,40 +64,37 @@ export default function CommunityBadgesCard({
   };
 
   return (
-    // Original: mb-4 p-3 p-lg-3 p-sm-4 p-xl-4 position-relative rounded-3 shadow
-    <div className="mb-4 p-3 sm:p-4 relative rounded-3 shadow bg-white">
-      {/* Original: d-flex */}
+    <div className="mb-4 p-3 sm:p-4 relative rounded-lg shadow bg-white">
       <div className="flex">
-        {/* Avatar - Original: thumb position-relative */}
-        <div className="thumb relative flex-shrink-0">
+        {/* Avatar */}
+        <div className="relative shrink-0">
           {logoSrc ? (
             <Image
               src={logoSrc}
               alt={memberName || 'Member'}
               width={46}
               height={46}
-              className="rounded-2 object-cover"
+              className="rounded object-cover"
               unoptimized
             />
           ) : (
-            <div className="w-[46px] h-[46px] rounded-2 bg-red-100 flex items-center justify-center text-primary font-semibold">
+            <div className="w-[46px] h-[46px] rounded bg-red-100 flex items-center justify-center text-primary font-semibold">
               {getInitials(memberName)}
             </div>
           )}
         </div>
 
-        {/* Info - Original: flex-grow-1 ms-3 */}
-        <div className="flex-grow ms-3">
-          {/* Original: fw-bold fz19 mb-0 */}
-          <h5 className="fw-bold fz19 mb-0">
+        {/* Info */}
+        <div className="flex-grow ml-3">
+          <h5 className="font-bold text-[19px] mb-0">
             {memberName}
-            <BadgeCheck size={20} className="text-green-500 ms-1 inline-block" />
+            <BadgeCheck size={20} className="text-green-500 ml-1 inline-block" />
           </h5>
-          <p className="mb-0">Member since {formatMemberSince(memberSince)}</p>
+          <p className="mb-0 text-gray-600 text-sm">Member since {formatMemberSince(memberSince)}</p>
 
-          {/* Badges - Original: community-badges d-flex gap-2 flex-wrap */}
+          {/* Badges */}
           {badges && badges.length > 0 && (
-            <div className="community-badges flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap mt-2">
               {badges.map((badge, index) => (
                 <Image
                   key={index}
@@ -113,26 +111,26 @@ export default function CommunityBadgesCard({
         </div>
       </div>
 
-      {/* Action Buttons - Original: d-grid mt-4 gap-3 */}
+      {/* Action Buttons */}
       {(profileLink || userMeta) && (
         <div className="grid mt-4 gap-3">
           {profileLink && (
-            <Link
-              href={`/${profileLink}`}
-              className="ud-btn btn-soft-primary w-full"
-            >
-              View Profile
-              <ArrowUpRight size={16} className="ms-2 inline-block" />
+            <Link href={`/${profileLink}`}>
+              <SecondaryButton fullWidth icon={<ArrowUpRight size={16} />} iconPosition="end">
+                View Profile
+              </SecondaryButton>
             </Link>
           )}
           {userMeta && (
-            <button
+            <PmcButton
+              variant="primary"
+              fullWidth
               onClick={handleMessageClick}
-              className="ud-btn btn-thm w-full"
+              icon={<MessageCircle size={16} />}
+              iconPosition="end"
             >
               Message to seller
-              <MessageCircle size={16} className="ms-2 inline-block" />
-            </button>
+            </PmcButton>
           )}
         </div>
       )}

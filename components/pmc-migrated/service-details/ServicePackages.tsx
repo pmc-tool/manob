@@ -9,6 +9,7 @@ import { ServicePackage, formatPrice } from '@/lib/mocks/service-details.mock';
 import OrderCartSidebar from './OrderCartSidebar';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface ServicePackagesProps {
   packages: ServicePackage[];
@@ -163,19 +164,20 @@ export default function ServicePackages({
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <button
+              <PmcButton
+                variant="primary"
+                fullWidth
                 onClick={() => handleOrderNow(pkg)}
-                className="ud-btn btn-thm w-full"
               >
                 Continue (${formatPrice(pkg.price)})
-              </button>
-              <button
+              </PmcButton>
+              <SecondaryButton
+                fullWidth
                 onClick={() => handleAddToCart(pkg.id)}
-                className="ud-btn btn-soft-primary w-full"
+                icon={<ShoppingCart className="h-4 w-4" />}
               >
-                <ShoppingCart className="h-4 w-4" />
                 Add to Cart
-              </button>
+              </SecondaryButton>
             </div>
           </div>
         ))}

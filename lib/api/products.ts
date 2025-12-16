@@ -1,7 +1,7 @@
 // CONTRACT: Product API endpoints match PMC exactly
 // MIGRATION: Centralized product API module
 
-import { api } from './client';
+import { apiRequest, API_URL_INV, type RequestOptions } from './client';
 import type {
   Product,
   ProductListResponse,
@@ -14,6 +14,21 @@ import type {
   ReviewListResponse,
   PaginationRequest,
 } from './types';
+
+// Helper for inventory API calls
+const invApi = {
+  get: <T>(endpoint: string, options?: RequestOptions) => {
+    const url = `${API_URL_INV}${endpoint}`;
+    return fetch(url, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    }).then(async (res) => {
+      if (!res.ok) throw await res.json();
+      return res.json() as Promise<T>;
+    });
+  },
+};
 
 /**
  * Products API module
@@ -46,21 +61,21 @@ export const productsApi = {
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.search) searchParams.set('search', params.search);
     const query = searchParams.toString();
-    return api.get<ProductListResponse>(`/products${query ? `?${query}` : ''}`);
+    return invApi.get<ProductListResponse>(`/products${query ? `?${query}` : ''}`);
   },
 
   /**
    * Get single product by ID
    * CONTRACT: GET /products/:id
    */
-  getProduct: (id: string) => api.get<Product>(`/products/${id}`),
+  getProduct: (id: string) => invApi.get<Product>(`/products/${id}`),
 
   /**
    * Get featured products
    * CONTRACT: GET /products/featured
    */
   getFeaturedProducts: (limit = 10) =>
-    api.get<ProductListResponse>(`/products/featured?limit=${limit}`),
+    invApi.get<ProductListResponse>(`/products/featured?limit=${limit}`),
 
   /**
    * Get products by category
@@ -71,7 +86,7 @@ export const productsApi = {
     if (params?.page) searchParams.set('page', String(params.page));
     if (params?.limit) searchParams.set('limit', String(params.limit));
     const query = searchParams.toString();
-    return api.get<ProductListResponse>(
+    return invApi.get<ProductListResponse>(
       `/products/category/${categoryId}${query ? `?${query}` : ''}`
     );
   },
@@ -85,7 +100,7 @@ export const productsApi = {
     if (params?.page) searchParams.set('page', String(params.page));
     if (params?.limit) searchParams.set('limit', String(params.limit));
     const query = searchParams.toString();
-    return api.get<ReviewListResponse>(
+    return invApi.get<ReviewListResponse>(
       `/products/${id}/reviews${query ? `?${query}` : ''}`
     );
   },
@@ -116,14 +131,14 @@ export const productsApi = {
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.search) searchParams.set('search', params.search);
     const query = searchParams.toString();
-    return api.get<ServiceListResponse>(`/services${query ? `?${query}` : ''}`);
+    return invApi.get<ServiceListResponse>(`/services${query ? `?${query}` : ''}`);
   },
 
   /**
    * Get single service by ID
    * CONTRACT: GET /services/:id
    */
-  getService: (id: string) => api.get<Service>(`/services/${id}`),
+  getService: (id: string) => invApi.get<Service>(`/services/${id}`),
 
   /**
    * Get service reviews
@@ -134,7 +149,7 @@ export const productsApi = {
     if (params?.page) searchParams.set('page', String(params.page));
     if (params?.limit) searchParams.set('limit', String(params.limit));
     const query = searchParams.toString();
-    return api.get<ReviewListResponse>(
+    return invApi.get<ReviewListResponse>(
       `/services/${id}/reviews${query ? `?${query}` : ''}`
     );
   },
@@ -169,14 +184,14 @@ export const productsApi = {
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.search) searchParams.set('search', params.search);
     const query = searchParams.toString();
-    return api.get<JobListResponse>(`/jobs${query ? `?${query}` : ''}`);
+    return invApi.get<JobListResponse>(`/jobs${query ? `?${query}` : ''}`);
   },
 
   /**
    * Get single job by ID
    * CONTRACT: GET /jobs/:id
    */
-  getJob: (id: string) => api.get<Job>(`/jobs/${id}`),
+  getJob: (id: string) => invApi.get<Job>(`/jobs/${id}`),
 
   // ============================================
   // Category Endpoints
@@ -186,19 +201,19 @@ export const productsApi = {
    * Get all categories
    * CONTRACT: GET /categories
    */
-  getCategories: () => api.get<CategoryListResponse>('/categories'),
+  getCategories: () => invApi.get<CategoryListResponse>('/categories'),
 
   /**
    * Get category by slug
    * CONTRACT: GET /categories/:slug
    */
-  getCategory: (slug: string) => api.get<Category>(`/categories/${slug}`),
+  getCategory: (slug: string) => invApi.get<Category>(`/categories/${slug}`),
 
   /**
    * Get category tree (nested structure)
    * CONTRACT: GET /categories/tree
    */
-  getCategoryTree: () => api.get<CategoryListResponse>('/categories/tree'),
+  getCategoryTree: () => invApi.get<CategoryListResponse>('/categories/tree'),
 };
 
 // Re-export types for convenience

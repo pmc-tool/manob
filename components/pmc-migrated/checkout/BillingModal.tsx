@@ -4,6 +4,10 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import Countries from "@/lib/data/countries.json";
+import { PmcInput } from "@/components/ui/pmc-input";
+import { PmcSelect } from "@/components/ui/pmc-select";
+import { PmcTextArea } from "@/components/ui/pmc-input";
+import { PmcButton, SecondaryButton } from "@/components/ui/pmc-button";
 
 interface IBillingInfo {
   id?: string;
@@ -94,192 +98,180 @@ export default function BillingModal({
 
   return (
     <div
-      className="modal fade show d-block"
+      className="fixed inset-0 z-50 flex items-center justify-center"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">
-              {isUpdate ? "Update Billing Details" : "Add Billing Details"}
-            </h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={onClose}
-              aria-label="Close"
-            />
-          </div>
-          <div className="modal-body">
-            <form id="billingForm" onSubmit={handleSubmit}>
-              <div className="row g-3">
-                <div className="col-6">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    First Name
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h5 className="text-lg font-semibold">
+            {isUpdate ? "Update Billing Details" : "Add Billing Details"}
+          </h5>
+          <button
+            type="button"
+            className="p-1 hover:bg-gray-100 rounded"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-4">
+          <form id="billingForm" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-1">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  First Name <span className="text-red-500">*</span>
+                </label>
+                <PmcInput
+                  type="text"
+                  name="first_name"
+                  placeholder="Enter your name here"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                />
+                {errors.first_name && (
+                  <span className="text-red-500 text-sm">{errors.first_name}</span>
+                )}
+              </div>
+              <div className="col-span-1">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Last Name <span className="text-red-500">*</span>
+                </label>
+                <PmcInput
+                  type="text"
+                  name="last_name"
+                  placeholder="Enter your name here"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                />
+                {errors.last_name && (
+                  <span className="text-red-500 text-sm">{errors.last_name}</span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Address 1 <span className="text-red-500">*</span>
+                </label>
+                <PmcInput
+                  type="text"
+                  name="address_one"
+                  placeholder="Enter your address here"
+                  value={formData.address_one}
+                  onChange={handleChange}
+                />
+                {errors.address_one && (
+                  <span className="text-red-500 text-sm">{errors.address_one}</span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Address 2
+                </label>
+                <PmcInput
+                  type="text"
+                  name="address_two"
+                  placeholder="Enter your address here"
+                  value={formData.address_two}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Country / Region <span className="text-red-500">*</span>
+                </label>
+                <PmcSelect
+                  value={formData.country}
+                  onChange={(value) => {
+                    setFormData((prev) => ({ ...prev, country: value as string }));
+                    if (errors.country) {
+                      setErrors((prev) => ({ ...prev, country: "" }));
+                    }
+                  }}
+                  placeholder="Select"
+                  options={Countries?.map((country) => ({
+                    value: country.name,
+                    label: country.name,
+                  })) || []}
+                />
+                {errors.country && (
+                  <span className="text-red-500 text-sm">{errors.country}</span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Town / City <span className="text-red-500">*</span>
+                </label>
+                <PmcInput
+                  type="text"
+                  name="city"
+                  placeholder="Town / City"
+                  value={formData.city}
+                  onChange={handleChange}
+                />
+                {errors.city && (
+                  <span className="text-red-500 text-sm">{errors.city}</span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Zip code <span className="text-red-500">*</span>
+                </label>
+                <PmcInput
+                  type="text"
+                  name="zip_code"
+                  placeholder="Enter your zip code"
+                  value={formData.zip_code}
+                  onChange={handleChange}
+                />
+                {errors.zip_code && (
+                  <span className="text-red-500 text-sm">{errors.zip_code}</span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <label className="block font-medium text-gray-900 mb-1 text-sm">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <PmcInput
+                  type="email"
+                  name="email"
+                  placeholder="Enter email address"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {errors.email && (
+                  <span className="text-red-500 text-sm">{errors.email}</span>
+                )}
+              </div>
+              <div className="col-span-2">
+                <div className="mb-3">
+                  <h5 className="font-semibold mb-2">Additional information</h5>
+                  <label className="block font-medium text-gray-900 mb-1 text-sm">
+                    Order Notes (optional)
                   </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="first_name"
-                    placeholder="Enter your name here"
-                    value={formData.first_name}
+                  <PmcTextArea
+                    rows={4}
+                    name="notes"
+                    placeholder="Description"
+                    value={formData.notes}
                     onChange={handleChange}
                   />
-                  {errors.first_name && (
-                    <span className="text-danger fz14">{errors.first_name}</span>
-                  )}
-                </div>
-                <div className="col-6">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="last_name"
-                    placeholder="Enter your name here"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                  />
-                  {errors.last_name && (
-                    <span className="text-danger fz14">{errors.last_name}</span>
-                  )}
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    Address 1
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="address_one"
-                    placeholder="Enter your address here"
-                    value={formData.address_one}
-                    onChange={handleChange}
-                  />
-                  {errors.address_one && (
-                    <span className="text-danger fz14">{errors.address_one}</span>
-                  )}
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-medium dark-color mb-1 fz14">
-                    Address 2
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="address_two"
-                    placeholder="Enter your address here"
-                    value={formData.address_two}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    Country / Region
-                  </label>
-                  <select
-                    className="form-select"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select</option>
-                    {Countries?.map((country) => (
-                      <option key={country.name} value={country.name}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.country && (
-                    <span className="text-danger fz14">{errors.country}</span>
-                  )}
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    Town / City
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="city"
-                    placeholder="Town / City"
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
-                  {errors.city && (
-                    <span className="text-danger fz14">{errors.city}</span>
-                  )}
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    Zip code
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="zip_code"
-                    placeholder="Enter your zip code"
-                    value={formData.zip_code}
-                    onChange={handleChange}
-                  />
-                  {errors.zip_code && (
-                    <span className="text-danger fz14">{errors.zip_code}</span>
-                  )}
-                </div>
-                <div className="col-12">
-                  <label className="form-label fw-medium dark-color mb-1 fz14 required">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    name="email"
-                    placeholder="Enter email address"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                  {errors.email && (
-                    <span className="text-danger fz14">{errors.email}</span>
-                  )}
-                </div>
-                <div className="col-12">
-                  <div className="mb-3">
-                    <h5>Additional information</h5>
-                    <label className="form-label fw-medium dark-color mb-1 fz14">
-                      Order Notes (optional)
-                    </label>
-                    <textarea
-                      cols={30}
-                      rows={4}
-                      className="form-control"
-                      name="notes"
-                      placeholder="Description"
-                      value={formData.notes}
-                      onChange={handleChange}
-                    />
-                  </div>
                 </div>
               </div>
-            </form>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              form="billingForm"
-              className="ud-btn btn-thm"
-            >
-              {isUpdate ? "Update" : "Save"}
-            </button>
-          </div>
+            </div>
+          </form>
+        </div>
+        <div className="flex justify-end gap-2 p-4 border-t">
+          <SecondaryButton onClick={onClose}>
+            Cancel
+          </SecondaryButton>
+          <PmcButton
+            variant="primary"
+            htmlType="submit"
+            form="billingForm"
+          >
+            {isUpdate ? "Update" : "Save"}
+          </PmcButton>
         </div>
       </div>
     </div>

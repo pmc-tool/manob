@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, MapPin, Clock, CheckCircle, MessageCircle, ArrowUpRight } from 'lucide-react';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface SellerCardProps {
   seller: {
@@ -142,19 +143,18 @@ export default function SellerCard({ seller, onContactClick }: SellerCardProps) 
 
       {/* Action Buttons */}
       <div className="grid gap-2">
-        <button
+        <PmcButton
+          variant="primary"
+          fullWidth
           onClick={handleContactClick}
-          className="ud-btn btn-thm w-full"
+          icon={<MessageCircle className="h-4 w-4" />}
         >
-          <MessageCircle className="h-4 w-4" />
           Contact Me
-        </button>
-        <Link
-          href={`/${seller.user_name}`}
-          className="ud-btn btn-soft-primary w-full"
-        >
-          View Profile
-          <ArrowUpRight className="h-4 w-4" />
+        </PmcButton>
+        <Link href={`/${seller.user_name}`}>
+          <SecondaryButton fullWidth icon={<ArrowUpRight className="h-4 w-4" />}>
+            View Profile
+          </SecondaryButton>
         </Link>
       </div>
     </div>

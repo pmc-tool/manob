@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { X } from "lucide-react";
 import { useSellerWizard } from "@/context/SellerWizardContext";
 import { Category } from "@/lib/mocks/seller.mock";
 import styles from "./SellerRegistration.module.css";
+import { PmcButton, SecondaryButton } from "@/components/ui/pmc-button";
+import { PmcSelect } from "@/components/ui/pmc-select";
 
 interface ChooseCategoriesProps {
   categories: Category[];
@@ -65,124 +68,119 @@ export default function ChooseCategories({ categories }: ChooseCategoriesProps) 
 
   return (
     <form onSubmit={handleStartSetup}>
-      <div className="row align-items-center g-0">
-        <div className="col-12 col-lg-5 col-xxl-4 d-none d-lg-block">
+      <div className="flex items-center">
+        <div className="hidden lg:block lg:w-5/12 2xl:w-1/3">
           <div
-            className={`d-flex align-items-center vh-100 justify-content-center flex-column ${styles.imageContainer}`}
+            className={`flex items-center h-screen justify-center flex-col ${styles.imageContainer}`}
           >
             <img
-              className="img-fluid"
+              className="max-w-full"
               src="/images/become-seller/freelancerbenefit.png"
               alt="Overview Hero"
-              style={{ maxWidth: "100%" }}
             />
           </div>
         </div>
-        <div className={`${styles.formContent} col-12 col-lg-7 col-xxl-8`}>
-          <div className="container-lg">
-            <div className="row">
-              <div className="col-md-10 col-xl-8 col-xxl-6 offset-md-1 offset-xl-2">
-                <div className="mb-4">
-                  <h2 className="fw-bold">Choose Your Favorite Categories</h2>
-                  <p className="text-muted">
-                    Ready to start selling on manob.ai? Here are answers to
-                    some common questions. Whether you&apos;re a freelancer,
-                    designer, or developer, we&apos;ve got you covered. Find out how
-                    easy it is to set up your account.
-                  </p>
-                </div>
-                {/* make price */}
-                <div className="mb-4">
-                  <h5 className="fw-bold">Make your own price</h5>
-                  <p className="text-muted">
-                    Pricing your items appropriately will help them sell.{" "}
-                    <Link
-                      className="fw-semibold text-decoration-underline text-primary"
-                      href="/help"
-                    >
-                      Check out our article on best practices and things to
-                      avoid.
-                    </Link>
-                  </p>
-                </div>
+        <div className={`${styles.formContent} w-full lg:w-7/12 2xl:w-2/3`}>
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="max-w-lg mx-auto">
+              <div className="mb-4">
+                <h2 className="font-bold">Choose Your Favorite Categories</h2>
+                <p className="text-gray-500">
+                  Ready to start selling on manob.ai? Here are answers to
+                  some common questions. Whether you&apos;re a freelancer,
+                  designer, or developer, we&apos;ve got you covered. Find out how
+                  easy it is to set up your account.
+                </p>
+              </div>
+              {/* make price */}
+              <div className="mb-4">
+                <h5 className="font-bold">Make your own price</h5>
+                <p className="text-gray-500">
+                  Pricing your items appropriately will help them sell.{" "}
+                  <Link
+                    className="font-semibold underline text-primary"
+                    href="/help"
+                  >
+                    Check out our article on best practices and things to
+                    avoid.
+                  </Link>
+                </p>
+              </div>
 
-                <div className="mb-2">
-                  <label className="form-label fw-medium mb-1" style={{ fontSize: "14px" }}>
-                    Select Multiple Category <span className="text-danger">*</span>
-                  </label>
-                  <div className="position-relative">
-                    <select className="form-select" onChange={handleSelect} defaultValue="">
-                      <option value="" disabled>
-                        Select category
-                      </option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {categoryError && (
-                    <div className="text-danger fw-medium mt-1" style={{ fontSize: "14px" }}>
-                      {categoryError}
-                    </div>
-                  )}
+              <div className="mb-2">
+                <label className="block font-medium mb-1 text-sm">
+                  Select Multiple Category <span className="text-red-600">*</span>
+                </label>
+                <div className="relative">
+                  <PmcSelect
+                    onChange={(value) => {
+                      if (value && !localSelectedCategories.includes(String(value))) {
+                        setLocalSelectedCategories([...localSelectedCategories, String(value)]);
+                      }
+                    }}
+                    placeholder="Select category"
+                    options={categories.map((category) => ({
+                      value: String(category.id),
+                      label: category.title,
+                    }))}
+                  />
                 </div>
-                {selectedData.length > 0 && (
-                  <div className="border rounded p-3 mt-3">
-                    <div className="d-flex flex-wrap gap-2">
-                      {selectedData.map((category) => (
-                        <span
-                          key={category.id}
-                          className="badge bg-primary d-inline-flex align-items-center"
-                          style={{ padding: "0.5rem 0.75rem" }}
-                        >
-                          {category.title}
-                          <button
-                            type="button"
-                            className="btn-close btn-close-white btn-sm ms-2"
-                            aria-label="Remove"
-                            onClick={() => handleRemove(category.id)}
-                            style={{ fontSize: "0.6rem" }}
-                          ></button>
-                        </span>
-                      ))}
-                    </div>
+                {categoryError && (
+                  <div className="text-red-600 font-medium mt-1 text-sm">
+                    {categoryError}
                   </div>
                 )}
-                <ul className="d-flex flex-column gap-2 list-unstyled mt-4">
-                  <li>
-                    <span className="me-2">▶</span>Boost chances of getting
-                    hired or selling
-                  </li>
-                  <li>
-                    <span className="me-2">▶</span>Match With the Right Buyers
-                  </li>
-                  <li>
-                    <span className="me-2">▶</span>Get more relevant order from
-                    clients
-                  </li>
-                  <li>
-                    <span className="me-2">▶</span>Make it easier for clients to
-                    hire you
-                  </li>
-                </ul>
-                <div className={`d-flex gap-2 ${styles.btnContainer}`}>
-                  <button
-                    type="button"
-                    onClick={prevStep}
-                    className={styles.btnDark}
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    className={styles.btnThm}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? "Continuing..." : "Add Skills"}
-                  </button>
+              </div>
+              {selectedData.length > 0 && (
+                <div className="border rounded p-3 mt-3">
+                  <div className="flex flex-wrap gap-2">
+                    {selectedData.map((category) => (
+                      <span
+                        key={category.id}
+                        className="bg-primary text-white inline-flex items-center rounded px-3 py-1"
+                      >
+                        {category.title}
+                        <button
+                          type="button"
+                          className="ml-2 hover:opacity-80"
+                          aria-label="Remove"
+                          onClick={() => handleRemove(category.id)}
+                        >
+                          <X size={14} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
                 </div>
+              )}
+              <ul className="flex flex-col gap-2 list-none mt-4 p-0">
+                <li>
+                  <span className="mr-2">▶</span>Boost chances of getting
+                  hired or selling
+                </li>
+                <li>
+                  <span className="mr-2">▶</span>Match With the Right Buyers
+                </li>
+                <li>
+                  <span className="mr-2">▶</span>Get more relevant order from
+                  clients
+                </li>
+                <li>
+                  <span className="mr-2">▶</span>Make it easier for clients to
+                  hire you
+                </li>
+              </ul>
+              <div className={`flex gap-2 ${styles.btnContainer}`}>
+                <SecondaryButton onClick={prevStep}>
+                  Back
+                </SecondaryButton>
+                <PmcButton
+                  variant="primary"
+                  htmlType="submit"
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Continuing..." : "Add Skills"}
+                </PmcButton>
               </div>
             </div>
           </div>
