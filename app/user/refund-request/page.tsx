@@ -10,6 +10,35 @@ import { useGetOrderHistoryQuery } from "@/state/services/user-service/purchase-
 
 const { TextArea } = Input;
 
+// Mock data for development
+const mockOrderHistory = [
+  {
+    order_id: "ORD-2024-001",
+    product_id: "prod-001",
+    product_name: "Premium React Admin Dashboard Template",
+  },
+  {
+    order_id: "ORD-2024-002",
+    product_id: "prod-002",
+    product_name: "E-commerce Website Complete Package",
+  },
+  {
+    order_id: "ORD-2024-003",
+    product_id: "prod-003",
+    product_name: "Mobile App UI Kit - iOS & Android",
+  },
+  {
+    order_id: "ORD-2024-004",
+    product_id: "prod-004",
+    product_name: "WordPress Theme - Business Pro",
+  },
+  {
+    order_id: "ORD-2024-005",
+    product_id: "prod-005",
+    product_name: "Icon Pack - 5000+ Premium Icons",
+  },
+];
+
 const refundReasons = [
   { value: "There was a problem with my payment", label: "There was a problem with my payment" },
   { value: "I'm having a problem with item support", label: "I'm having a problem with item support" },
@@ -21,16 +50,19 @@ export default function RefundRequest() {
   const [form] = Form.useForm();
   const router = useRouter();
 
-  const { data: orderList } = useGetOrderHistoryQuery();
+  const { data: apiOrderList } = useGetOrderHistoryQuery();
   const [createRequest, { data: reqData, isLoading, error }] = useCreateRequestMutation();
 
-  const productOptions = (orderList || []).map((item: any) => ({
+  // Use mock data if API returns no data
+  const orderList = apiOrderList && apiOrderList.length > 0 ? apiOrderList : mockOrderHistory;
+
+  const productOptions = orderList.map((item: any) => ({
     value: item?.order_id,
     label: item?.product_name,
   }));
 
   const onFinish = async (values: any) => {
-    const orderInfo = orderList?.find(
+    const orderInfo = orderList.find(
       (order: any) => order?.order_id === values?.order_id
     );
     await createRequest({

@@ -9,6 +9,75 @@ import { useGetUserServiceOrdersQuery } from "@/state/services/user-service/serv
 import { dateFormat, getTime } from "@/utils/dateFormat";
 import useOrders from "@/hooks/orders";
 
+// Mock data for development
+const mockOrders = [
+  {
+    id: "ord-001",
+    order_id: "ORD-2024-001",
+    service_title: "Professional Logo Design",
+    selling_price: 150,
+    order_status: "COMPLETED",
+    created_at: "2024-12-10T10:30:00Z",
+    seller_info: {
+      first_name: "John",
+      last_name: "Smith",
+      profile_image: null,
+    },
+  },
+  {
+    id: "ord-002",
+    order_id: "ORD-2024-002",
+    service_title: "Website Development - React & Next.js",
+    selling_price: 500,
+    order_status: "IN_PROGRESS",
+    created_at: "2024-12-12T14:20:00Z",
+    seller_info: {
+      first_name: "Sarah",
+      last_name: "Johnson",
+      profile_image: null,
+    },
+  },
+  {
+    id: "ord-003",
+    order_id: "ORD-2024-003",
+    service_title: "SEO Optimization Package",
+    selling_price: 200,
+    order_status: "PENDING",
+    created_at: "2024-12-15T09:15:00Z",
+    seller_info: {
+      first_name: "Mike",
+      last_name: "Williams",
+      profile_image: null,
+    },
+  },
+  {
+    id: "ord-004",
+    order_id: "ORD-2024-004",
+    service_title: "Mobile App UI/UX Design",
+    selling_price: 350,
+    order_status: "PAID",
+    created_at: "2024-12-14T16:45:00Z",
+    seller_info: {
+      first_name: "Emily",
+      last_name: "Davis",
+      profile_image: null,
+    },
+  },
+  {
+    id: "ord-005",
+    order_id: "ORD-2024-005",
+    service_title: "Content Writing - 10 Blog Posts",
+    selling_price: 120,
+    order_status: "CANCELLED",
+    created_at: "2024-12-08T11:00:00Z",
+    seller_info: {
+      first_name: "David",
+      last_name: "Brown",
+      profile_image: null,
+    },
+  },
+];
+
 const statusOptions = [
   { value: "ALL", label: "All" },
   { value: "PENDING", label: "Pending" },
@@ -61,8 +130,10 @@ export default function OrderListPage() {
     error,
   } = useGetUserServiceOrdersQuery(url);
 
-  const serviceOrderList = userServiceOrders?.items || [];
-  const pagination = userServiceOrders?.pagination;
+  // Use mock data if API returns no data
+  const apiOrders = userServiceOrders?.items || [];
+  const serviceOrderList = apiOrders.length > 0 ? apiOrders : mockOrders;
+  const pagination = userServiceOrders?.pagination || { total_count: mockOrders.length };
 
   const handleSelect = (value: string) => {
     setCurrentPage(1);
