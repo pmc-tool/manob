@@ -83,22 +83,22 @@ export default function Page() {
 
   return (
     <div className="container">
-      <section className={`align-items-center d-flex ${styles.authWrap}`}>
-        <div className={`flex-grow-1 m-auto ${styles.authInner}`}>
+      <section className={`items-center flex ${styles.authWrap}`}>
+        <div className={`flex-grow m-auto ${styles.authInner}`}>
           <div className="auth-header mb-5 text-center">
-            <h4 className="fw-bold text-center mb-0">Set a new password</h4>
-            <div className="fz13 mt-1">
+            <h4 className="font-bold text-center mb-0">Set a new password</h4>
+            <div className="text-[13px] mt-1">
               For security, use a strong password with a mix of uppercase,
               lowercase,
               <br /> numbers, and symbols to protect your account.
             </div>
           </div>
           <div className="auth-body">
-            <div className="align-items-md-center justify-content-center auth-form d-md-flex flex-md-row">
+            <div className="md:items-center justify-center auth-form md:flex md:flex-row">
               <div className={styles.authFormLeft}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   {error && (
-                    <div className="alert alert-danger mb-4" role="alert">
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
                       {error}
                     </div>
                   )}
@@ -106,12 +106,12 @@ export default function Page() {
                     <label className={`${styles.authLabel} required`}>
                       PASSWORD
                     </label>
-                    <div className="position-relative">
-                      <div className="position-relative">
+                    <div className="relative">
+                      <div className="relative">
                         <input
                           id="new_password"
                           type={showPassword ? "text" : "password"}
-                          className={`form-control password ${styles.authInput}`}
+                          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-12 ${styles.authInput}`}
                           placeholder="New password"
                           autoComplete="off"
                           {...register("new_password")}
@@ -134,7 +134,7 @@ export default function Page() {
                       errors={errors}
                       name="new_password"
                       render={({ message }) => (
-                        <span className="text-danger fz14">{message}</span>
+                        <span className="text-red-500 text-sm">{message}</span>
                       )}
                     />
                   </div>
@@ -142,12 +142,12 @@ export default function Page() {
                     <label className={`${styles.authLabel} required`}>
                       Confirm PASSWORD
                     </label>
-                    <div className="position-relative">
-                      <div className="position-relative">
+                    <div className="relative">
+                      <div className="relative">
                         <input
                           id="confirm_password"
                           type={showConfirmPassword ? "text" : "password"}
-                          className={`form-control password ${styles.authInput}`}
+                          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-12 ${styles.authInput}`}
                           placeholder="Confirm password"
                           autoComplete="off"
                           {...register("confirm_password")}
@@ -173,13 +173,13 @@ export default function Page() {
                       errors={errors}
                       name="confirm_password"
                       render={({ message }) => (
-                        <span className="text-danger fz14">{message}</span>
+                        <span className="text-red-500 text-sm">{message}</span>
                       )}
                     />
                   </div>
                   <button
                     type="submit"
-                    className="rounded ud-btn btn-default w-100"
+                    className="rounded inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200 transition-all w-full"
                     disabled={isLoading}
                   >
                     {isLoading ? "Submitting..." : "Submit"}
@@ -188,12 +188,12 @@ export default function Page() {
               </div>
             </div>
           </div>
-          <div className="mt-4 text-center auth-text fz13">
+          <div className="mt-4 text-center auth-text text-[13px]">
             Secure Login with reCAPTCHA subject to Google{" "}
             <Link
               href="/privacy-policy"
               target="_blank"
-              className="fw-medium text-decoration-underline"
+              className="font-medium underline"
             >
               <br />
               Terms
@@ -202,7 +202,7 @@ export default function Page() {
             <Link
               href="/privacy-policy"
               target="_blank"
-              className="fw-medium text-decoration-underline"
+              className="font-medium underline"
             >
               Privacy
             </Link>

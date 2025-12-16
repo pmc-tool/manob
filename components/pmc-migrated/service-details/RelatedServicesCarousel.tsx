@@ -51,9 +51,9 @@ export default function RelatedServicesCarousel({
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h3 className="fz20 font-bold">{title}</h3>
+          <h3 className="text-xl font-bold">{title}</h3>
           <div className="flex items-center gap-3">
-            <Link href={linkHref} className="text-primary font-medium fz14 hover:underline">
+            <Link href={linkHref} className="text-primary font-medium text-sm hover:underline">
               {linkText}
             </Link>
             <div className="flex gap-2">
@@ -99,23 +99,23 @@ export default function RelatedServicesCarousel({
               <div className="p-4">
                 <Link
                   href={`/service-details/${service.slug}`}
-                  className="block font-medium fz15 text-gray-800 hover:text-primary line-clamp-2 mb-2"
+                  className="block font-medium text-[15px] text-gray-800 hover:text-primary line-clamp-2 mb-2"
                 >
                   {service.title}
                 </Link>
-                <p className="text-gray-500 fz13 mb-2">by {service.authorName}</p>
+                <p className="text-gray-500 text-[13px] mb-2">by {service.authorName}</p>
 
                 {service.rating > 0 && (
                   <div className="flex items-center gap-1 mb-2">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium fz13">{service.rating.toFixed(1)}</span>
-                    <span className="text-gray-400 fz13">({service.reviews})</span>
+                    <span className="font-medium text-[13px]">{service.rating.toFixed(1)}</span>
+                    <span className="text-gray-400 text-[13px]">({service.reviews})</span>
                   </div>
                 )}
 
                 <div className="flex items-center justify-between border-t pt-3 mt-2">
-                  <span className="text-gray-500 fz13">Starting at</span>
-                  <span className="text-primary font-bold fz16">${service.price}</span>
+                  <span className="text-gray-500 text-[13px]">Starting at</span>
+                  <span className="text-primary font-bold text-base">${service.price}</span>
                 </div>
               </div>
             </div>

@@ -57,7 +57,7 @@ export default function ServiceHeader({
       </nav>
 
       {/* Title */}
-      <h1 className="fz24 font-bold mb-3 leading-tight">{title}</h1>
+      <h1 className="text-2xl font-bold mb-3 leading-tight">{title}</h1>
 
       {/* Seller & Stats */}
       <div className="service-meta-stats flex flex-wrap items-center gap-4 mb-4">

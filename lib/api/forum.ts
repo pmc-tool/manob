@@ -1,146 +1,202 @@
-// CONTRACT: Forum API endpoints match PMC exactly
-// MIGRATION: Centralized forum API module
+// CONTRACT: Forum API endpoints
+// All endpoints match the actual backend API
 
 import { api } from './client';
 import type {
-  ForumTopic,
-  ForumTopicListResponse,
-  ForumPost,
-  ForumPostListResponse,
-  ForumPostCreateRequest,
-  ForumReply,
-  ForumReplyListResponse,
-  Discussion,
-  DiscussionListResponse,
-  PaginationRequest,
+  Forum,
+  ForumListResponse,
+  ForumDetailResponse,
+  ForumCommentsResponse,
+  TopContributorsResponse,
+  TopForumsResponse,
+  ForumCreateRequest,
+  ForumUpdateRequest,
+  ForumCommentCreateRequest,
+  ForumInteractionRequest,
+  ForumListParams,
+  ForumComment,
   SuccessResponse,
 } from './types';
 
 /**
+ * Build query string from params
+ */
+function buildQueryString(params: Record<string, unknown>): string {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      searchParams.set(key, String(value));
+    }
+  });
+  const query = searchParams.toString();
+  return query ? `?${query}` : '';
+}
+
+/**
  * Forum API module
- * CONTRACT: All endpoints and request/response shapes match PMC API
  */
 export const forumApi = {
   // ============================================
-  // Topic Endpoints
+  // Public Endpoints (No Auth Required)
   // ============================================
 
   /**
-   * Get all forum topics
-   * CONTRACT: GET /forum/topics
+   * Get all forums (public)
+   * GET /public/forum
+   * @param params - Query params: page, limit, sort_by, term, filter
    */
-  getTopics: () => api.get<ForumTopicListResponse>('/forum/topics'),
-
-  /**
-   * Get topic by slug
-   * CONTRACT: GET /forum/topics/:slug
-   */
-  getTopic: (slug: string) => api.get<ForumTopic>(`/forum/topics/${slug}`),
-
-  // ============================================
-  // Post Endpoints
-  // ============================================
-
-  /**
-   * Get posts in a topic
-   * CONTRACT: GET /forum/topics/:topicId/posts
-   */
-  getPosts: (topicId: string, params?: PaginationRequest) => {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.set('page', String(params.page));
-    if (params?.limit) searchParams.set('limit', String(params.limit));
-    const query = searchParams.toString();
-    return api.get<ForumPostListResponse>(
-      `/forum/topics/${topicId}/posts${query ? `?${query}` : ''}`
-    );
+  getForums: (params?: ForumListParams) => {
+    const query = buildQueryString((params || {}) as Record<string, unknown>);
+    return api.get<ForumListResponse>(`/public/forum${query}`, { skipAuth: true });
   },
 
   /**
-   * Get single post
-   * CONTRACT: GET /forum/posts/:id
+   * Get single forum (public)
+   * GET /public/forum/:id
    */
-  getPost: (id: string) => api.get<ForumPost>(`/forum/posts/${id}`),
-
-  /**
-   * Create new post
-   * CONTRACT: POST /forum/posts
-   */
-  createPost: (data: ForumPostCreateRequest) =>
-    api.post<ForumPost>('/forum/posts', data),
-
-  /**
-   * Update post
-   * CONTRACT: PUT /forum/posts/:id
-   */
-  updatePost: (id: string, data: { title?: string; content?: string }) =>
-    api.put<ForumPost>(`/forum/posts/${id}`, data),
-
-  /**
-   * Delete post
-   * CONTRACT: DELETE /forum/posts/:id
-   */
-  deletePost: (id: string) => api.delete<SuccessResponse>(`/forum/posts/${id}`),
-
-  // ============================================
-  // Reply Endpoints
-  // ============================================
-
-  /**
-   * Get replies to a post
-   * CONTRACT: GET /forum/posts/:postId/replies
-   */
-  getReplies: (postId: string, params?: PaginationRequest) => {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.set('page', String(params.page));
-    if (params?.limit) searchParams.set('limit', String(params.limit));
-    const query = searchParams.toString();
-    return api.get<ForumReplyListResponse>(
-      `/forum/posts/${postId}/replies${query ? `?${query}` : ''}`
-    );
+  getForum: (id: string) => {
+    return api.get<ForumDetailResponse>(`/public/forum/${id}`, { skipAuth: true });
   },
 
   /**
-   * Create reply
-   * CONTRACT: POST /forum/posts/:postId/replies
+   * Get forum comments (public)
+   * GET /public/forum/:id/comments
+   * @param sortBy - Sort option
    */
-  createReply: (postId: string, content: string) =>
-    api.post<ForumReply>(`/forum/posts/${postId}/replies`, { content }),
-
-  /**
-   * Delete reply
-   * CONTRACT: DELETE /forum/replies/:id
-   */
-  deleteReply: (id: string) => api.delete<SuccessResponse>(`/forum/replies/${id}`),
-
-  // ============================================
-  // Discussion Endpoints
-  // ============================================
-
-  /**
-   * Get discussions
-   * CONTRACT: GET /discussions
-   */
-  getDiscussions: (params?: PaginationRequest & { category?: string }) => {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.set('page', String(params.page));
-    if (params?.limit) searchParams.set('limit', String(params.limit));
-    if (params?.category) searchParams.set('category', params.category);
-    const query = searchParams.toString();
-    return api.get<DiscussionListResponse>(`/discussions${query ? `?${query}` : ''}`);
+  getForumComments: (id: string, sortBy?: string) => {
+    const query = sortBy ? `?sort_by=${sortBy}` : '';
+    return api.get<ForumCommentsResponse>(`/public/forum/${id}/comments${query}`, { skipAuth: true });
   },
 
   /**
-   * Get discussion by ID
-   * CONTRACT: GET /discussions/:id
+   * Increment view count
+   * PATCH /public/forum/:id/view
    */
-  getDiscussion: (id: string) => api.get<Discussion>(`/discussions/${id}`),
+  incrementViewCount: (id: string) => {
+    return api.patch<SuccessResponse>(`/public/forum/${id}/view`, undefined, { skipAuth: true });
+  },
 
   /**
-   * Create discussion
-   * CONTRACT: POST /discussions
+   * Get top contributors
+   * GET /public/top-forum-contributors
    */
-  createDiscussion: (data: { title: string; content: string; category: string; tags?: string[] }) =>
-    api.post<Discussion>('/discussions', data),
+  getTopContributors: () => {
+    return api.get<TopContributorsResponse>('/public/top-forum-contributors', { skipAuth: true });
+  },
+
+  /**
+   * Get top forums
+   * GET /public/top-forums
+   */
+  getTopForums: () => {
+    return api.get<TopForumsResponse>('/public/top-forums', { skipAuth: true });
+  },
+
+  // ============================================
+  // Private Endpoints (Auth Required)
+  // ============================================
+
+  /**
+   * Create forum
+   * POST /forum
+   */
+  createForum: (data: ForumCreateRequest) => {
+    return api.post<ForumDetailResponse>('/forum', data);
+  },
+
+  /**
+   * Update forum
+   * PATCH /forum/:id
+   */
+  updateForum: (id: string, data: ForumUpdateRequest) => {
+    return api.patch<ForumDetailResponse>(`/forum/${id}`, data);
+  },
+
+  /**
+   * Mark forum as solved
+   * PATCH /forum/:id/solved
+   */
+  markAsSolved: (id: string, commentId: string) => {
+    return api.patch<SuccessResponse>(`/forum/${id}/solved`, { comment_id: commentId });
+  },
+
+  /**
+   * Request pin for forum
+   * PATCH /forum/:id/pin-request
+   */
+  requestPin: (id: string) => {
+    return api.patch<SuccessResponse>(`/forum/${id}/pin-request`);
+  },
+
+  /**
+   * Update forum interaction (like/unlike/bookmark)
+   * PATCH /forum/:id/interaction
+   */
+  updateInteraction: (id: string, data: ForumInteractionRequest) => {
+    return api.patch<SuccessResponse>(`/forum/${id}/interaction`, data);
+  },
+
+  /**
+   * Like a forum
+   */
+  likeForum: (id: string) => {
+    return forumApi.updateInteraction(id, { type: 'like' });
+  },
+
+  /**
+   * Unlike a forum
+   */
+  unlikeForum: (id: string) => {
+    return forumApi.updateInteraction(id, { type: 'unlike' });
+  },
+
+  /**
+   * Bookmark a forum
+   */
+  bookmarkForum: (id: string) => {
+    return forumApi.updateInteraction(id, { type: 'bookmark' });
+  },
+
+  /**
+   * Remove bookmark from forum
+   */
+  unbookmarkForum: (id: string) => {
+    return forumApi.updateInteraction(id, { type: 'unbookmark' });
+  },
+
+  /**
+   * Create forum comment
+   * POST /forum/:id/comment
+   */
+  createComment: (forumId: string, data: ForumCommentCreateRequest) => {
+    return api.post<ForumComment>(`/forum/${forumId}/comment`, data);
+  },
+
+  /**
+   * Get my forums
+   * GET /forum
+   */
+  getMyForums: (params?: { page?: number; limit?: number }) => {
+    const query = buildQueryString((params || {}) as Record<string, unknown>);
+    return api.get<ForumListResponse>(`/forum${query}`);
+  },
+
+  /**
+   * Get my bookmarked forums
+   * GET /forum-bookmark
+   */
+  getBookmarkedForums: (params?: { page?: number; limit?: number }) => {
+    const query = buildQueryString((params || {}) as Record<string, unknown>);
+    return api.get<ForumListResponse>(`/forum-bookmark${query}`);
+  },
+
+  /**
+   * Get my single forum (with edit permissions check)
+   * GET /forum/:id
+   */
+  getMyForum: (id: string) => {
+    return api.get<ForumDetailResponse>(`/forum/${id}`);
+  },
 };
 
 export default forumApi;

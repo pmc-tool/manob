@@ -207,6 +207,194 @@ export const jobFilterOptions = {
 };
 
 // Helper function to calculate time ago
+// Extended job interface for job details
+export interface JobOwner {
+  id: string;
+  first_name: string;
+  last_name: string;
+  user_name: string;
+  email: string;
+  profile_image: string;
+  country: string;
+  isVerified: boolean;
+  avg_rating: number;
+  created_at: string;
+  total_orders: number;
+}
+
+export interface BuyerDetails {
+  hire_rate: number;
+  total_spent: number;
+  total_jobs: number;
+  total_projects: number;
+  member_since: string;
+}
+
+export interface JobDetails extends Job {
+  owner_meta: JobOwner;
+  owner_info: JobOwner;
+  category_meta: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+  primary_category: {
+    id: string;
+    title: string;
+  };
+  avg_bid_price: number;
+  attached_product_meta?: {
+    id: string;
+    title: string;
+    product_preview_file: string;
+    avg_rating: number;
+    total_review: number;
+  };
+  is_bidded?: boolean;
+}
+
+// Mock owner data
+const mockOwner: JobOwner = {
+  id: 'owner-001',
+  first_name: 'John',
+  last_name: 'Smith',
+  user_name: 'johnsmith',
+  email: 'john@example.com',
+  profile_image: 'uploads/profiles/default-avatar.png',
+  country: 'United States',
+  isVerified: true,
+  avg_rating: 4.8,
+  created_at: '2023-01-15T00:00:00.000Z',
+  total_orders: 45,
+};
+
+// Mock buyer details
+export const mockBuyerDetails: BuyerDetails = {
+  hire_rate: 85,
+  total_spent: 25000,
+  total_jobs: 32,
+  total_projects: 28,
+  member_since: '2023-01-15T00:00:00.000Z',
+};
+
+// Mock job details data
+export const mockJobDetails: Record<string, JobDetails> = {
+  'job-001': {
+    ...mockJobs[0],
+    owner_meta: mockOwner,
+    owner_info: mockOwner,
+    category_meta: { id: 'cat-1', title: 'Web Development', slug: 'web-development' },
+    primary_category: { id: 'cat-1', title: 'Web Development' },
+    avg_bid_price: 2200,
+    is_bidded: false,
+  },
+  'job-002': {
+    ...mockJobs[1],
+    owner_meta: { ...mockOwner, id: 'owner-002', first_name: 'Sarah', last_name: 'Johnson', user_name: 'sarahj' },
+    owner_info: { ...mockOwner, id: 'owner-002', first_name: 'Sarah', last_name: 'Johnson', user_name: 'sarahj' },
+    category_meta: { id: 'cat-2', title: 'Mobile Development', slug: 'mobile-development' },
+    primary_category: { id: 'cat-2', title: 'Mobile Development' },
+    avg_bid_price: 3200,
+    is_bidded: false,
+  },
+  'job-003': {
+    ...mockJobs[2],
+    owner_meta: { ...mockOwner, id: 'owner-003', first_name: 'Mike', last_name: 'Wilson', user_name: 'mikew' },
+    owner_info: { ...mockOwner, id: 'owner-003', first_name: 'Mike', last_name: 'Wilson', user_name: 'mikew' },
+    category_meta: { id: 'cat-3', title: 'WordPress', slug: 'wordpress' },
+    primary_category: { id: 'cat-3', title: 'WordPress' },
+    avg_bid_price: 650,
+    is_bidded: true,
+  },
+  'job-004': {
+    ...mockJobs[3],
+    owner_meta: mockOwner,
+    owner_info: mockOwner,
+    category_meta: { id: 'cat-4', title: 'Data Science', slug: 'data-science' },
+    primary_category: { id: 'cat-4', title: 'Data Science' },
+    avg_bid_price: 1600,
+    is_bidded: false,
+  },
+  'job-005': {
+    ...mockJobs[4],
+    owner_meta: { ...mockOwner, id: 'owner-004', first_name: 'Emily', last_name: 'Brown', user_name: 'emilyb' },
+    owner_info: { ...mockOwner, id: 'owner-004', first_name: 'Emily', last_name: 'Brown', user_name: 'emilyb' },
+    category_meta: { id: 'cat-5', title: 'DevOps', slug: 'devops' },
+    primary_category: { id: 'cat-5', title: 'DevOps' },
+    avg_bid_price: 1850,
+    is_bidded: false,
+  },
+  'job-006': {
+    ...mockJobs[5],
+    owner_meta: mockOwner,
+    owner_info: mockOwner,
+    category_meta: { id: 'cat-1', title: 'Web Development', slug: 'web-development' },
+    primary_category: { id: 'cat-1', title: 'Web Development' },
+    avg_bid_price: 1350,
+    is_bidded: false,
+  },
+  'job-007': {
+    ...mockJobs[6],
+    owner_meta: { ...mockOwner, id: 'owner-005', first_name: 'David', last_name: 'Lee', user_name: 'davidl' },
+    owner_info: { ...mockOwner, id: 'owner-005', first_name: 'David', last_name: 'Lee', user_name: 'davidl' },
+    category_meta: { id: 'cat-6', title: 'UI/UX Design', slug: 'ui-ux-design' },
+    primary_category: { id: 'cat-6', title: 'UI/UX Design' },
+    avg_bid_price: 420,
+    is_bidded: false,
+  },
+  'job-008': {
+    ...mockJobs[7],
+    owner_meta: mockOwner,
+    owner_info: mockOwner,
+    category_meta: { id: 'cat-7', title: 'E-commerce', slug: 'ecommerce' },
+    primary_category: { id: 'cat-7', title: 'E-commerce' },
+    avg_bid_price: 1100,
+    is_bidded: false,
+  },
+};
+
+// Helper to get job details by id or slug
+export function getJobDetails(idOrSlug: string): JobDetails | null {
+  // Try direct id match
+  if (mockJobDetails[idOrSlug]) {
+    return mockJobDetails[idOrSlug];
+  }
+  // Try slug match
+  const job = mockJobs.find(j => j.slug === idOrSlug);
+  if (job && mockJobDetails[job.id]) {
+    return mockJobDetails[job.id];
+  }
+  return null;
+}
+
+// Helper function to format date
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
+// Helper function to calculate deadline
+export function calculateDeadline(deliveryTime: number, deliveryTimeType: string): string {
+  const currentDate = new Date();
+  const deadlineDate = new Date(currentDate);
+
+  if (deliveryTimeType.toUpperCase() === 'DAY' || deliveryTimeType.toUpperCase() === 'DAYS') {
+    deadlineDate.setDate(deadlineDate.getDate() + deliveryTime);
+  } else if (deliveryTimeType.toUpperCase() === 'HOUR' || deliveryTimeType.toUpperCase() === 'HOURS') {
+    deadlineDate.setHours(deadlineDate.getHours() + deliveryTime);
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(deadlineDate);
+}
+
 export function calculateTimeAgo(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();

@@ -29,7 +29,7 @@ export default function ServiceDescription({
     <div className="service-description mb-6">
       {/* Short Description */}
       <div className="mb-4">
-        <p className="text-gray-700 fz16 leading-relaxed">{shortDescription}</p>
+        <p className="text-gray-700 text-base leading-relaxed">{shortDescription}</p>
       </div>
 
       {/* Full Description */}
@@ -48,7 +48,7 @@ export default function ServiceDescription({
       {isMobile && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-center gap-2 w-full mt-4 py-2 text-primary font-medium fz14 hover:underline"
+          className="flex items-center justify-center gap-2 w-full mt-4 py-2 text-primary font-medium text-sm hover:underline"
         >
           {isExpanded ? (
             <>

@@ -9,6 +9,7 @@ import { ServicePackage, formatPrice } from '@/lib/mocks/service-details.mock';
 import OrderCartSidebar from './OrderCartSidebar';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface ServicePackagesProps {
   packages: ServicePackage[];
@@ -103,16 +104,16 @@ export default function ServicePackages({
   };
 
   return (
-    <div className="service-packages mb-4 bg-white">
-      {/* Package Tabs - Original PMC navpill-style1 */}
-      <div className="navpill-style1">
-        <ul className="nav-tabs">
+    <div className="border border-gray-200 rounded-lg overflow-hidden mb-4 bg-white">
+      {/* Package Tabs */}
+      <div className="rounded-t-lg overflow-hidden">
+        <ul className="flex bg-[#f9f9f9] m-0 p-0 list-none">
           {packages.map((pkg, index) => (
-            <li key={pkg.id} className="nav-item">
+            <li key={pkg.id} className="flex-1 border-r border-[#e9e9e9] last:border-r-0">
               <button
                 type="button"
                 onClick={() => setActivePackage(index)}
-                className={`nav-link ${activePackage === index ? 'active' : ''}`}
+                className={`inline-flex items-center justify-center w-full py-3.5 px-4 text-[15px] font-semibold text-center bg-transparent border-none border-b-2 cursor-pointer transition-all leading-normal ${activePackage === index ? 'text-primary bg-white border-b-primary' : 'text-[#697488] border-b-transparent hover:text-primary'}`}
               >
                 {pkg.name}
               </button>
@@ -122,7 +123,7 @@ export default function ServicePackages({
       </div>
 
       {/* Package Content */}
-      <div className="package-content">
+      <div className="p-5">
         {packages.map((pkg, index) => (
           <div
             key={pkg.id}
@@ -130,22 +131,22 @@ export default function ServicePackages({
           >
             {/* Price */}
             <div className="flex items-center gap-3 mb-4">
-              <span className="package-price">${formatPrice(pkg.price)}</span>
+              <span className="text-[28px] font-bold text-gray-900">${formatPrice(pkg.price)}</span>
               {pkg.oldPrice && pkg.oldPrice > pkg.price && (
-                <span className="package-old-price">${formatPrice(pkg.oldPrice)}</span>
+                <span className="text-base text-gray-400 line-through">${formatPrice(pkg.oldPrice)}</span>
               )}
             </div>
 
             {/* Description */}
-            <p className="text-gray-600 fz15 mb-4">{pkg.description}</p>
+            <p className="text-gray-600 text-[15px] mb-4">{pkg.description}</p>
 
             {/* Delivery & Revisions */}
             <div className="delivery-info flex flex-wrap items-center gap-4 mb-4 pb-4 border-b border-gray-100">
-              <span className="inline-flex items-center gap-2 text-gray-700 fz14">
+              <span className="inline-flex items-center gap-2 text-gray-700 text-sm">
                 <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
                 <span className="font-medium">{pkg.deliveryDays} days delivery</span>
               </span>
-              <span className="inline-flex items-center gap-2 text-gray-700 fz14">
+              <span className="inline-flex items-center gap-2 text-gray-700 text-sm">
                 <RotateCcw className="h-4 w-4 text-gray-500 flex-shrink-0" />
                 <span className="font-medium">{pkg.revisions} revisions</span>
               </span>
@@ -154,7 +155,7 @@ export default function ServicePackages({
             {/* Features */}
             <ul className="feature-list space-y-3 mb-5">
               {pkg.features.map((feature, idx) => (
-                <li key={idx} className="flex items-center gap-3 fz14">
+                <li key={idx} className="flex items-center gap-3 text-sm">
                   <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
                   <span className="text-gray-700">{feature}</span>
                 </li>
@@ -163,19 +164,20 @@ export default function ServicePackages({
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <button
+              <PmcButton
+                variant="primary"
+                fullWidth
                 onClick={() => handleOrderNow(pkg)}
-                className="ud-btn btn-thm w-full"
               >
                 Continue (${formatPrice(pkg.price)})
-              </button>
-              <button
+              </PmcButton>
+              <SecondaryButton
+                fullWidth
                 onClick={() => handleAddToCart(pkg.id)}
-                className="ud-btn btn-soft-primary w-full"
+                icon={<ShoppingCart className="h-4 w-4" />}
               >
-                <ShoppingCart className="h-4 w-4" />
                 Add to Cart
-              </button>
+              </SecondaryButton>
             </div>
           </div>
         ))}
@@ -183,7 +185,7 @@ export default function ServicePackages({
 
       {/* Compare Packages Link */}
       <div className="border-t p-4 text-center bg-gray-50">
-        <button className="text-primary fz14 font-medium hover:underline">
+        <button className="text-primary text-sm font-medium hover:underline">
           Compare Packages
         </button>
       </div>

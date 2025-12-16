@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Activity,
   BotMessageSquare,
   Briefcase,
   History,
@@ -39,6 +40,10 @@ export default function ProjectSidebar() {
 
     if (tab === "marketplace") {
       router.push("/marketplace");
+    }
+
+    if (tab === "market2") {
+      router.push("/market-2");
     }
 
     if (tab === "chat") {
@@ -128,6 +133,16 @@ export default function ProjectSidebar() {
               <Store size={22} />
             </div>
             Market
+          </button>
+
+          <button
+            onClick={() => handleClick("market2")}
+            className={buttonClass("market2")}
+          >
+            <div className={iconClass("market2")}>
+              <Activity size={22} />
+            </div>
+            Market 2
           </button>
 
           <button

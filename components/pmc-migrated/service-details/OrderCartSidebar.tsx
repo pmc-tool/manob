@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { X, Info } from 'lucide-react';
 import InputSpinner from './InputSpinner';
 import PackageDetails from './PackageDetails';
+import { PmcButton } from '@/components/ui/pmc-button';
+import styles from './OrderCartSidebar.module.css';
 
 interface PackageAttribute {
   key: string;
@@ -80,12 +82,12 @@ export default function OrderCartSidebar({
   return (
     <>
       {/* Sidebar */}
-      <div className={`order-cart-sidebar ${isActive ? 'active' : ''}`}>
+      <div className={`${styles.sidebar} ${isActive ? styles.active : ''}`}>
         {/* Sidebar Header */}
-        <div className="order-cart-header" id="sidebarHeader">
-          <span className="fz20 fw-semibold text-dark">Order Options</span>
+        <div className={styles.header}>
+          <span className={styles.headerTitle}>Order Options</span>
           <button
-            className="order-cart-close"
+            className={styles.closeButton}
             onClick={onClose}
             aria-label="Close"
           >
@@ -94,26 +96,26 @@ export default function OrderCartSidebar({
         </div>
 
         {/* Sidebar Body */}
-        <div className="order-cart-body">
+        <div className={styles.body}>
           {/* Package Title & Price */}
-          <div className="order-cart-package-info">
-            <div className="order-cart-package-row">
-              <h5 className="fz18 mb-0">{packageInfo.title}</h5>
-              <h5 className="fz18 mb-0">${selectedServicePrice}</h5>
+          <div className={styles.packageInfo}>
+            <div className={styles.packageRow}>
+              <h5 className={styles.packageTitle}>{packageInfo.title}</h5>
+              <h5 className={styles.packageTitle}>${selectedServicePrice}</h5>
             </div>
-            <div className="text-muted">{packageInfo.short_description}</div>
+            <div className="text-gray-500">{packageInfo.short_description}</div>
           </div>
 
           {/* How often section */}
-          <h5 className="fz18 mb-3">How often do you need this order</h5>
+          <h5 className={styles.sectionTitle}>How often do you need this order</h5>
 
           {/* Single Order Box */}
-          <div className="order-cart-single-order">
-            <div className="order-cart-single-order-header">
-              <h5 className="fz18 mb-0">Single Order</h5>
-              <h5 className="fz18 mb-0">${selectedServicePrice}</h5>
+          <div className={styles.singleOrder}>
+            <div className={styles.singleOrderHeader}>
+              <h5 className={styles.packageTitle}>Single Order</h5>
+              <h5 className={styles.packageTitle}>${selectedServicePrice}</h5>
             </div>
-            <div className="order-cart-quantity-row">
+            <div className={styles.quantityRow}>
               <span>Gig Quantity:</span>
               <InputSpinner
                 value={quantity}
@@ -131,34 +133,34 @@ export default function OrderCartSidebar({
           />
 
           {/* Order Summary */}
-          <div className="order-cart-summary-section">
-            <h5 className="fz18 mb-3">Order Summary</h5>
-            <ul className="order-cart-summary-list">
+          <div className={styles.summarySection}>
+            <h5 className={styles.sectionTitle}>Order Summary</h5>
+            <ul className={styles.summaryList}>
               <li>
-                <span className="text-dark fw-medium">Sub Total:</span>
-                <span className="text-muted">
+                <span className="text-gray-900 font-medium">Sub Total:</span>
+                <span className="text-gray-500">
                   ${(selectedServicePrice * quantity).toFixed(2)}
                 </span>
               </li>
               <li>
-                <span className="text-dark fw-medium">Discount:</span>
-                <span className="text-danger fw-medium">-$0.00</span>
+                <span className="text-gray-900 font-medium">Discount:</span>
+                <span className="text-red-600 font-medium">-$0.00</span>
               </li>
             </ul>
           </div>
 
           {/* Total Price */}
-          <div className="order-cart-total">
-            <span className="text-dark fw-medium">Total price:</span>
-            <span className="fz18 fw-semibold">
+          <div className={styles.total}>
+            <span className="text-gray-900 font-medium">Total price:</span>
+            <span className="text-lg font-semibold">
               ${(selectedServicePrice * quantity).toFixed(2)}
             </span>
           </div>
 
           {/* Warning Alert */}
-          <div className="order-cart-alert">
+          <div className={styles.alert}>
             <Info className="h-6 w-6 flex-shrink-0" />
-            <div className="text-muted">
+            <div>
               This money will be kept in the PMC, paid to the service provider
               after the order is completed
             </div>
@@ -166,14 +168,15 @@ export default function OrderCartSidebar({
         </div>
 
         {/* Sidebar Footer */}
-        <div className="order-cart-footer" id="sidebarFooter">
-          <button
-            className="ud-btn btn-thm w-full"
+        <div className={styles.footer}>
+          <PmcButton
+            variant="primary"
+            fullWidth
             onClick={handleContinue}
           >
             Continue With (${(selectedServicePrice * quantity).toFixed(2)})
-          </button>
-          <div className="text-muted mt-2 text-center text-sm">
+          </PmcButton>
+          <div className="text-gray-500 mt-2 text-center text-sm">
             You won&apos;t be charged yet
           </div>
         </div>
@@ -181,7 +184,7 @@ export default function OrderCartSidebar({
 
       {/* Overlay */}
       <div
-        className={`order-cart-overlay ${isActive ? 'active' : ''}`}
+        className={`${styles.overlay} ${isActive ? styles.active : ''}`}
         onClick={onClose}
       />
     </>

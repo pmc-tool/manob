@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { useEffect } from "react";
+import { PmcButton } from "@/components/ui/pmc-button";
 
 interface CheckoutCompleteProps {
   totalPrice: number;
@@ -26,26 +27,30 @@ export default function CheckoutComplete({
 
   return (
     <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-lg-7 text-center">
+      <div className="flex justify-center">
+        <div className="w-full lg:w-7/12 text-center">
           <CheckCircle2 size={70} className="text-success mb-4" />
           <div className="mb-4">
             <h2>Thank you for your purchase!</h2>
             <p className="text-black-50 mb-1">
               Make sure you make note of your purchase number, which is{" "}
-              <strong className="text-dark">{orderNumber}.</strong>
+              <strong className="text-gray-900">{orderNumber}.</strong>
             </p>
             <p className="text-black-50 mb-0">
               You will be receiving an email shortly with confirmation of your
               purchase. <u>You can now:</u>
             </p>
           </div>
-          <div className="d-grid d-sm-flex gap-2 justify-content-center">
-            <Link className="ud-btn btn-thm" href="/marketplace">
-              Go back shopping
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Link href="/marketplace">
+              <PmcButton variant="primary">
+                Go back shopping
+              </PmcButton>
             </Link>
-            <Link className="ud-btn btn-dark" href="/user/purchased-products">
-              See your Purchased Products
+            <Link href="/user/purchased-products">
+              <PmcButton variant="secondary">
+                See your Purchased Products
+              </PmcButton>
             </Link>
           </div>
         </div>

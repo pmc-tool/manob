@@ -114,7 +114,7 @@ export function LoadingSkeleton({
 export function CardSkeleton({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`rounded-2xl border border-gray-200 bg-white p-6 ${className}`}
+      className={`rounded-mdxl border border-gray-200 bg-white p-6 ${className}`}
     >
       <LoadingSkeleton height={24} width="60%" className="mb-4" />
       <LoadingSkeleton height={16} className="mb-2" />

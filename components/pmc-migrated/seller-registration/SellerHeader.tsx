@@ -42,8 +42,8 @@ export function SellerHeader() {
   return (
     <>
       {/* Desktop Nav */}
-      <nav className={`${styles.sellerHeader} d-none d-lg-block`}>
-        <div className="container-fluid px-lg-5">
+      <nav className={`${styles.sellerHeader} hidden lg:block`}>
+        <div className="container mx-auto px-4 lg:px-10">
           <div className={styles.sellerHeaderInner}>
             <Link href="/">
               <img src="/images/logo-manob.png" height={20} alt="manob.ai" />
@@ -76,11 +76,11 @@ export function SellerHeader() {
       </nav>
 
       {/* Mobile Nav */}
-      <div className={`${styles.mobileHeader} d-lg-none`}>
+      <div className={`${styles.mobileHeader} lg:hidden`}>
         <Link href="/">
           <img src="/images/logo-manob.png" height={20} alt="manob.ai" />
         </Link>
-        <div className="d-flex align-items-center gap-2">
+        <div className="flex items-center gap-2">
           <Link href="/my-profile">
             <Image
               src={user?.profile_image || "/images/become-seller/become_sellerProfile.png"}
@@ -101,7 +101,7 @@ export function SellerHeader() {
 
       {/* Mobile Sidebar */}
       <div
-        className={`position-fixed top-0 start-0 h-100 bg-white d-flex flex-column ${
+        className={`fixed top-0 left-0 h-full bg-white flex flex-col ${
           isActive ? "translate-x-0" : ""
         }`}
         style={{
@@ -111,25 +111,25 @@ export function SellerHeader() {
           transition: "transform 0.3s ease",
         }}
       >
-        <div className="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <div className="flex justify-between items-center p-3 border-b">
           <Link href="/">
             <img src="/images/logo-manob.png" height={20} alt="manob.ai" />
           </Link>
           <button
-            className="btn btn-link p-0"
+            className="p-0 bg-transparent border-0 hover:opacity-70"
             onClick={closeSidebarNav}
           >
             <X size={24} />
           </button>
         </div>
-        <div className="p-3 flex-grow-1 overflow-auto">
-          <ul className="list-unstyled">
+        <div className="p-3 flex-grow overflow-auto">
+          <ul className="list-none p-0 m-0">
             {menuItems.map((menu, index) => (
               <li key={index} className="mb-3">
                 <Link
                   href={menu.href}
-                  className={`text-decoration-none ${
-                    pathname === menu.href ? "text-primary fw-semibold" : "text-dark"
+                  className={`no-underline ${
+                    pathname === menu.href ? "text-primary font-semibold" : "text-gray-900"
                   }`}
                   onClick={closeSidebarNav}
                 >
@@ -139,12 +139,12 @@ export function SellerHeader() {
             ))}
           </ul>
         </div>
-        <div className="p-3 border-top">
-          <div className="d-flex flex-column gap-2" style={{ fontSize: "13px" }}>
-            <Link href="/terms" className="text-muted text-decoration-none">
+        <div className="p-3 border-t">
+          <div className="flex flex-col gap-2" style={{ fontSize: "13px" }}>
+            <Link href="/terms" className="text-gray-500 no-underline hover:text-primary">
               Terms of service
             </Link>
-            <Link href="/privacy-policy" className="text-muted text-decoration-none">
+            <Link href="/privacy-policy" className="text-gray-500 no-underline hover:text-primary">
               Privacy policy
             </Link>
           </div>
@@ -154,7 +154,7 @@ export function SellerHeader() {
       {/* Sidebar Overlay */}
       {isActive && (
         <div
-          className="position-fixed top-0 start-0 w-100 h-100"
+          className="fixed top-0 left-0 w-full h-full"
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             zIndex: 1040,

@@ -2,6 +2,9 @@
 import { BlogPage } from '@/components/pmc-migrated/blog';
 import { Metadata } from 'next';
 
+// Force dynamic rendering to avoid SSG issues with useSearchParams
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'manob.ai Blog - Insights on Code, Digital Products & Tech Trends',
   description:

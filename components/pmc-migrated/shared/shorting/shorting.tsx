@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./shorting.module.css";
 
 interface ShortingProps {
   options: { id: string; label: string }[];
@@ -15,7 +16,7 @@ export default function Shorting({
   return (
     <>
       <div
-        className="btn-group d-none d-lg-inline-flex"
+        className="hidden lg:inline-flex rounded-lg overflow-hidden border border-gray-200"
         role="group"
         aria-label="Basic radio toggle button group"
       >
@@ -23,7 +24,7 @@ export default function Shorting({
           <React.Fragment key={option.id}>
             <input
               type="radio"
-              className="btn-check"
+              className="sr-only"
               name={name}
               id={option.id}
               autoComplete="off"
@@ -31,7 +32,11 @@ export default function Shorting({
               onChange={() => onSelect(option.id)}
             />
             <label
-              className="btn btn-outline-light btn-radio"
+              className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
+                selectedOption === option.id
+                  ? "bg-primary text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
               htmlFor={option.id}
             >
               {option.label}
@@ -39,10 +44,10 @@ export default function Shorting({
           </React.Fragment>
         ))}
       </div>
-      <div className="align-items-center d-flex dark-color gap-2 text-nowrap d-lg-none">
+      <div className="flex items-center text-gray-900 gap-2 whitespace-nowrap lg:hidden">
         <span>Sort by</span>
         <select
-          className="form-select"
+          className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           value={selectedOption}
           onChange={(e) => onSelect(e.target.value)}
         >

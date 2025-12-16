@@ -6,7 +6,8 @@ import Link from "next/link";
 import { Plus, X, RefreshCw, SlidersHorizontal, Search, ChevronDown } from "lucide-react";
 import { Skeleton, Slider, InputNumber } from "antd";
 import JobCard from "./job-card";
-import { mockJobs, calculateTimeAgo } from "@/lib/mocks/job-list.mock";
+import JobDetailDrawer from "../job-details/JobDetailDrawer";
+import { mockJobs, calculateTimeAgo, getJobDetails, JobDetails } from "@/lib/mocks/job-list.mock";
 import { useAuth } from "@/context/AuthContext";
 import styles from "./JobListPage.module.css";
 
@@ -60,6 +61,10 @@ export default function JobListPage() {
     location: [],
   });
   const { isAuthenticated, openLoginModal } = useAuth();
+
+  // Drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<JobDetails | null>(null);
 
   const isLoading = false;
   const error = null;
@@ -117,7 +122,25 @@ export default function JobListPage() {
   };
 
   const handleDrawer = (job: any) => {
-    console.log("Open job details:", job);
+    const jobDetails = getJobDetails(job.id);
+    if (jobDetails) {
+      setSelectedJob(jobDetails);
+      setIsDrawerOpen(true);
+    }
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedJob(null);
+  };
+
+  const handleBidClick = () => {
+    if (!isAuthenticated) {
+      openLoginModal();
+      return;
+    }
+    // TODO: Open bid modal
+    console.log("Open bid modal for job:", selectedJob?.id);
   };
 
   const hasActiveFilters =
@@ -463,6 +486,14 @@ export default function JobListPage() {
       {isFilterActive && (
         <div className={styles.overlay} onClick={closeFilter} />
       )}
+
+      {/* Job Details Drawer */}
+      <JobDetailDrawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        jobData={selectedJob}
+        onBidClick={handleBidClick}
+      />
     </div>
   );
 }

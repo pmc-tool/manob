@@ -78,7 +78,7 @@ export default function Header() {
       </Link>
 
       {/* RIGHT SIDE ACTIONS */}
-      <div className="flex items-center gap-1.5 ms-auto">
+      <div className="flex items-center gap-1.5 ml-auto">
         <Button
           size="small"
           color="default"

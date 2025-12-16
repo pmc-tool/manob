@@ -9,6 +9,10 @@ import { RenameModalProvider } from "@/context/RenameModalContext";
 import { SettingsModalProvider } from "@/context/SettingsModalContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { SocketProvider } from "@/context/SocketProvider";
+import StoreProvider from "./StoreProvider";
+import { Suspense } from "react";
+
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -46,8 +50,14 @@ export default function RootLayout({
               <CartProvider>
                 <RenameModalProvider>
                   <SettingsModalProvider>
-                    <Toaster position="top-right" />
-                    {children}
+                    <Suspense fallback={null}>
+                      <StoreProvider>
+                        <SocketProvider>
+                          <Toaster position="top-right" />
+                          {children}
+                        </SocketProvider>
+                      </StoreProvider>
+                    </Suspense>
                   </SettingsModalProvider>
                 </RenameModalProvider>
               </CartProvider>

@@ -1,27 +1,17 @@
-// MIGRATION: Service list page with filters
+// MIGRATION: Service list page with centralized API
 'use client';
 
-import { Suspense, useState, useMemo } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
-import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
-import { mockCategories } from '@/lib/mocks/categories.mock';
+import { getServices, type ServiceListItem, type ServiceFilters } from '@/lib/api/services';
 import styles from './page.module.css';
-
-// MOCK: Combine all services for the list
-const allServices = [...mockFeaturedServices, ...mockTrendingServices];
-
-// MOCK: Filter categories for the dropdown
-const filterCategories = mockCategories.map((cat) => ({
-  id: cat.slug,
-  label: cat.title,
-  count: Math.floor(Math.random() * 50) + 5,
-}));
 
 export default function ServiceListPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>}>
       <ServiceListContent />
     </Suspense>
   );
@@ -29,7 +19,6 @@ export default function ServiceListPage() {
 
 function ServiceListContent() {
   const searchParams = useSearchParams();
-  const initialFilter = searchParams.get('filter');
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     categories: [],
@@ -38,52 +27,65 @@ function ServiceListContent() {
     sortBy: 'newest',
   });
 
-  // MOCK: Filter and sort services
-  const filteredServices = useMemo(() => {
-    let result = [...allServices];
+  // Data states
+  const [services, setServices] = useState<ServiceListItem[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    // Filter by category
-    if (activeFilters.categories.length > 0) {
-      result = result.filter((s) =>
-        activeFilters.categories.includes(s.category_id || '')
-      );
-      // If no matches (mock data), show all
-      if (result.length === 0) result = [...allServices];
+  // Fetch services using centralized API
+  const fetchServices = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Build filters from activeFilters state
+      const filters: ServiceFilters = {
+        page: 1,
+        limit: 50,
+        sortBy: activeFilters.sortBy as ServiceFilters['sortBy'],
+      };
+
+      // Add category filter if selected
+      if (activeFilters.categories.length === 1) {
+        filters.categoryId = activeFilters.categories[0];
+      }
+
+      // Add price range filter
+      if (activeFilters.priceRange) {
+        filters.minPrice = activeFilters.priceRange.min;
+        filters.maxPrice = activeFilters.priceRange.max;
+      }
+
+      // Add rating filter
+      if (activeFilters.rating) {
+        filters.minRating = activeFilters.rating;
+      }
+
+      const response = await getServices(filters);
+
+      // Apply multi-category filter client-side (API supports single category)
+      let serviceList = response.services;
+      if (activeFilters.categories.length > 1) {
+        serviceList = serviceList.filter((s) =>
+          activeFilters.categories.includes(s.category_id || '')
+        );
+      }
+
+      setServices(serviceList);
+      setCategories(response.categories);
+    } catch (err) {
+      console.error('Failed to fetch services:', err);
+      setError('Failed to load services. Please try again.');
+      setServices([]);
+    } finally {
+      setLoading(false);
     }
-
-    // Filter by price
-    if (activeFilters.priceRange) {
-      result = result.filter(
-        (s) => s.price >= activeFilters.priceRange!.min && s.price <= activeFilters.priceRange!.max
-      );
-    }
-
-    // Filter by rating
-    if (activeFilters.rating) {
-      result = result.filter((s) => s.avg_rating >= activeFilters.rating!);
-    }
-
-    // Sort
-    switch (activeFilters.sortBy) {
-      case 'popular':
-        result.sort((a, b) => b.total_sales - a.total_sales);
-        break;
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        result.sort((a, b) => b.avg_rating - a.avg_rating);
-        break;
-      default:
-        // newest - keep original order
-        break;
-    }
-
-    return result;
   }, [activeFilters]);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
 
   return (
     <div className={styles.container}>
@@ -95,17 +97,32 @@ function ServiceListContent() {
 
       {/* Filter Bar */}
       <FilterBar
-        categories={filterCategories}
+        categories={categories}
         activeFilters={activeFilters}
         onFiltersChange={setActiveFilters}
-        totalResults={filteredServices.length}
+        totalResults={services.length}
         listingType="services"
       />
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className={styles.emptyState}>
+          <p>{error}</p>
+          <button onClick={fetchServices}>Try again</button>
+        </div>
+      )}
+
       {/* Service Grid */}
-      {filteredServices.length > 0 ? (
+      {!loading && !error && services.length > 0 && (
         <div className={styles.grid}>
-          {filteredServices.map((service) => (
+          {services.map((service) => (
             <ServiceCard
               key={service.id}
               id={service.id}
@@ -128,7 +145,10 @@ function ServiceListContent() {
             />
           ))}
         </div>
-      ) : (
+      )}
+
+      {/* Empty State */}
+      {!loading && !error && services.length === 0 && (
         <div className={styles.emptyState}>
           <p>No services found matching your filters.</p>
           <button onClick={() => setActiveFilters({ categories: [], priceRange: null, rating: null, sortBy: 'newest' })}>

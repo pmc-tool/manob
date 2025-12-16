@@ -8,6 +8,7 @@ import BillingModal from "./BillingModal";
 import PmcWallet from "./PmcWallet";
 import PmcStripe from "./PmcStripe";
 import { useCart } from "@/context/CartContext";
+import { PmcButton, SecondaryButton } from "@/components/ui/pmc-button";
 
 interface IBillingInfo {
   id?: string;
@@ -102,68 +103,64 @@ export default function Payment({ onClick, isSaving }: PaymentProps) {
 
   return (
     <>
-      <div className="mb-4 pb-3 border-2 border-bottom">
-        <h2 className="fw-medium fz21 mb-0">Billing & Payment</h2>
-        <p className="mb-0">
+      <div className="mb-4 pb-3 border-b border-gray-200">
+        <h2 className="font-medium text-xl mb-0">Billing & Payment</h2>
+        <p className="mb-0 text-gray-600">
           Billing & Payment involves managing invoices, payment methods, and
           transaction processing for services.
         </p>
       </div>
-      <div className="row g-4">
-        <div className="col-lg-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-8">
           <div
-            className="alert alert-warning d-flex align-items-center border-0"
+            className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded flex items-center"
             role="alert"
           >
-            <Info size={26} className="flex-shrink-0 me-3" />
+            <Info size={26} className="shrink-0 mr-3 text-yellow-600" />
             <div>
-              <div>
+              <div className="text-yellow-800">
                 This money will be kept in the PMC, paid to the service provider
                 after the order is completed
               </div>
             </div>
           </div>
-          <div className="checkout_form">
+          <div className="mt-4">
             <div>
               <h5 className="mb-3">Billing details</h5>
             </div>
-            <div className="border p-3 p-xl-4 rounded-3">
+            <div className="border p-3 xl:p-4 rounded-lg">
               {!billingInfo?.id ? (
-                <div className="col-auto mb-4">
-                  <button
-                    type="button"
-                    className="btn-default px-3 py-2 rounded ud-btn"
+                <div className="mb-4">
+                  <SecondaryButton
                     onClick={() => {
                       setShowModal(true);
                       setIsUpdate(false);
                     }}
+                    icon={<Pencil size={16} />}
                   >
                     Add
-                    <Pencil className="ms-2" size={16} />
-                  </button>
+                  </SecondaryButton>
                 </div>
               ) : (
-                <div className="row g-3 align-items-center">
-                  <div className="col-auto">
+                <div className="flex gap-3 items-center">
+                  <div className="flex-shrink-0">
                     <MapPin size={32} />
                   </div>
-                  <div className="col">
+                  <div className="flex-1">
                     <h5 className="mb-1">{billingInfo.country}</h5>
                     <div>{billingInfo.email}</div>
                     <div>{billingInfo.address_one}</div>
                   </div>
-                  <div className="col-auto">
-                    <button
-                      type="button"
-                      className="btn-default px-3 py-2 rounded ud-btn"
+                  <div className="flex-shrink-0">
+                    <SecondaryButton
                       onClick={() => {
                         setShowModal(true);
                         setIsUpdate(true);
                       }}
+                      icon={<Pencil size={16} />}
                     >
                       Edit
-                      <Pencil className="ms-2" size={16} />
-                    </button>
+                    </SecondaryButton>
                   </div>
                 </div>
               )}
@@ -191,58 +188,59 @@ export default function Payment({ onClick, isSaving }: PaymentProps) {
             />
           </div>
         </div>
-        <div className="col-lg-4 ps-xl-5">
-          <div className="bgc-gray-4 mb-3 p-4 rounded-4">
-            <div className="p-sm-2 p-lg-0 p-xl-2">
-              <h5 className="border-bottom pb-3 mb-4 fz19">Order summary</h5>
-              <ul className="d-flex flex-column fs-sm gap-2 list-unstyled mb-0">
-                <li className="d-flex justify-content-between">
+        <div className="lg:col-span-4 xl:pl-5">
+          <div className="bg-gray-100 mb-3 p-4 rounded-mdxl">
+            <div className="sm:p-2 lg:p-0 xl:p-2">
+              <h5 className="border-b pb-3 mb-4 text-[19px] font-semibold">Order summary</h5>
+              <ul className="flex flex-col text-sm gap-2 list-none m-0 p-0">
+                <li className="flex justify-between">
                   Selected Item
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     {cartTotals.total_selected_items}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Total price
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     ${cartTotals.total_price?.toFixed(2)}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Extended support fee
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     ${cartTotals.extended_support_fee?.toFixed(2)}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Subtotal
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     ${cartTotals.subtotal_price?.toFixed(2)}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Discount
-                  <span className="text-danger fw-medium">
+                  <span className="text-red-600 font-medium">
                     ${cartTotals.total_discount}
                   </span>
                 </li>
               </ul>
-              <div className="border-top pt-4 mt-4">
-                <div className="d-flex justify-content-between">
-                  <span className="fs-sm">Total payable</span>
-                  <span className="h5 fz18 mb-0">
+              <div className="border-t pt-4 mt-4">
+                <div className="flex justify-between">
+                  <span className="text-sm">Total payable</span>
+                  <span className="text-lg font-semibold">
                     ${cartTotals.total_payable?.toFixed(2)}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  className="btn-thm d-block ud-btn w-100 mt-4"
+                <PmcButton
+                  variant="primary"
+                  fullWidth
+                  className="mt-4"
                   onClick={handlePaymentMethodContinue}
                   disabled={(!isPaidByStripe && !isPaidByPmcWallet) || isSaving}
+                  icon={<ArrowRight size={16} />}
                 >
                   {isSaving ? "Saving ..." : "Continue Payment"}
-                  <ArrowRight size={16} className="ms-2" />
-                </button>
+                </PmcButton>
               </div>
             </div>
           </div>

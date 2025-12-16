@@ -14,7 +14,7 @@ export default function Status({
 }: ShortingProps) {
   return (
     <div
-      className="btn-group d-lg-inline-flex"
+      className="inline-flex lg:inline-flex rounded-lg overflow-hidden border border-gray-200"
       role="group"
       aria-label="Basic radio toggle button group"
     >
@@ -22,7 +22,7 @@ export default function Status({
         <React.Fragment key={option.id}>
           <input
             type="radio"
-            className="btn-check"
+            className="sr-only peer"
             name={name}
             id={option.id}
             autoComplete="off"
@@ -30,7 +30,11 @@ export default function Status({
             onChange={() => onSelect(option.id)}
           />
           <label
-            className="btn btn-outline-light btn-radio"
+            className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
+              selectedOption === option.id
+                ? "bg-primary text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
             htmlFor={option.id}
           >
             {option.label}

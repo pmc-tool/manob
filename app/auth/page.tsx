@@ -53,31 +53,31 @@ function AuthPageContent() {
 
   return (
     <div className="container">
-      <section className={`align-items-center d-flex ${styles.authWrap}`}>
-        <div className={`flex-grow-1 m-auto ${styles.authInner}`}>
+      <section className={`items-center flex ${styles.authWrap}`}>
+        <div className={`flex-grow m-auto ${styles.authInner}`}>
           <div className="auth-header mb-5">
-            <h4 className="fw-bold text-center mb-0">
+            <h4 className="font-bold text-center mb-0">
               Join as a client or seller
             </h4>
           </div>
           <div className="auth-body">
             <div className="auth-form">
-              <div className="g-4 justify-content-center row">
-                <div className="col-sm-6 col-md-5 col-lg-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-items-center max-w-2xl mx-auto">
+                <div className="w-full max-w-xs">
                   <div
-                    className={`form-check-radio bg-white border position-relative ps-0 rounded ${
-                      selectedOption === "client" ? "active" : ""
+                    className={`bg-white border relative pl-0 rounded transition-all ${
+                      selectedOption === "client" ? "border-primary ring-2 ring-primary/20" : ""
                     }`}
                   >
                     <input
                       type="radio"
                       id="client"
-                      name="form-check-radio"
-                      className="form-check-input"
+                      name="user-type-radio"
+                      className="absolute opacity-0 w-full h-full cursor-pointer z-10"
                       onChange={handleOptionChange}
                     />
                     <label
-                      className="custom-control-label p-3"
+                      className="block p-3 cursor-pointer"
                       htmlFor="client"
                     >
                       <svg
@@ -141,27 +141,27 @@ function AuthPageContent() {
                           d="M3 18.45v-.9a7 7 0 017-7h.09a6.73 6.73 0 011.91.27"
                         />
                       </svg>
-                      <span className="d-block fw-medium fz21 lh-sm text-dark">
+                      <span className="block font-medium text-[21px] leading-tight text-gray-900">
                         I&apos;m a client, hiring for a project
                       </span>
                     </label>
                   </div>
                 </div>
-                <div className="col-sm-6 col-md-5 col-lg-4">
+                <div className="w-full max-w-xs">
                   <div
-                    className={`form-check-radio bg-white border position-relative ps-0 rounded ${
-                      selectedOption === "seller" ? "active" : ""
+                    className={`bg-white border relative pl-0 rounded transition-all ${
+                      selectedOption === "seller" ? "border-primary ring-2 ring-primary/20" : ""
                     }`}
                   >
                     <input
                       type="radio"
                       id="seller"
-                      name="form-check-radio"
-                      className="form-check-input"
+                      name="user-type-radio"
+                      className="absolute opacity-0 w-full h-full cursor-pointer z-10"
                       onChange={handleOptionChange}
                     />
                     <label
-                      className="custom-control-label p-3"
+                      className="block p-3 cursor-pointer"
                       htmlFor="seller"
                     >
                       <svg
@@ -226,7 +226,7 @@ function AuthPageContent() {
                           d="M3 18.45v-.9a7 7 0 017-7h.09a6.94 6.94 0 013.79 1.12"
                         />
                       </svg>
-                      <span className="d-block fw-medium fz21 lh-sm text-dark">
+                      <span className="block font-medium text-[21px] leading-tight text-gray-900">
                         I&apos;m a seller, I will sell my products
                       </span>
                     </label>
@@ -239,18 +239,18 @@ function AuthPageContent() {
             <Link href={getLinkHref()}>
               <button
                 type="button"
-                className={`ud-btn btn-thm ${styles.JoinTheMarketplace}`}
+                className={`inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl bg-primary text-white shadow-md hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${styles.JoinTheMarketplace}`}
                 disabled={!selectedOption}
               >
                 {getButtonText()}
               </button>
             </Link>
           </div>
-          <div className="mt-3 text-center auth-text fz15">
+          <div className="mt-3 text-center auth-text text-[15px]">
             Already have an account?{" "}
             <Link
               href="/auth/sign-in"
-              className="fw-medium text-decoration-underline text-primary"
+              className="font-medium underline text-primary"
             >
               Log In
             </Link>

@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { BlogPost, formatBlogDate } from '@/lib/mocks/blog.mock';
+import { BlogPost, formatBlogDate } from '@/lib/api/blog';
 
 interface BlogHeroCardProps {
   post: BlogPost;
@@ -11,11 +11,11 @@ interface BlogHeroCardProps {
 
 export default function BlogHeroCard({ post }: BlogHeroCardProps) {
   return (
-    <div className="blog-hero-card card mb-5 border-0 shadow rounded-lg overflow-hidden">
+    <div className="blog-hero-card bg-white rounded-lg shadow mb-5 border-0 overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-12">
         {/* Image Section */}
         <div className="lg:col-span-8 relative">
-          <div className="blog-hero-image position-relative overflow-hidden">
+          <div className="blog-hero-image relative overflow-hidden">
             <Link href={`/blog/${post.slug || post.id}`}>
               <Image
                 src={post.cover_image}
@@ -44,13 +44,13 @@ export default function BlogHeroCard({ post }: BlogHeroCardProps) {
 
         {/* Content Section */}
         <div className="lg:col-span-4 flex flex-col">
-          <div className="card-body p-6 flex flex-col h-full">
-            <h3 className="blog-card-title fw-semibold fz22 mb-4">
-              <Link href={`/blog/${post.slug || post.id}`} className="text-dark hover:text-primary">
+          <div className="p-6 flex flex-col h-full">
+            <h3 className="blog-card-title font-semibold text-[22px] mb-4">
+              <Link href={`/blog/${post.slug || post.id}`} className="text-gray-900 hover:text-primary">
                 {post.title}
               </Link>
             </h3>
-            <p className="card-text text-gray-600 fz15 line-clamp-4 flex-grow">
+            <p className="text-gray-600 text-[15px] line-clamp-4 flex-grow">
               {post.short_description}
             </p>
 
@@ -66,11 +66,11 @@ export default function BlogHeroCard({ post }: BlogHeroCardProps) {
                     className="rounded-full object-cover"
                     unoptimized
                   />
-                  <span className="fz13 text-gray-600">
+                  <span className="text-[13px] text-gray-600">
                     {post.user_meta.first_name} {post.user_meta.last_name}
                   </span>
                 </div>
-                <span className="fz13 text-gray-500 uppercase font-medium">
+                <span className="text-[13px] text-gray-500 uppercase font-medium">
                   {formatBlogDate(post.updated_at)}
                 </span>
               </div>

@@ -7,6 +7,7 @@ import { ArrowRight, ChevronLeft } from "lucide-react";
 import { Skeleton } from "antd";
 import CartItem from "./CartItem";
 import { useCart } from "@/context/CartContext";
+import { PmcButton } from "@/components/ui/pmc-button";
 
 const licenseOptions = [
   { value: "REGULAR", title: "Regular License" },
@@ -63,21 +64,21 @@ export default function Cart({ onClick }: CartProps) {
 
   return (
     <>
-      <div className="mb-5 pb-3 border-2 border-bottom">
-        <h2 className="fw-medium fz21 mb-0">Shopping Cart</h2>
+      <div className="mb-5 pb-3 border-b border-gray-200">
+        <h2 className="font-medium text-xl mb-0">Shopping Cart</h2>
       </div>
 
-      <div className="row g-4">
-        <div className="col-lg-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div className="lg:col-span-8">
           {/* Cart Items List */}
-          <ul className="cart-items__list list-unstyled m-0 p-0">
+          <ul className="list-none m-0 p-0">
             {isLoading ? (
               Array(3)
                 .fill(0)
                 .map((_, idx) => (
                   <div
                     key={idx}
-                    className="align-items-start border mb-3 overflow-hidden p-3 p-lg-4 position-relative rounded-4 shadow-sm"
+                    className="items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-mdxl shadow-sm"
                     style={{ backgroundColor: "#FCFCFC" }}
                   >
                     <Skeleton active paragraph={{ rows: 3 }} />
@@ -118,65 +119,67 @@ export default function Cart({ onClick }: CartProps) {
           <div className={`${cartItems?.length === 0 && "text-center"} mt-2`}>
             <Link
               href="/marketplace"
-              className="align-items-center d-inline-flex fw-medium gap-2 text-primary"
+              className="inline-flex items-center font-medium gap-2 text-primary"
             >
               <ChevronLeft size={16} />
               Continue Shopping
             </Link>
           </div>
         </div>
-        <div className="col-lg-4 ps-xl-5">
-          <div className="bgc-gray-4 mb-3 p-4 rounded-4">
-            <div className="p-sm-2 p-lg-0 p-xl-2">
-              <h5 className="border-bottom pb-3 mb-4 fz19">Order summary</h5>
-              <ul className="d-flex flex-column fs-sm gap-2 list-unstyled mb-0">
-                <li className="d-flex justify-content-between">
+        <div className="lg:col-span-4 xl:pl-5">
+          <div className="bg-gray-100 mb-3 p-4 rounded-mdxl">
+            <div className="sm:p-2 lg:p-0 xl:p-2">
+              <h5 className="border-b pb-3 mb-4 text-[19px] font-semibold">Order summary</h5>
+              <ul className="flex flex-col text-sm gap-2 list-none mb-0">
+                <li className="flex justify-between">
                   Selected Item
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     {cartTotals.total_selected_items}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Total price
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     ${cartTotals.total_price?.toFixed(2)}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Extended support fee
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     ${cartTotals.extended_support_fee?.toFixed(2)}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Subtotal
-                  <span className="text-dark-emphasis fw-medium">
+                  <span className="text-gray-900 font-medium">
                     ${cartTotals.subtotal_price?.toFixed(2)}
                   </span>
                 </li>
-                <li className="d-flex justify-content-between">
+                <li className="flex justify-between">
                   Discount
-                  <span className="text-danger fw-medium">
+                  <span className="text-red-500 font-medium">
                     ${cartTotals.total_discount}
                   </span>
                 </li>
               </ul>
-              <div className="border-top pt-4 mt-4">
-                <div className="d-flex justify-content-between">
-                  <span className="fs-sm">Total payable</span>
-                  <span className="h5 fz18 mb-0">
+              <div className="border-t pt-4 mt-4">
+                <div className="flex justify-between">
+                  <span className="text-sm">Total payable</span>
+                  <span className="text-lg font-semibold mb-0">
                     ${cartTotals.total_payable?.toFixed(2)}
                   </span>
                 </div>
-                <button
+                <PmcButton
+                  variant="primary"
+                  fullWidth
                   disabled={!isSelected}
-                  type="button"
-                  className="btn-thm d-block ud-btn w-100 mt-4"
                   onClick={onClick}
+                  className="mt-4"
+                  icon={<ArrowRight size={16} />}
+                  iconPosition="end"
                 >
                   Proceed to checkout
-                  <ArrowRight size={16} className="ms-2" />
-                </button>
+                </PmcButton>
               </div>
             </div>
           </div>

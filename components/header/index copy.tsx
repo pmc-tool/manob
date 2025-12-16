@@ -352,14 +352,14 @@ export default function Header() {
             </p>
             <ChevronDown className="h-3 w-3 text-foreground/50" />
           </div>
-          <p className="hidden w-full min-w-0 truncate text-left text-xs text-muted-foreground md:flex">
+          <p className="hidden w-full min-w-0 truncate text-left text-xs text-gray-500-foreground md:flex">
             Previewing last saved version
           </p>
         </div>
       </button>
 
       {/* RIGHT SIDE ACTIONS */}
-      <div className="flex items-center gap-1.5 ms-auto">
+      <div className="flex items-center gap-1.5 ml-auto">
         <Button
           size="small"
           color="default"

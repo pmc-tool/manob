@@ -3,6 +3,7 @@
 export interface BlogAuthor {
   first_name: string;
   last_name: string;
+  user_name?: string;
   profile_image: string;
 }
 

@@ -5,7 +5,7 @@ import 'swiper/css';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import BlogGridCard from './BlogGridCard';
-import { BlogPost } from '@/lib/mocks/blog.mock';
+import { BlogPost } from '@/lib/api/blog';
 
 interface RelatedPostsProps {
   title: string;

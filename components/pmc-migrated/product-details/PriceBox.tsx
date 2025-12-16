@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Check, ShoppingCart, ChevronRight } from 'lucide-react';
 import { License, formatPrice } from '@/lib/mocks/product-details.mock';
+import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
 interface PriceBoxProps {
   licenses: License[];
@@ -35,28 +36,12 @@ export default function PriceBox({
   const [extendSupport, setExtendSupport] = useState(false);
   const [licenseDropdownOpen, setLicenseDropdownOpen] = useState(false);
   const [downloadDropdownOpen, setDownloadDropdownOpen] = useState(false);
-  const [showBottomBar, setShowBottomBar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     if (licenses.length > 0) {
       setSelectedLicense(licenses[0]);
     }
   }, [licenses]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setShowBottomBar(false);
-      } else {
-        setShowBottomBar(true);
-      }
-      setLastScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
 
   const handleLicenseSelect = (license: License) => {
     setSelectedLicense(license);
@@ -106,17 +91,19 @@ export default function PriceBox({
                 <div className="flex-grow ml-3">
                   <h6 className="font-semibold">You have bought this item.</h6>
                   <div className="flex flex-wrap gap-2">
-                    <Link href="/freelancer-list" className="ud-btn btn-thm fz13 px-3 py-2 rounded-lg font-medium">
-                      Hire Freelancer
+                    <Link href="/freelancer-list">
+                      <PmcButton variant="primary" className="text-sm">
+                        Hire Freelancer
+                      </PmcButton>
                     </Link>
                     <div className="relative flex-grow">
-                      <button
-                        type="button"
+                      <SecondaryButton
                         onClick={() => setDownloadDropdownOpen(!downloadDropdownOpen)}
-                        className="ud-btn btn-soft-primary dropdown-toggle fz13 px-3 py-2 rounded-3 fw-medium w-full"
+                        fullWidth
+                        className="text-sm"
                       >
                         Download
-                      </button>
+                      </SecondaryButton>
                       {downloadDropdownOpen && dropdownItems && (
                         <ul className="absolute right-0 mt-1 w-full bg-white rounded-lg shadow-lg border z-10">
                           {dropdownItems.map((item, index) => (
@@ -145,14 +132,12 @@ export default function PriceBox({
           <div className="flex flex-wrap items-center gap-2 justify-between">
             {/* License dropdown - Original: dropdown license-dropdown */}
             <div className="license-dropdown relative">
-              <button
+              <SecondaryButton
                 id="license-button"
-                type="button"
                 onClick={() => setLicenseDropdownOpen(!licenseDropdownOpen)}
-                className="ud-btn btn-soft-primary dropdown-toggle px-3 py-2 rounded-2"
               >
                 {selectedLicense?.type || 'Select License'}
-              </button>
+              </SecondaryButton>
               {licenseDropdownOpen && (
                 <ul className="absolute left-0 mt-1 w-80 bg-white rounded-lg shadow-lg border z-10">
                   {licenses.map((license) => (
@@ -164,24 +149,24 @@ export default function PriceBox({
                         }`}
                       >
                         <div className="flex items-center gap-1 mb-2">
-                          <h5 className="fz16 font-bold mb-0">{license.type}</h5>
+                          <h5 className="text-base font-bold mb-0">{license.type}</h5>
                           {selectedLicense?.type === license.type && (
                             <span className="badge bg-green-500 text-white text-xs px-2 py-0.5 rounded selected-badge">
                               Selected
                             </span>
                           )}
-                          <div className="font-bold fz21 ml-auto">
+                          <div className="font-bold text-[21px] ml-auto">
                             <sup>$</sup>
                             {formatPrice(license.price)}
                           </div>
                         </div>
-                        <p className="fz14 leading-normal text-gray-600 mb-0">{license.description}</p>
+                        <p className="text-sm leading-normal text-gray-600 mb-0">{license.description}</p>
                       </button>
                     </li>
                   ))}
                   <li>
                     <div className="text-center py-2 border-t">
-                      <Link href="/licenses" className="font-medium fz14 text-primary flex items-center justify-center">
+                      <Link href="/licenses" className="font-medium text-sm text-primary flex items-center justify-center">
                         View license details
                         <ChevronRight className="h-4 w-4" />
                       </Link>
@@ -194,12 +179,12 @@ export default function PriceBox({
             {/* Product Price */}
             <div className="price flex items-center gap-2 mb-0">
               {selectedLicense?.oldPrice && selectedLicense.oldPrice > 0 && (
-                <div id="old-price" className="font-normal fz19 text-gray-400 line-through">
+                <div id="old-price" className="font-normal text-[19px] text-gray-400 line-through">
                   <sup>$</sup>
                   {formatPrice(selectedLicense.oldPrice)}
                 </div>
               )}
-              <span id="current-price" className="text-primary fz32 font-bold">
+              <span id="current-price" className="text-primary text-[32px] font-bold">
                 <sup>$</sup>
                 {formatPrice(totalPrice)}
               </span>
@@ -209,7 +194,7 @@ export default function PriceBox({
           <hr className="opacity-100 mb-3 mt-2" />
 
           <div className="h5 mb-2 font-semibold">{productName}</div>
-          {productDescription && <p className="text fz14">{productDescription}</p>}
+          {productDescription && <p className="text text-sm">{productDescription}</p>}
 
           <hr className="opacity-100 mb-3" />
 
@@ -239,13 +224,13 @@ export default function PriceBox({
           <hr className="opacity-100 mb-3 mt-3" />
 
           {/* Extend Support */}
-          <div className="extend-support form-check mb-3">
+          <div className="mb-3">
             <label className="flex items-center font-medium gap-2 leading-none text-gray-700 cursor-pointer">
               <input
                 type="checkbox"
                 checked={extendSupport}
                 onChange={handleExtendSupportChange}
-                className="form-check-input w-4 h-4"
+                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <span>Extend support to 12 months</span>
               <span className="flex items-end gap-2 ml-auto">
@@ -254,7 +239,7 @@ export default function PriceBox({
                     ${formatPrice(selectedLicense.extendSupportOldPrice)}
                   </span>
                 )}
-                <span id="extend-support-current-price" className="font-bold fz19">
+                <span id="extend-support-current-price" className="font-bold text-[19px]">
                   ${formatPrice(selectedLicense?.extendSupportPrice || 0)}
                 </span>
               </span>
@@ -263,48 +248,22 @@ export default function PriceBox({
 
           {/* Add to Cart Button */}
           <div className="grid gap-2">
-            <button
+            <PmcButton
+              variant="primary"
               onClick={handleAddToCart}
               disabled={!canAddToCart}
-              className={`ud-btn btn-thm ${!canAddToCart ? 'opacity-50 cursor-not-allowed' : ''}`}
+              icon={<ShoppingCart size={18} />}
             >
               Add To Cart
-              <ShoppingCart size={18} className="ms-2 inline-block" />
-            </button>
+            </PmcButton>
           </div>
 
-          <div className="font-mono italic fz13 mt-1 text-center text-gray-500">
+          <div className="font-mono italic text-[13px] mt-1 text-center text-gray-500">
             Price is in US dollars and excludes tax and handling fees
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Bar */}
-      <div
-        className={`fixed bottom-0 left-0 w-full bg-white z-30 py-3 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] transition-transform duration-300 ${
-          showBottomBar ? 'translate-y-0' : 'translate-y-full'
-        }`}
-      >
-        <div className="container mx-auto px-4">
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={!canAddToCart}
-            className={`ud-btn btn-thm w-full py-2 flex items-center justify-center gap-2 ${
-              !canAddToCart ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            Add To Cart
-            <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="currentColor" viewBox="0 0 576 512">
-              <path d="M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM252 160c0 11 9 20 20 20l44 0 0 44c0 11 9 20 20 20s20-9 20-20l0-44 44 0c11 0 20-9 20-20s-9-20-20-20l-44 0 0-44c0-11-9-20-20-20s-20 9-20 20l0 44-44 0c-11 0-20 9-20 20z" />
-            </svg>
-            <span className="fz19">
-              <sup>$</sup>
-              {formatPrice(totalPrice)}
-            </span>
-          </button>
-        </div>
-      </div>
     </>
   );
 }

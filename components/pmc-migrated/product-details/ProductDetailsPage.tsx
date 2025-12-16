@@ -1,8 +1,8 @@
 // Product Details Page - Main component (matching original PMC design)
 'use client';
 
-import { useState } from 'react';
-import { FileText, MessageSquare, Star, Info } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { FileText, MessageSquare, Star, Info, Loader2 } from 'lucide-react';
 import ItemHeader from './ItemHeader';
 import ProductPreview from './ProductPreview';
 import ItemDescription from './ItemDescription';
@@ -20,46 +20,352 @@ import {
   License,
   Review,
   Comment,
-  mockProduct,
-  mockLicenses,
-  mockReviews,
-  mockComments,
   mockRelatedProducts,
-  mockReviewStats,
 } from '@/lib/mocks/product-details.mock';
 
-interface ProductDetailsPageProps {
-  product?: ProductData;
-  licenses?: License[];
-  reviews?: Review[];
-  comments?: Comment[];
-  relatedProducts?: typeof mockRelatedProducts;
-  reviewStats?: typeof mockReviewStats;
+const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
+const API_URL_INV = process.env.NEXT_PUBLIC_API_URL_INV || '';
+const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
+
+// Helper to construct proper image URLs
+const getImageUrl = (imagePath: string | undefined | null): string => {
+  if (!imagePath) return '';
+  // If already a full URL, return as-is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  // Remove leading slash if present to avoid double slashes
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  return `${S3_BUCKET}/${cleanPath}`;
+};
+
+// API Response interfaces
+interface ApiFeedProduct {
+  id: string;
+  product_name: string;
+  slug: string;
+  mrp: number;
+  price: number;
+  image: string;
+  short_description: string;
+  avg_rating: string;
+  total_reviews: number;
+  total_sales: number;
+  is_onsale: boolean;
+  is_liked: boolean;
+  updated_at: string;
+  primary_category?: { id: number; name: string; slug: string };
+  secondary_category?: { id: number; name: string; slug: string };
+  user?: {
+    sub: string;
+    first_name: string;
+    last_name: string;
+    user_name: string;
+    email: string;
+    profile_image: string;
+  };
 }
 
-export default function ProductDetailsPage({
-  product = mockProduct,
-  licenses = mockLicenses,
-  reviews = mockReviews,
-  comments = mockComments,
-  relatedProducts = mockRelatedProducts,
-  reviewStats = mockReviewStats,
-}: ProductDetailsPageProps) {
+interface ApiInvProduct {
+  id: string;
+  product_name: string;
+  short_description: string;
+  full_description: string;
+  product_demo_url: string;
+  product_doc_url: string;
+  price: number;
+  extended_price: number;
+  current_status: string;
+  created_at?: string;
+  author_id: string;
+  product_preview_file?: string;
+  thumbnail_images?: string[];
+}
+
+interface ApiReview {
+  id: string;
+  review_rating: string;
+  review_content: string;
+  reply_content?: string;
+  created_at: string;
+  reviewer_meta: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    user_name: string;
+    avatar: string;
+    member_since: string;
+  };
+}
+
+interface ApiComment {
+  id: string;
+  content: string;
+  created_at: string;
+  user_meta: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    user_name: string;
+    avatar: string;
+  };
+  replies?: Array<{
+    id: string;
+    content: string;
+    created_at: string;
+    is_author: boolean;
+    user_meta: {
+      first_name: string;
+      last_name: string;
+      user_name: string;
+      avatar: string;
+    };
+  }>;
+}
+
+interface ApiReviewStats {
+  total_reviews: number;
+  avg_rating: number;
+  rating_sequence: {
+    one_star: string;
+    two_star: string;
+    three_star: string;
+    four_star: string;
+    five_star: string;
+  };
+}
+
+interface ProductDetailsPageProps {
+  slug: string;
+}
+
+export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
   const [activeTab, setActiveTab] = useState<'details' | 'comments' | 'reviews'>('details');
   const [reviewPage, setReviewPage] = useState(1);
   const [commentPage, setCommentPage] = useState(1);
   const [reviewFilter, setReviewFilter] = useState('newest');
   const [commentFilter, setCommentFilter] = useState('newest');
 
+  // Data states
+  const [product, setProduct] = useState<ProductData | null>(null);
+  const [licenses, setLicenses] = useState<License[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [reviewStats, setReviewStats] = useState({ avg_rating: 0, total_reviews: 0, rating_sequence: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } });
+  const [relatedProducts, setRelatedProducts] = useState<typeof mockRelatedProducts>([]);
+
+  // Loading and error states
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // Check if user is owner (mock for now)
   const isOwner = false;
-  const isHiddenItem = product.current_status !== 'PUBLISHED';
+  const isHiddenItem = product?.current_status !== 'PUBLISHED';
   const hasPurchased = false;
+
+  // Fetch product data
+  const fetchProductData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Step 1: Search for product by slug in feed API to get UUID and basic info
+      const feedResponse = await fetch(`${API_URL_FEED}/themes?search=${encodeURIComponent(slug.replace(/-/g, ' '))}&limit=50`);
+      if (!feedResponse.ok) throw new Error('Failed to fetch product');
+
+      const feedJson = await feedResponse.json();
+      const feedItems: ApiFeedProduct[] = feedJson.data?.items || [];
+
+      // Find exact match by slug
+      const feedProduct = feedItems.find((item) => item.slug === slug);
+      if (!feedProduct) throw new Error('Product not found');
+
+      const productId = feedProduct.id;
+
+      // Step 2: Fetch detailed product info from inventory API
+      const invResponse = await fetch(`${API_URL_INV}/products/${productId}`);
+      let invProduct: ApiInvProduct | null = null;
+      if (invResponse.ok) {
+        const invJson = await invResponse.json();
+        invProduct = invJson.data;
+      }
+
+      // Step 3: Fetch reviews
+      const reviewsResponse = await fetch(`${API_URL_INV}/products/${productId}/reviews`);
+      const defaultReviewStats = { total_reviews: 0, avg_rating: 0, rating_sequence: { one_star: '0', two_star: '0', three_star: '0', four_star: '0', five_star: '0' } };
+      let reviewsData: { stats: ApiReviewStats | null; items: ApiReview[] } = {
+        stats: defaultReviewStats,
+        items: [],
+      };
+      if (reviewsResponse.ok) {
+        const reviewsJson = await reviewsResponse.json();
+        reviewsData = {
+          stats: reviewsJson.data?.stats || defaultReviewStats,
+          items: reviewsJson.data?.items || [],
+        };
+      }
+
+      // Step 4: Fetch comments
+      const commentsResponse = await fetch(`${API_URL_INV}/products/${productId}/comments?page=1&limit=20`);
+      let commentsData: ApiComment[] = [];
+      if (commentsResponse.ok) {
+        const commentsJson = await commentsResponse.json();
+        commentsData = commentsJson.data?.items || [];
+      }
+
+      // Step 5: Fetch related products (same category)
+      const relatedResponse = await fetch(`${API_URL_FEED}/themes?limit=4`);
+      let relatedItems: ApiFeedProduct[] = [];
+      if (relatedResponse.ok) {
+        const relatedJson = await relatedResponse.json();
+        relatedItems = (relatedJson.data?.items || []).filter((item: ApiFeedProduct) => item.id !== productId).slice(0, 4);
+      }
+
+      // Map feed + inventory data to ProductData
+      const mappedProduct: ProductData = {
+        id: feedProduct.id,
+        product_name: feedProduct.product_name,
+        short_description: feedProduct.short_description || invProduct?.short_description || '',
+        full_description: invProduct?.full_description || '',
+        product_preview_file_url: getImageUrl(feedProduct.image),
+        screenshots_urls: invProduct?.thumbnail_images?.map((img) => getImageUrl(img)) || [],
+        is_onsale: feedProduct.is_onsale,
+        regular_lic_price: feedProduct.price || invProduct?.price || 0,
+        regular_lic_fee: 0,
+        extended_lic_price: invProduct?.extended_price || feedProduct.price * 5 || 0,
+        extended_lic_fee: 0,
+        discount_regular_price: feedProduct.mrp < feedProduct.price ? feedProduct.mrp : 0,
+        discount_extended_price: 0,
+        total_sales: feedProduct.total_sales || 0,
+        total_views: 0,
+        total_likes: 0,
+        is_liked: feedProduct.is_liked,
+        current_status: invProduct?.current_status || 'PUBLISHED',
+        product_attributes: [],
+        is_gutenberg_potimized: false,
+        is_high_resolution: true,
+        layout_columns: '4+',
+        layout_type: 'Responsive',
+        product_tags: [],
+        product_doc_url: invProduct?.product_doc_url || '',
+        updated_at: feedProduct.updated_at,
+        created_at: invProduct?.created_at || feedProduct.updated_at,
+        user_meta: {
+          sub: feedProduct.user?.sub || '',
+          first_name: feedProduct.user?.first_name || '',
+          last_name: feedProduct.user?.last_name || '',
+          user_name: feedProduct.user?.user_name || '',
+          profile_image: getImageUrl(feedProduct.user?.profile_image),
+          member_since: '',
+        },
+      };
+
+      // Map licenses
+      const mappedLicenses: License[] = [
+        {
+          type: 'Regular License',
+          lic_type: 'REGULAR',
+          price: feedProduct.price || invProduct?.price || 0,
+          oldPrice: feedProduct.is_onsale && feedProduct.mrp > feedProduct.price ? feedProduct.mrp : 0,
+          extendSupportPrice: (feedProduct.price || 0) * 0.3,
+          extendSupportOldPrice: 0,
+          description: 'Use, by you or one client, in a single end product which end users are not charged for.',
+        },
+        {
+          type: 'Extended License',
+          lic_type: 'EXTENDED',
+          price: invProduct?.extended_price || (feedProduct.price || 0) * 5,
+          oldPrice: 0,
+          extendSupportPrice: ((invProduct?.extended_price || 0) || (feedProduct.price || 0) * 5) * 0.3,
+          extendSupportOldPrice: 0,
+          description: 'Use, by you or one client, in a single end product which end users can be charged for.',
+        },
+      ];
+
+      // Map reviews
+      const mappedReviews: Review[] = reviewsData.items.map((r) => ({
+        id: r.id,
+        user_name: `${r.reviewer_meta.first_name} ${r.reviewer_meta.last_name}`,
+        user_avatar: getImageUrl(r.reviewer_meta.avatar),
+        rating: parseFloat(r.review_rating) || 0,
+        content: r.review_content,
+        created_at: r.created_at,
+        author_reply: r.reply_content || undefined,
+      }));
+
+      // Map review stats
+      const ratingSeq = reviewsData.stats?.rating_sequence;
+      const mappedReviewStats = {
+        avg_rating: reviewsData.stats?.avg_rating || parseFloat(feedProduct.avg_rating) || 0,
+        total_reviews: reviewsData.stats?.total_reviews || feedProduct.total_reviews || 0,
+        rating_sequence: {
+          5: parseInt(ratingSeq?.five_star || '0') || 0,
+          4: parseInt(ratingSeq?.four_star || '0') || 0,
+          3: parseInt(ratingSeq?.three_star || '0') || 0,
+          2: parseInt(ratingSeq?.two_star || '0') || 0,
+          1: parseInt(ratingSeq?.one_star || '0') || 0,
+        },
+      };
+
+      // Map comments
+      const mappedComments: Comment[] = commentsData.map((c) => ({
+        id: c.id,
+        user_name: `${c.user_meta?.first_name || ''} ${c.user_meta?.last_name || ''}`.trim() || 'Anonymous',
+        user_avatar: getImageUrl(c.user_meta?.avatar),
+        content: c.content,
+        created_at: c.created_at,
+        replies: c.replies?.map((r) => ({
+          id: r.id,
+          user_name: `${r.user_meta?.first_name || ''} ${r.user_meta?.last_name || ''}`.trim() || 'Anonymous',
+          user_avatar: getImageUrl(r.user_meta?.avatar),
+          content: r.content,
+          created_at: r.created_at,
+          is_author: r.is_author,
+        })),
+      }));
+
+      // Map related products
+      const mappedRelated = relatedItems.map((item) => ({
+        id: item.id,
+        title: item.product_name,
+        thumbnail_image: getImageUrl(item.image),
+        price: item.price,
+        total_sales: item.total_sales || 0,
+        avg_rating: parseFloat(item.avg_rating) || 0,
+        total_reviews: item.total_reviews || 0,
+        creator: {
+          first_name: item.user?.first_name || '',
+          last_name: item.user?.last_name || '',
+          user_name: item.user?.user_name || '',
+        },
+      }));
+
+      // Set all states
+      setProduct(mappedProduct);
+      setLicenses(mappedLicenses);
+      setReviews(mappedReviews);
+      setReviewStats(mappedReviewStats);
+      setComments(mappedComments);
+      setRelatedProducts(mappedRelated);
+    } catch (err) {
+      console.error('Failed to fetch product:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load product');
+    } finally {
+      setLoading(false);
+    }
+  }, [slug]);
+
+  useEffect(() => {
+    if (slug) {
+      fetchProductData();
+    }
+  }, [slug, fetchProductData]);
 
   // Cart functionality
   const { addToCart, isLoading: cartLoading } = useAddToCart();
 
   const handleAddToCart = async (data: { isExtend: boolean; lic_type: string }) => {
+    if (!product) return;
     await addToCart(product.id, {
       quantity: 1,
       is_extended: data.isExtend,
@@ -83,6 +389,44 @@ export default function ProductDetailsPage({
     console.log('New comment:', comment);
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <section className="pt-4">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+            <span className="ml-3 text-gray-500">Loading product details...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error || !product) {
+    return (
+      <section className="pt-4">
+        <div className="container mx-auto px-4">
+          <div className="text-center py-20">
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">
+              {error || 'Product not found'}
+            </h2>
+            <p className="text-gray-500 mb-4">
+              The product you&apos;re looking for could not be loaded.
+            </p>
+            <button
+              onClick={fetchProductData}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       <section className="pt-4">
@@ -96,8 +440,8 @@ export default function ProductDetailsPage({
                 <div className="alert alert-warning flex items-start gap-3">
                   <Info className="h-6 w-6 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="fz18 font-semibold mb-1">This product is yours! 🚀</h5>
-                    <p className="fz14">
+                    <h5 className="text-lg font-semibold mb-1">This product is yours! 🚀</h5>
+                    <p className="text-sm">
                       📌 You have created this product! ✅ Please review and take necessary action.
                     </p>
                   </div>
@@ -109,8 +453,8 @@ export default function ProductDetailsPage({
                 <div className="alert alert-primary flex items-start gap-3">
                   <Info className="h-6 w-6 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="fz18 font-semibold mb-1">This item is currently hidden! 🔒</h5>
-                    <p className="fz14">
+                    <h5 className="text-lg font-semibold mb-1">This item is currently hidden! 🔒</h5>
+                    <p className="text-sm">
                       Before you can put this item on sale, it currently needs to be reviewed as
                       it&apos;s hidden. Simply use the &quot;Submit files to review&quot; button on
                       the Edit Tab. If your item was rejected, ensure all outlined issues are fixed.
@@ -138,36 +482,36 @@ export default function ProductDetailsPage({
               />
 
               {/* Tabs Navigation */}
-              <ul className="item-details-tabs mb-8">
-                <li className="nav-item">
+              <ul className="flex bg-[#222222] rounded-lg overflow-hidden list-none p-0 m-0 mb-8">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('details')}
-                    className={`nav-link ${activeTab === 'details' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'details' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <FileText className="h-4 w-4" />
+                    <FileText className="h-4 w-4 shrink-0" />
                     Item Details
                   </button>
                 </li>
-                <li className="nav-item">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('comments')}
-                    className={`nav-link ${activeTab === 'comments' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'comments' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4 shrink-0" />
                     Comments
-                    <span className="badge">{comments.length}</span>
+                    <span className={`px-2 py-0.5 rounded-xl text-xs leading-none ${activeTab === 'comments' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>{comments.length}</span>
                   </button>
                 </li>
                 {(hasPurchased || reviews.length > 0) && (
-                  <li className="nav-item">
+                  <li className="flex-1 border-r border-[#393939] last:border-r-0">
                     <button
                       type="button"
                       onClick={() => setActiveTab('reviews')}
-                      className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`}
+                      className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'reviews' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                     >
-                      <Star className="h-4 w-4" />
+                      <Star className="h-4 w-4 shrink-0" />
                       {reviewStats.avg_rating.toFixed(1)} ({reviewStats.total_reviews})
                     </button>
                   </li>

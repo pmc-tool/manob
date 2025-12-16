@@ -41,7 +41,7 @@ export function ProductCard({
 
   return (
     <Link href={`/products/${product.id}`}>
-      <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all hover:shadow-lg">
+      <div className="group relative overflow-hidden rounded-mdxl border border-gray-200 bg-white transition-all hover:shadow-lg">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-100">
           {product.thumbnail ? (
@@ -135,7 +135,7 @@ export function ProductCard({
  */
 export function ProductCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-mdxl border border-gray-200 bg-white">
       <div className="aspect-square animate-pulse bg-gray-200" />
       <div className="p-4">
         <div className="mb-2 h-3 w-16 animate-pulse rounded bg-gray-200" />

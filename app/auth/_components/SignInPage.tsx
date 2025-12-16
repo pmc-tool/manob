@@ -52,26 +52,26 @@ export default function SignInPage() {
 
   return (
     <div className="container">
-      <section className={`align-items-center d-flex ${styles.authWrap}`}>
-        <div className={`flex-grow-1 m-auto ${styles.authInner}`}>
+      <section className={`items-center flex ${styles.authWrap}`}>
+        <div className={`flex-grow m-auto ${styles.authInner}`}>
           <div className="auth-header mb-5 text-center">
-            <h4 className="fw-bold text-center mb-0">Log into manob.ai</h4>
-            <div className="fz13 mt-1">
+            <h4 className="font-bold text-center mb-0">Log into manob.ai</h4>
+            <div className="text-[13px] mt-1">
               Don&apos;t have an account?{" "}
               <Link
                 href="/auth"
-                className="fw-semibold text-decoration-underline text-primary"
+                className="font-semibold underline text-primary"
               >
                 Create an account
               </Link>
             </div>
           </div>
           <div className="auth-body">
-            <div className="align-items-md-center auth-form d-md-flex flex-md-row">
+            <div className="align-items-md-center auth-form d-mflex flex-md-row">
               <div className={styles.authFormLeft}>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   {error && (
-                    <div className="alert alert-danger mb-4" role="alert">
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
                       {error}
                     </div>
                   )}
@@ -82,7 +82,7 @@ export default function SignInPage() {
                     <div className="position-relative">
                       <input
                         type="text"
-                        className={`form-control ${styles.authInput}`}
+                        className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${styles.authInput}`}
                         placeholder="name@example.com"
                         {...register("username", {
                           required: "Email field is required!",
@@ -94,7 +94,7 @@ export default function SignInPage() {
                       errors={errors}
                       name="username"
                       render={({ message }) => (
-                        <span className="text-danger fz14">{message}</span>
+                        <span className="text-red-500 text-sm">{message}</span>
                       )}
                     />
                   </div>
@@ -108,7 +108,7 @@ export default function SignInPage() {
                         <input
                           id="password"
                           type={showPassword ? "text" : "password"}
-                          className={`form-control password ${styles.authInput}`}
+                          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-12 ${styles.authInput}`}
                           placeholder="Password"
                           autoComplete="off"
                           {...register("password", {
@@ -134,13 +134,13 @@ export default function SignInPage() {
                       errors={errors}
                       name="password"
                       render={({ message }) => (
-                        <span className="text-danger fz14">{message}</span>
+                        <span className="text-red-500 text-sm">{message}</span>
                       )}
                     />
                   </div>
                   <button
                     type="submit"
-                    className="rounded ud-btn btn-default w-100"
+                    className="rounded inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200 transition-all w-full"
                     disabled={isLoading}
                   >
                     {isLoading ? "Logging in..." : "Log in"}
@@ -148,7 +148,7 @@ export default function SignInPage() {
                 </form>
               </div>
               <div
-                className={`align-items-center d-flex ${styles.authDevider}`}
+                className={`items-center flex ${styles.authDevider}`}
               >
                 <div className={styles.authDeviderLine} />
                 <div className={styles.authDeviderText}>
@@ -156,7 +156,7 @@ export default function SignInPage() {
                 </div>
                 <div className={styles.authDeviderLine} />
               </div>
-              <div className={`${styles.authFormRight} d-grid gap-2`}>
+              <div className={`${styles.authFormRight} grid gap-2`}>
                 <button className={styles.authBtn} type="button">
                   <svg viewBox="0 0 24 24" width="18" height="18">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -171,18 +171,18 @@ export default function SignInPage() {
           </div>
           <div className="mt-5 text-center">
             <Link
-              className={`d-inline fw-semibold fz12 text-uppercase ${styles.authLink}`}
+              className={`inline font-semibold text-xs uppercase ${styles.authLink}`}
               href="/auth/recovery"
             >
               Can&apos;t log in?
             </Link>
           </div>
-          <div className="mt-3 text-center auth-text fz13">
+          <div className="mt-3 text-center auth-text text-[13px]">
             Secure Login with reCAPTCHA subject to Google{" "}
             <Link
               href="/privacy-policy"
               target="_blank"
-              className="fw-medium text-decoration-underline"
+              className="font-medium underline"
             >
               <br />
               Terms & Privacy

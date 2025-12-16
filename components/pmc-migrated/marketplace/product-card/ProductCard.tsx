@@ -12,12 +12,12 @@ import styles from './ProductCard.module.css';
 
 interface Author {
   id?: string;
-  email: string;
-  full_name: string;
-  is_online: boolean;
-  level: string;
-  profile_image: string;
-  user_name: string;
+  email?: string;
+  full_name?: string;
+  is_online?: boolean;
+  level?: string;
+  profile_image?: string;
+  user_name?: string;
   first_name?: string;
   last_name?: string;
 }
@@ -25,7 +25,7 @@ interface Author {
 interface ProductCardProps {
   id: string;
   img: string;
-  author?: Author;
+  author?: Author | string;
   category?: string;
   title: string;
   slug?: string;
@@ -64,9 +64,15 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { addToCart, isLoading, isInCart } = useAddToCart();
   const isSmall = size === 'small';
-  const authorName = author?.full_name
-    ? author.full_name
-    : `${author?.first_name || ''} ${author?.last_name || ''}`.trim();
+
+  // Handle author as either string or Author object
+  const authorObj = typeof author === 'string' ? null : author;
+  const authorName = typeof author === 'string'
+    ? author
+    : author?.full_name
+      ? author.full_name
+      : `${author?.first_name || ''} ${author?.last_name || ''}`.trim();
+  const authorUsername = authorObj?.user_name || '';
   const inCart = isInCart(id);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
@@ -104,7 +110,7 @@ export default function ProductCard({
       <div className={`${styles.content} ${isSmall ? styles.contentSmall : ''}`}>
         <div className={`${styles.authorLine} ${isSmall ? styles.textSmall : ''}`}>
           by{' '}
-          <Link href={`/${author?.user_name || ''}`} className={styles.authorLink}>
+          <Link href={`/${authorUsername}`} className={styles.authorLink}>
             {authorName}
           </Link>
         </div>

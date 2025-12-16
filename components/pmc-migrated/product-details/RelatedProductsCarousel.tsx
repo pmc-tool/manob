@@ -48,26 +48,26 @@ function ProductCard({ product }: { product: RelatedProduct }) {
       <div className="p-4">
         <Link
           href={`/product-details/${product.id}`}
-          className="font-semibold text-gray-900 hover:text-primary line-clamp-2 mb-2 block fz15"
+          className="font-semibold text-gray-900 hover:text-primary line-clamp-2 mb-2 block text-[15px]"
         >
           {product.title}
         </Link>
         <div className="flex items-center gap-2 mb-2">
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="fz14 font-medium">{product.avg_rating.toFixed(1)}</span>
+            <span className="text-sm font-medium">{product.avg_rating.toFixed(1)}</span>
           </div>
-          <span className="fz13 text-gray-400">({product.total_reviews} reviews)</span>
+          <span className="text-[13px] text-gray-400">({product.total_reviews} reviews)</span>
         </div>
-        <div className="flex items-center gap-2 fz14 text-gray-500 mb-3">
+        <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
           <ShoppingCart className="h-4 w-4" />
           <span>{product.total_sales.toLocaleString()} sales</span>
         </div>
         <div className="flex items-center justify-between">
-          <Link href={`/${product.creator.user_name}`} className="fz13 text-gray-500 hover:text-primary">
+          <Link href={`/${product.creator.user_name}`} className="text-[13px] text-gray-500 hover:text-primary">
             by {product.creator.first_name} {product.creator.last_name}
           </Link>
-          <span className="fz18 font-bold text-primary">${formatPrice(product.price)}</span>
+          <span className="text-lg font-bold text-primary">${formatPrice(product.price)}</span>
         </div>
       </div>
     </div>
@@ -124,15 +124,15 @@ export default function RelatedProductsCarousel({
   };
 
   return (
-    <section className="py-8 bgc-gray-4">
+    <section className="py-8 bg-[#f8f8f8]">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6">
           <div className="flex-grow">
-            <h3 className="fz18 font-semibold">{title}</h3>
-            {description && <p className="text-gray-500 fz14">{description}</p>}
+            <h3 className="text-lg font-semibold">{title}</h3>
+            {description && <p className="text-gray-500 text-sm">{description}</p>}
           </div>
-          <Link href={linkHref} className="text-primary font-semibold flex items-center gap-1 hover:underline fz14">
+          <Link href={linkHref} className="text-primary font-semibold flex items-center gap-1 hover:underline text-sm">
             {linkText}
             <ArrowUpRight className="h-4 w-4" />
           </Link>

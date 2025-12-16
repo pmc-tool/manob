@@ -50,7 +50,7 @@ export default function PackmycodeWork() {
             alt="How it works"
             width={500}
             height={400}
-            className="rounded-2xl"
+            className="rounded-mdxl"
           />
           {/* Stats Overlay */}
           <div className="absolute bottom-4 left-0 right-0 mx-4 lg:mx-0 lg:left-auto lg:-right-4">

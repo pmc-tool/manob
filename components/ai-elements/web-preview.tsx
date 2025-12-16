@@ -236,7 +236,7 @@ export const WebPreviewConsole = ({
       >
         <div className="max-h-48 space-y-1 overflow-y-auto">
           {logs.length === 0 ? (
-            <p className="text-muted-foreground">No console output</p>
+            <p className="text-gray-500-foreground">No console output</p>
           ) : (
             logs.map((log, index) => (
               <div
@@ -248,7 +248,7 @@ export const WebPreviewConsole = ({
                 )}
                 key={`${log.timestamp.getTime()}-${index}`}
               >
-                <span className="text-muted-foreground">
+                <span className="text-gray-500-foreground">
                   {log.timestamp.toLocaleTimeString()}
                 </span>{" "}
                 {log.message}

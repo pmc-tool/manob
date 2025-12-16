@@ -1,0 +1,217 @@
+/* OrderCartSidebar CSS Module - migrated from globals.css */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 420px;
+  max-width: 100%;
+  background-color: #fff;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar.active {
+  transform: translateX(0);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.headerTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.closeButton:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.packageInfo {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.packageRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.packageTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.singleOrder {
+  border: 2px solid var(--pmc-primary, #ea2725);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.singleOrderHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.quantityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summarySection {
+  margin-bottom: 16px;
+}
+
+.summaryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.summaryList li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-top: 2px solid #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.alert {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background-color: #fef3c7;
+  border-radius: 8px;
+  color: #92400e;
+}
+
+.footer {
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Dark mode support */
+:global(.dark) .sidebar {
+  background-color: #1f2937;
+}
+
+:global(.dark) .header {
+  border-bottom-color: #374151;
+}
+
+:global(.dark) .headerTitle {
+  color: #f9fafb;
+}
+
+:global(.dark) .closeButton {
+  color: #9ca3af;
+}
+
+:global(.dark) .closeButton:hover {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+:global(.dark) .packageInfo {
+  border-bottom-color: #374151;
+}
+
+:global(.dark) .packageTitle {
+  color: #f9fafb;
+}
+
+:global(.dark) .singleOrder {
+  border-color: #6b7280;
+}
+
+:global(.dark) .total {
+  border-top-color: #374151;
+}
+
+:global(.dark) .alert {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: #fbbf24;
+}
+
+:global(.dark) .footer {
+  background-color: #111827;
+  border-top-color: #374151;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+  }
+}
