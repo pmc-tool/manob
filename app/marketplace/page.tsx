@@ -13,6 +13,7 @@ import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
 import { mockCategories } from '@/lib/mocks/categories.mock';
 import { mockFeaturedProducts, mockTrendingProducts } from '@/lib/mocks/products.mock';
 import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
+import { useGetProductsQuery } from '@/state/services/home-service/public-product.service';
 
 // MOCK: Combine products and services
 const allProducts = [...mockFeaturedProducts, ...mockTrendingProducts];
@@ -42,7 +43,22 @@ export default function MarketplacePage() {
     priceRange: null,
     rating: null,
   });
+  const { 
+    data: publicProducts, 
+    error: productsError, 
+    isLoading: isLoadingProducts,
+    isError: isProductsError 
+  } = useGetProductsQuery({
+    queryParams: {
+      page: 1,
+      limit: 10
+    }
+  })
 
+  console.log('Public Products Data---------------:', publicProducts);
+  console.log('Products Error---------------:', productsError);
+  console.log('Is Loading---------------:', isLoadingProducts);
+  console.log('Is Error---------------:', isProductsError);
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let result = [...allProducts];
@@ -172,48 +188,48 @@ export default function MarketplacePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {listingType === 'products'
                 ? filteredProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      id={product.id}
-                      img={product.thumbnail_image}
-                      author={product.creator}
-                      title={product.title}
-                      slug={product.slug}
-                      rating={product.avg_rating}
-                      reviews={product.total_reviews}
-                      price={product.price}
-                      discountPrice={product.mrp && product.mrp < product.price ? product.mrp : 0}
-                      isOnSale={product.is_onsale}
-                      trendingStatus={product.is_trending}
-                      sales={product.total_sales}
-                      is_liked={product.is_liked}
-                      isFreeProduct={product.mrp === 0}
-                      isPixiCompatible={product.is_pixi_compatible}
-                    />
-                  ))
+                  <ProductCard
+                    key={product.id}
+                    id={product.id}
+                    img={product.thumbnail_image}
+                    author={product.creator}
+                    title={product.title}
+                    slug={product.slug}
+                    rating={product.avg_rating}
+                    reviews={product.total_reviews}
+                    price={product.price}
+                    discountPrice={product.mrp && product.mrp < product.price ? product.mrp : 0}
+                    isOnSale={product.is_onsale}
+                    trendingStatus={product.is_trending}
+                    sales={product.total_sales}
+                    is_liked={product.is_liked}
+                    isFreeProduct={product.mrp === 0}
+                    isPixiCompatible={product.is_pixi_compatible}
+                  />
+                ))
                 : filteredServices.map((service) => (
-                    <ServiceCard
-                      key={service.id}
-                      id={service.id}
-                      slug={service.slug}
-                      img={service.thumbnail_image}
-                      author={service.creator?.full_name}
-                      authorProfileLink={`/${service.creator?.user_name}`}
-                      category={service.category}
-                      categoryId={service.category_id}
-                      title={service.title}
-                      rating={service.avg_rating}
-                      reviews={service.total_reviews}
-                      authorImg={service.creator?.profile_image}
-                      authorName={service.creator?.full_name}
-                      price={service.price}
-                      discountPrice={service.mrp && service.mrp < service.price ? service.mrp : 0}
-                      isOnSale={service.is_onsale}
-                      trendingStatus={service.is_trending}
-                      is_liked={service.is_liked}
-                      isPixiCompatible={service.is_pixi_compatible}
-                    />
-                  ))}
+                  <ServiceCard
+                    key={service.id}
+                    id={service.id}
+                    slug={service.slug}
+                    img={service.thumbnail_image}
+                    author={service.creator?.full_name}
+                    authorProfileLink={`/${service.creator?.user_name}`}
+                    category={service.category}
+                    categoryId={service.category_id}
+                    title={service.title}
+                    rating={service.avg_rating}
+                    reviews={service.total_reviews}
+                    authorImg={service.creator?.profile_image}
+                    authorName={service.creator?.full_name}
+                    price={service.price}
+                    discountPrice={service.mrp && service.mrp < service.price ? service.mrp : 0}
+                    isOnSale={service.is_onsale}
+                    trendingStatus={service.is_trending}
+                    is_liked={service.is_liked}
+                    isPixiCompatible={service.is_pixi_compatible}
+                  />
+                ))}
             </div>
           ) : (
             <div className="text-center py-12 px-5 bg-gray-50 rounded-xl">
