@@ -309,3 +309,29 @@ body,
 .animate-modal-shake {
   animation: modalShake 0.3s ease-out;
 }
+
+/* ==============================================
+   Product/Service Details Layout
+   ============================================== */
+.product-details-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .product-details-layout {
+    grid-template-columns: 1fr 380px;
+    gap: 2rem;
+  }
+}
+
+.product-details-main {
+  min-width: 0;
+}
+
+.product-details-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
