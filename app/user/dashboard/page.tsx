@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   ArrowRight,
   ReceiptText,
+  Zap,
 } from "lucide-react";
 
 interface DashboardCardProps {
@@ -60,6 +61,14 @@ const dashboardCards: DashboardCardProps[] = [
     href: "/user/refund-list",
     iconBgColor: "bg-orange-50",
     iconColor: "text-orange-600",
+  },
+  {
+    title: "My Connects",
+    description: "View balance and purchase connects",
+    icon: <Zap size={24} />,
+    href: "/connect",
+    iconBgColor: "bg-yellow-50",
+    iconColor: "text-yellow-600",
   },
 ];
 
