@@ -176,8 +176,10 @@ export default function SupportRequestsPage() {
       title: 'Action',
       key: 'action',
       width: 80,
-      render: () => (
-        <Button type="text" icon={<EyeOutlined />} size="small" />
+      render: (_: unknown, record: SupportTicket) => (
+        <Link href={`/my-support/${record.id}`}>
+          <Button type="text" icon={<EyeOutlined />} size="small" />
+        </Link>
       ),
     },
   ];
