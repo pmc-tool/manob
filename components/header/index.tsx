@@ -35,7 +35,22 @@ export default function Header() {
         router.push('/my-profile');
         break;
       case 'dashboard':
-        router.push('/dashboard');
+        router.push('/user/dashboard');
+        break;
+      case 'my-orders':
+        router.push('/user/order-list');
+        break;
+      case 'purchased-products':
+        router.push('/user/purchased-products');
+        break;
+      case 'posted-jobs':
+        router.push('/user/job-list');
+        break;
+      case 'favorites':
+        router.push('/user/favorites-list');
+        break;
+      case 'refund-list':
+        router.push('/user/refund-list');
         break;
       case 'settings':
         router.push('/settings/security');
@@ -129,7 +144,6 @@ export default function Header() {
         {/* Publish Dropdown */}
         <Dropdown
           trigger={["click"]}
-          // popupRender={() => <PublishDropdown />}
           open={publishDropdownOpen}
           onOpenChange={(open) => setPublishDropdownOpen(open)}
           popupRender={() => (
@@ -138,7 +152,10 @@ export default function Header() {
           placement="bottomRight"
           arrow
         >
-          <Button type="primary" size="small">
+          <Button
+            size="small"
+            className="!bg-black !text-white !border-black hover:!bg-gray-800 hover:!border-gray-800"
+          >
             Publish
           </Button>
         </Dropdown>

@@ -5,11 +5,16 @@ import { Progress } from "antd";
 import {
   BadgeDollarSign,
   BookOpen,
+  Briefcase,
   ChevronRight,
   Headset,
+  Heart,
   LayoutDashboard,
   LogOut,
+  Package,
+  ReceiptText,
   Settings,
+  ShoppingCart,
   Store,
   UserRoundPen,
   UsersRound,
@@ -69,6 +74,34 @@ export const userMenuItems: MenuProps["items"] = [
     icon: <LayoutDashboard size={18} />,
     label: <span className="dark:text-gray-300 font-medium">Dashboard</span>,
   },
+  {
+    key: "my-orders",
+    icon: <ShoppingCart size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">My Orders</span>,
+  },
+  {
+    key: "purchased-products",
+    icon: <Package size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Purchased Products</span>,
+  },
+  {
+    key: "posted-jobs",
+    icon: <Briefcase size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Posted Jobs</span>,
+  },
+  {
+    key: "favorites",
+    icon: <Heart size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Favorites</span>,
+  },
+  {
+    key: "refund-list",
+    icon: <ReceiptText size={18} />,
+    label: <span className="dark:text-gray-300 font-medium">Refund Requests</span>,
+  },
+
+  { type: "divider" },
+
   {
     key: "pricing",
     icon: <BadgeDollarSign size={18} />,
