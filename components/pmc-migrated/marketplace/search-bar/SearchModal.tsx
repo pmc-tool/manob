@@ -1,5 +1,5 @@
 // MIGRATION: SearchSuggestions modal from manob.ai
-// Simplified version with CSS Modules
+// Simplified version with Tailwind CSS
 'use client';
 
 import { Search, X } from 'lucide-react';
@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { mockSearchSuggestions } from '@/lib/mocks/products.mock';
-import styles from './SearchModal.module.css';
 
 interface SearchModalProps {
   onClose: () => void;
@@ -79,58 +78,64 @@ export function SearchModal({ onClose }: SearchModalProps) {
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
+    <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-[100] flex justify-center pt-[100px]" onClick={onClose}>
+      <div
+        className="relative w-full max-w-[960px] max-h-[calc(100vh-150px)] mx-4 bg-white rounded-2xl shadow-xl p-6 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="absolute top-4 right-4 bg-transparent border-none cursor-pointer text-gray-500 p-1 rounded transition-colors hover:text-gray-900"
+          onClick={onClose}
+        >
           <X size={20} />
         </button>
 
-        <div className={styles.searchHeader}>
-          <Search size={16} className={styles.searchIcon} />
+        <div className="relative z-[2]">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
             ref={inputRef}
             type="search"
             autoComplete="off"
             maxLength={50}
-            className={styles.searchInput}
+            className="w-full py-3 pr-[140px] pl-10 text-[15px] border border-gray-300 rounded-3xl bg-white outline-none transition-colors shadow-[inset_0_1px_0_hsla(0,0%,100%,0.2),0_1px_2px_rgba(0,0,0,0.05)] hover:border-gray-800 focus:border-gray-800"
             placeholder="Search what are you looking for?"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyUp={handleKeyUp}
           />
 
-          <div className={styles.typeDropdown}>
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
             <button
-              className={styles.typeButton}
+              className="bg-transparent border-none border-l border-gray-300 px-3 text-[13px] font-medium cursor-pointer text-gray-900"
               type="button"
               onClick={() => setShowTypeDropdown(!showTypeDropdown)}
             >
               {searchType}
             </button>
             {showTypeDropdown && (
-              <ul className={styles.typeMenu}>
+              <ul className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg list-none py-2 min-w-[200px]">
                 <li>
                   <button
-                    className={`${styles.typeMenuItem} ${searchType === 'Products' ? styles.active : ''}`}
+                    className={`flex flex-col w-full px-4 py-2 border-none bg-transparent cursor-pointer text-left transition-colors hover:bg-gray-100 ${searchType === 'Products' ? 'bg-gray-100' : ''}`}
                     onClick={() => {
                       setSearchType('Products');
                       setShowTypeDropdown(false);
                     }}
                   >
-                    <span className={styles.typeTitle}>Products</span>
-                    <span className={styles.typeDescription}>Find the best products</span>
+                    <span className="text-sm font-semibold text-gray-900">Products</span>
+                    <span className="text-xs text-gray-500">Find the best products</span>
                   </button>
                 </li>
                 <li>
                   <button
-                    className={`${styles.typeMenuItem} ${searchType === 'Services' ? styles.active : ''}`}
+                    className={`flex flex-col w-full px-4 py-2 border-none bg-transparent cursor-pointer text-left transition-colors hover:bg-gray-100 ${searchType === 'Services' ? 'bg-gray-100' : ''}`}
                     onClick={() => {
                       setSearchType('Services');
                       setShowTypeDropdown(false);
                     }}
                   >
-                    <span className={styles.typeTitle}>Services</span>
-                    <span className={styles.typeDescription}>Hire professionals and agencies</span>
+                    <span className="text-sm font-semibold text-gray-900">Services</span>
+                    <span className="text-xs text-gray-500">Hire professionals and agencies</span>
                   </button>
                 </li>
               </ul>
@@ -138,19 +143,19 @@ export function SearchModal({ onClose }: SearchModalProps) {
           </div>
         </div>
 
-        <div className={styles.content}>
-          <div className={styles.columns}>
-            <div className={styles.leftColumn}>
+        <div className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
               {recentSearches.length > 0 && (
-                <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Recent</div>
-                  <ul className={styles.list}>
+                <div className="mb-6">
+                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Recent</div>
+                  <ul className="list-none p-0 m-0">
                     {recentSearches.map((item, index) => (
-                      <li key={index} className={styles.listItem}>
+                      <li key={index} className="flex items-center gap-2.5 px-4 py-2 text-[15px] text-gray-900 cursor-pointer rounded-lg transition-all hover:text-primary hover:bg-gray-200">
                         <Search size={14} />
-                        <span onClick={() => handleSearch(item)}>{item}</span>
+                        <span className="flex-1" onClick={() => handleSearch(item)}>{item}</span>
                         <button
-                          className={styles.removeButton}
+                          className="bg-transparent border-none cursor-pointer text-gray-500 p-0.5 ml-auto"
                           onClick={() => removeRecentSearch(item)}
                         >
                           <X size={14} />
@@ -162,13 +167,13 @@ export function SearchModal({ onClose }: SearchModalProps) {
               )}
 
               {suggestions.top_searches.length > 0 && (
-                <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Top Searches</div>
-                  <ul className={styles.list}>
+                <div className="mb-6">
+                  <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Top Searches</div>
+                  <ul className="list-none p-0 m-0">
                     {suggestions.top_searches.map((item, index) => (
                       <li
                         key={index}
-                        className={styles.listItem}
+                        className="flex items-center gap-2.5 px-4 py-2 text-[15px] text-gray-900 cursor-pointer rounded-lg transition-all hover:text-primary hover:bg-gray-200"
                         onClick={() => handleSearch(item)}
                       >
                         <Search size={14} />
@@ -181,12 +186,12 @@ export function SearchModal({ onClose }: SearchModalProps) {
             </div>
 
             {(suggestions.products.length > 0 || suggestions.services.length > 0) && (
-              <div className={styles.rightColumn}>
+              <div className="md:border-l md:border-gray-200 md:pl-6">
                 {suggestions.products.length > 0 && (
-                  <div className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                      <span className={styles.sectionTitle}>Products</span>
-                      <Link href="/product-list" className={styles.seeAll}>
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-2 mb-3">
+                      <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Products</span>
+                      <Link href="/product-list" className="text-xs font-semibold text-primary uppercase no-underline">
                         See All
                       </Link>
                     </div>
@@ -194,13 +199,13 @@ export function SearchModal({ onClose }: SearchModalProps) {
                       <Link
                         key={item.id}
                         href={`/product-details/${item.slug}`}
-                        className={styles.productCard}
+                        className="flex items-center gap-3 p-2 rounded-lg no-underline text-gray-900 transition-colors hover:bg-gray-100 mb-2"
                         onClick={onClose}
                       >
-                        <div className={styles.productImage}>
-                          <div className={styles.imagePlaceholder} />
+                        <div className="w-[60px] h-[45px] rounded-md overflow-hidden flex-shrink-0">
+                          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
                         </div>
-                        <span className={styles.productTitle}>{item.name}</span>
+                        <span className="text-sm leading-snug line-clamp-2">{item.name}</span>
                       </Link>
                     ))}
                   </div>
@@ -209,13 +214,13 @@ export function SearchModal({ onClose }: SearchModalProps) {
             )}
           </div>
 
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Trending</div>
-            <div className={styles.tags}>
+          <div className="mb-6">
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Trending</div>
+            <div className="flex flex-wrap gap-1.5">
               {trendingTags.map((tag, index) => (
                 <span
                   key={index}
-                  className={styles.tag}
+                  className="inline-block px-5 py-1.5 text-[13px] font-medium bg-white text-primary border border-gray-300 rounded-full cursor-pointer transition-all shadow-[inset_0_1px_0_hsla(0,0%,100%,0.2),0_1px_2px_rgba(0,0,0,0.05)] hover:border-primary hover:bg-red-50"
                   onClick={() => handleSearch(tag)}
                 >
                   {tag}

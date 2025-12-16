@@ -4,13 +4,13 @@
 
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useId } from 'react';
 import 'swiper/css';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { ServiceCard } from '../service-card';
 import { ServiceCardSkeleton } from './ServiceCardSkeleton';
 import type { Service } from '@/lib/mocks/services.mock';
-import styles from './ServicesCarousel.module.css';
 
 type ServicesCarouselProps = {
   title: string;
@@ -29,29 +29,33 @@ export default function ServicesCarousel({
   services,
   isLoading = false,
 }: ServicesCarouselProps) {
+  const id = useId().replace(/:/g, '');
+  const nextBtnId = `svc-next-${id}`;
+  const prevBtnId = `svc-prev-${id}`;
+
   return (
-    <section className={styles.section}>
-      <div className={styles.wrapper}>
-        <div className={styles.header}>
-          <div className={styles.titleSection}>
-            <h3 className={styles.title}>{title}</h3>
-            {subTitle && <div className={styles.subTitle}>{subTitle}</div>}
+    <section className="pt-0">
+      <div>
+        <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+          <div>
+            <h3 className="text-xl font-semibold m-0 text-gray-900">{title}</h3>
+            {subTitle && <div className="text-sm text-gray-500 mt-1">{subTitle}</div>}
           </div>
-          <Link className={styles.headerLink} href={linkHref}>
+          <Link className="flex items-center gap-2 font-semibold text-primary no-underline transition-opacity hover:opacity-80" href={linkHref}>
             <span>{linkText}</span>
             <ArrowUpRight size={16} />
           </Link>
         </div>
 
-        <div className={styles.swiperContainer}>
-          <div className={styles.swiperInner}>
+        <div className="relative">
+          <div className="overflow-hidden">
             <Swiper
               modules={[Navigation]}
               spaceBetween={16}
               slidesPerView={1}
               navigation={{
-                nextEl: `.${styles.nextButton}`,
-                prevEl: `.${styles.prevButton}`,
+                nextEl: `#${nextBtnId}`,
+                prevEl: `#${prevBtnId}`,
               }}
               breakpoints={{
                 480: { slidesPerView: 1.5 },
@@ -68,7 +72,7 @@ export default function ServicesCarousel({
                 ))}
               {!isLoading &&
                 services?.map((item) => (
-                  <SwiperSlide key={item.id} className={styles.slideAuto}>
+                  <SwiperSlide key={item.id} className="h-auto">
                     <ServiceCard
                       id={item.id}
                       slug={item.slug}
@@ -90,10 +94,16 @@ export default function ServicesCarousel({
                     />
                   </SwiperSlide>
                 ))}
-              <button className={`${styles.navButton} ${styles.nextButton}`}>
+              <button
+                id={nextBtnId}
+                className="absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md cursor-pointer flex items-center justify-center transition-all text-gray-900 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed right-0 md:-right-5"
+              >
                 <ChevronRight size={21} />
               </button>
-              <button className={`${styles.navButton} ${styles.prevButton}`}>
+              <button
+                id={prevBtnId}
+                className="absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md cursor-pointer flex items-center justify-center transition-all text-gray-900 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed left-0 md:-left-5"
+              >
                 <ChevronLeft size={21} />
               </button>
             </Swiper>

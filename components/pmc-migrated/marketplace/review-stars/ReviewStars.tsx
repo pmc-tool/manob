@@ -3,7 +3,6 @@
 'use client';
 
 import { Star, StarHalf } from 'lucide-react';
-import styles from './ReviewStars.module.css';
 
 interface ReviewStarsProps {
   rating: number;
@@ -21,9 +20,6 @@ export default function ReviewStars({
   reviewCount,
   size = 14.5,
   className = '',
-  textSize = '',
-  textColor = 'textMuted',
-  ratingTextColor = 'darkColor',
   showCount = true,
 }: ReviewStarsProps) {
   const fullStars = Math.floor(rating);
@@ -31,34 +27,32 @@ export default function ReviewStars({
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
   return (
-    <div className={`${styles.reviewMeta} ${className}`}>
-      <div className={styles.ratingStars}>
+    <div className={`flex items-center gap-2 flex-wrap ${className}`}>
+      <div className="flex items-center gap-0.5">
         {/* Render full stars */}
         {Array.from({ length: fullStars }).map((_, index) => (
           <Star
             key={`full-${index}`}
             size={size}
-            className={styles.starFilled}
+            className="text-yellow-400"
             fill="currentColor"
           />
         ))}
         {/* Render half star if applicable */}
         {hasHalfStar && (
-          <StarHalf size={size} className={styles.starFilled} fill="currentColor" />
+          <StarHalf size={size} className="text-yellow-400" fill="currentColor" />
         )}
         {/* Render empty stars */}
         {Array.from({ length: emptyStars }).map((_, index) => (
-          <Star key={`empty-${index}`} size={size} className={styles.starEmpty} />
+          <Star key={`empty-${index}`} size={size} className="text-gray-300" />
         ))}
       </div>
-      <div className={`${styles[textColor]} ${textSize}`}>
+      <div className="text-gray-500">
         {showCount && (
-          <span className={`${styles.ratingValue} ${styles[ratingTextColor]}`}>
-            ({rating})
-          </span>
+          <span className="font-semibold text-gray-900">({rating})</span>
         )}
         {reviewCount !== undefined && (
-          <span className={styles.reviewCount}>{reviewCount} Reviews</span>
+          <span className="ml-2">{reviewCount} Reviews</span>
         )}
       </div>
     </div>

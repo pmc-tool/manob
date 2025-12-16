@@ -3,9 +3,9 @@
 
 import { useState, useMemo } from 'react';
 import { Search, ArrowUpDown } from 'lucide-react';
+import { Select } from 'antd';
 import { ListingToggle, type ListingType } from '@/components/pmc-migrated/marketplace/listing-toggle';
 import { SidebarFilter, type ActiveFilters } from '@/components/pmc-migrated/marketplace/sidebar-filter';
-// import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar'; // TOP BAR STYLE (commented)
 import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
 import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
@@ -13,7 +13,6 @@ import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
 import { mockCategories } from '@/lib/mocks/categories.mock';
 import { mockFeaturedProducts, mockTrendingProducts } from '@/lib/mocks/products.mock';
 import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
-import styles from './page.module.css';
 
 // MOCK: Combine products and services
 const allProducts = [...mockFeaturedProducts, ...mockTrendingProducts];
@@ -27,11 +26,11 @@ const filterCategories = mockCategories.map((cat, index) => ({
 }));
 
 const SORT_OPTIONS = [
-  { id: 'newest', label: 'Newest' },
-  { id: 'popular', label: 'Most Popular' },
-  { id: 'price-low', label: 'Price: Low to High' },
-  { id: 'price-high', label: 'Price: High to Low' },
-  { id: 'rating', label: 'Highest Rated' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'popular', label: 'Most Popular' },
+  { value: 'price-low', label: 'Price: Low to High' },
+  { value: 'price-high', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Highest Rated' },
 ];
 
 export default function MarketplacePage() {
@@ -121,23 +120,26 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className="flex flex-col gap-4 h-full">
       {/* Header Row */}
-      <div className={styles.headerRow}>
-        <div className={styles.headerLeft}>
-          <h1 className={styles.title}>Marketplace</h1>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold text-gray-900 m-0">Marketplace</h1>
           <ListingToggle activeType={listingType} onToggle={handleToggle} />
         </div>
 
-        <button onClick={() => setShowSearch(true)} className={styles.searchButton}>
+        <button
+          onClick={() => setShowSearch(true)}
+          className="flex items-center gap-2 px-3.5 py-2 text-[13px] bg-gray-100 border-none rounded-lg text-gray-500 cursor-pointer transition-colors hover:bg-gray-200"
+        >
           <Search size={16} />
-          <span>Search {listingType}...</span>
-          <kbd>/</kbd>
+          <span className="hidden sm:inline">Search {listingType}...</span>
+          <kbd className="px-1.5 py-0.5 text-[11px] bg-white border border-gray-200 rounded text-gray-400">/</kbd>
         </button>
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className={styles.mainContent}>
+      <div className="flex gap-5 flex-1 min-h-0 flex-col md:flex-row">
         {/* Left Sidebar Filter */}
         <SidebarFilter
           categories={filterCategories}
@@ -146,27 +148,28 @@ export default function MarketplacePage() {
         />
 
         {/* Right Content Area */}
-        <div className={styles.contentArea}>
+        <div className="flex-1 min-w-0 flex flex-col">
           {/* Sort Bar */}
-          <div className={styles.sortBar}>
-            <span className={styles.resultCount}>
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+            <span className="text-sm text-gray-500">
               {currentItems.length} {listingType}
             </span>
-            <div className={styles.sortSelect}>
+            <div className="flex items-center gap-1.5 text-gray-500">
               <ArrowUpDown size={14} />
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <Select
+                value={sortBy}
+                onChange={(value) => setSortBy(value)}
+                options={SORT_OPTIONS}
+                size="small"
+                style={{ width: 160 }}
+                variant="outlined"
+              />
             </div>
           </div>
 
           {/* Grid */}
           {currentItems.length > 0 ? (
-            <div className={styles.grid}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {listingType === 'products'
                 ? filteredProducts.map((product) => (
                     <ProductCard
@@ -213,12 +216,13 @@ export default function MarketplacePage() {
                   ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              <p>No {listingType} found matching your filters.</p>
+            <div className="text-center py-12 px-5 bg-gray-50 rounded-xl">
+              <p className="text-[15px] text-gray-500 mb-3">No {listingType} found matching your filters.</p>
               <button
                 onClick={() =>
                   setActiveFilters({ categories: [], priceRange: null, rating: null })
                 }
+                className="px-4 py-2 text-[13px] font-medium text-primary bg-transparent border border-primary rounded-lg cursor-pointer transition-all hover:bg-primary hover:text-white"
               >
                 Clear filters
               </button>
