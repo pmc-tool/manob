@@ -59,7 +59,7 @@ export default function CartPage() {
     return (
       <section className="pt-4">
         <div className="container">
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+          <div className="flex justify-center items-center" style={{ minHeight: "400px" }}>
             <Spin size="large" />
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function CartPage() {
     <section className="pt-4">
       {isProcessing ? (
         <div className="container">
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+          <div className="flex justify-center items-center" style={{ minHeight: "400px" }}>
             <Spin size="large" />
           </div>
         </div>
@@ -79,8 +79,8 @@ export default function CartPage() {
         <div className="container">
           {isCartEmpty && currentStep === 0 ? (
             // Empty Cart State
-            <div className="row justify-content-center mt-4">
-              <div className="col-lg-8 col-xl-6">
+            <div className="flex justify-center mt-4">
+              <div className="w-full lg:w-2/3 xl:w-1/2">
                 <div className="text-center">
                   <Image
                     src="/images/empty-cart.svg"
@@ -96,10 +96,10 @@ export default function CartPage() {
                     className="mb-4"
                     unoptimized
                   />
-                  <h3 className="fw-semibold">
+                  <h3 className="font-semibold">
                     Your shopping cart is empty.
                   </h3>
-                  <div className="fz17 text-muted">
+                  <div className="text-[17px] text-gray-500">
                     Return to the store to add items for your delivery slot.
                     Before proceed to checkout you must add some products to
                     your shopping cart. You will find a lot of interesting
@@ -107,7 +107,7 @@ export default function CartPage() {
                   </div>
                   <Link
                     href="/marketplace"
-                    className="ud-btn btn-thm mt-4 rounded-pill"
+                    className="inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 bg-primary text-white shadow-md hover:brightness-110 transition-all mt-4 rounded-full"
                   >
                     Explore Products
                   </Link>
@@ -116,12 +116,12 @@ export default function CartPage() {
             </div>
           ) : (
             // Cart Wizard with Stepper
-            <div className="stepper wizard-numbered">
+            <div>
               <Stepper
                 steps={steps}
                 currentStep={currentStep}
               />
-              <div className="stepper-content">
+              <div className="mt-4">
                 {currentStep === 0 && (
                   <Cart onClick={checkout} />
                 )}

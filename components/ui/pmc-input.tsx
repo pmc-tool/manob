@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 /**
  * PMC Input - Ant Design Input wrapper for consistent styling
  *
- * Replaces Bootstrap .form-control patterns
+ * Replaces Bootstrap .w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent patterns
  * Use this for text inputs, search fields, etc.
  */
 
@@ -43,7 +43,7 @@ PmcInput.displayName = 'PmcInput';
 /**
  * PMC TextArea - Ant Design TextArea wrapper
  *
- * Replaces Bootstrap textarea.form-control patterns
+ * Replaces Bootstrap textarea.w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent patterns
  */
 export interface PmcTextAreaProps extends TextAreaProps {
   /** Full width textarea */

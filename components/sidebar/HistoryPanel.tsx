@@ -37,7 +37,7 @@ const HistoryPanel = forwardRef<HTMLDivElement, HistoryPanelProps>(
         {open && (
           <motion.div
             ref={ref}
-            className="absolute left-[67px] top-0 h-full w-72 bg-white rounded-2xl z-50 p-4 border border-gray-200 overflow-y-auto shadow-lg"
+            className="absolute left-[67px] top-0 h-full w-72 bg-white rounded-mdxl z-50 p-4 border border-gray-200 overflow-y-auto shadow-lg"
             initial={{ x: -367 }}
             animate={{ x: 0 }}
             exit={{ x: -367 }}
@@ -59,7 +59,7 @@ const HistoryPanel = forwardRef<HTMLDivElement, HistoryPanelProps>(
                 <Link
                   key={idx}
                   href={item.href}
-                  className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-gray-100! text-nowrap overflow-hidden text-ellipsis text-[0.906rem] text-gray-800!"
+                  className="flex items-center gap-1.5 px-2 py-1.5 rounded-md hover:bg-gray-100! whitespace-nowrap overflow-hidden text-ellipsis text-[0.906rem] text-gray-800!"
                 >
                   {item.icon}
                   <span className="flex-1">{item.label}</span>
@@ -78,7 +78,7 @@ const HistoryPanel = forwardRef<HTMLDivElement, HistoryPanelProps>(
                   <Link
                     key={idx}
                     href="#"
-                    className="px-2 py-1.5 rounded-md hover:bg-gray-100! text-nowrap overflow-hidden text-ellipsis text-[0.906rem] text-gray-800!"
+                    className="px-2 py-1.5 rounded-md hover:bg-gray-100! whitespace-nowrap overflow-hidden text-ellipsis text-[0.906rem] text-gray-800!"
                   >
                     {name}
                   </Link>

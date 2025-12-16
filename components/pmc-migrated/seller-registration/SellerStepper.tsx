@@ -61,7 +61,7 @@ export default function SellerStepper({ steps }: StepperProps) {
               id={`${step.id}-trigger`}
             >
               <span
-                className={`rounded-none ${styles.bordersWidth} ${
+                className={`roundehidden ${styles.bordersWidth} ${
                   index <= currentStep
                     ? styles.activeBorder
                     : styles.inActiveBorder

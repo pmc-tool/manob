@@ -218,7 +218,7 @@ const PreviewFrame: React.FC<Props> = ({
         className="hidden absolute bg-orange-500 text-white px-2 py-1 rounded text-xs pointer-events-none z-9999"
       ></div>
 
-      <div className="absolute w-[350px] left-1/2 -translate-x-1/2 bottom-18 bg-white rounded-2xl shadow-[0px_0px_1px_rgba(0,0,0,0.18),_0px_3px_8px_rgba(0,0,0,0.1),_0px_1px_3px_rgba(0,0,0,0.1)] py-2 px-3 flex items-center justify-between gap-2">
+      <div className="absolute w-[350px] left-1/2 -translate-x-1/2 bottom-18 bg-white rounded-mdxl shadow-[0px_0px_1px_rgba(0,0,0,0.18),_0px_3px_8px_rgba(0,0,0,0.1),_0px_1px_3px_rgba(0,0,0,0.1)] py-2 px-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-1 text-[14px]">
           <TriangleAlert size={16} />
           <div className="flex-1">Unsaved Changes</div>
@@ -250,7 +250,7 @@ const PreviewFrame: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-3 bg-white rounded-2xl shadow-[0px_0px_1px_rgba(0,0,0,0.18),_0px_3px_8px_rgba(0,0,0,0.1),_0px_1px_3px_rgba(0,0,0,0.1)] py-2 px-3 flex items-center gap-2">
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-3 bg-white rounded-mdxl shadow-[0px_0px_1px_rgba(0,0,0,0.18),_0px_3px_8px_rgba(0,0,0,0.1),_0px_1px_3px_rgba(0,0,0,0.1)] py-2 px-3 flex items-center gap-2">
         <Space>
           {/* Replace Switch with a button */}
           <Button

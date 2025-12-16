@@ -95,15 +95,17 @@ export default function JobPostPage() {
     <div className={styles.jobPostPage}>
       {/* Header */}
       <div className={styles.pageHeader}>
-        <button className={styles.backBtn} onClick={() => router.back()}>
-          <ArrowLeft size={20} />
-          <span>Back</span>
-        </button>
-        <div className={styles.headerContent}>
-          <h1 className={styles.pageTitle}>Post a New Job</h1>
-          <p className={styles.pageSubtitle}>
-            Fill in the details below to create your job posting
-          </p>
+        <div className={styles.pageHeaderInner}>
+          <button className={styles.backBtn} onClick={() => router.back()}>
+            <ArrowLeft size={20} />
+            <span>Back</span>
+          </button>
+          <div className={styles.headerContent}>
+            <h1 className={styles.pageTitle}>Post a New Job</h1>
+            <p className={styles.pageSubtitle}>
+              Fill in the details below to create your job posting
+            </p>
+          </div>
         </div>
       </div>
 

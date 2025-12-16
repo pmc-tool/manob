@@ -72,7 +72,7 @@ export default function JobCard({
   return (
     <>
       <div
-        className={`${styles.jobListCard} items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-2xl shadow ${statusClass ?? ""} ${idxClass}`}
+        className={`${styles.jobListCard} items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-mdxl shadow ${statusClass ?? ""} ${idxClass}`}
       >
         <div
           onClick={() => handleDrawer(id)}

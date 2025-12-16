@@ -1,0 +1,130 @@
+.pageHeader {
+  background: #f9fafb;
+}
+
+.itemDescription {
+  line-height: 1.7;
+}
+
+.itemDescription h1,
+.itemDescription h2,
+.itemDescription h3,
+.itemDescription h4,
+.itemDescription h5,
+.itemDescription h6 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.itemDescription ul,
+.itemDescription ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.itemDescription li {
+  margin-bottom: 0.5rem;
+}
+
+.itemDescription p {
+  margin-bottom: 1rem;
+}
+
+/* Mobile collapsible description */
+@media (max-width: 1023px) {
+  .itemDescription {
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .itemDescription::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(transparent, white);
+  }
+
+  .itemDescription.isExpanded {
+    max-height: none;
+  }
+
+  .itemDescription.isExpanded::after {
+    display: none;
+  }
+}
+
+/* Sidebar card */
+.sidebarCard {
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .sidebarCard {
+    padding: 24px;
+  }
+}
+
+/* Buttons */
+.bidButton {
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--primary-color, #f84525);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bidButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.bidButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--primary-color, #f84525);
+  border: 2px solid var(--primary-color, #f84525);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.secondaryButton:hover {
+  background: var(--primary-color, #f84525);
+  color: white;
+}
+
+.secondaryButton:disabled {
+  border-color: #9ca3af;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.secondaryButton:disabled:hover {
+  background: transparent;
+  color: #9ca3af;
+}

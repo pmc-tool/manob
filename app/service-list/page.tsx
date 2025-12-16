@@ -1,4 +1,4 @@
-// MIGRATION: Service list page with real API data
+// MIGRATION: Service list page with centralized API
 'use client';
 
 import { Suspense, useState, useEffect, useCallback } from 'react';
@@ -6,61 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
+import { getServices, type ServiceListItem, type ServiceFilters } from '@/lib/api/services';
 import styles from './page.module.css';
-
-const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
-const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
-
-// API Response interface
-interface ApiService {
-  id: string;
-  service_title: string;
-  slug: string;
-  thumbnail_image: string;
-  price: number;
-  mrp: number;
-  avg_rating: string;
-  total_reviews: number;
-  total_sales: number;
-  is_onsale: boolean;
-  is_liked: boolean;
-  primary_category?: { id: number; name: string; slug: string };
-  secondary_category?: { id: number; name: string; slug: string };
-  package_details?: {
-    basic?: { price: number; mrp: number; delivery_time: number };
-    standard?: { price: number; mrp: number; delivery_time: number };
-    premium?: { price: number; mrp: number; delivery_time: number };
-  };
-  user?: {
-    sub: string;
-    first_name: string;
-    last_name: string;
-    user_name: string;
-    profile_image: string;
-  };
-}
-
-interface MappedService {
-  id: string;
-  title: string;
-  slug: string;
-  thumbnail_image: string;
-  price: number;
-  mrp: number;
-  avg_rating: number;
-  total_reviews: number;
-  total_sales: number;
-  is_onsale: boolean;
-  is_liked: boolean;
-  is_trending: boolean;
-  category?: string;
-  category_id?: string;
-  creator?: {
-    full_name: string;
-    user_name: string;
-    profile_image: string;
-  };
-}
 
 export default function ServiceListPage() {
   return (
@@ -81,115 +28,52 @@ function ServiceListContent() {
   });
 
   // Data states
-  const [services, setServices] = useState<MappedService[]>([]);
+  const [services, setServices] = useState<ServiceListItem[]>([]);
   const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Map API service to our format
-  const mapService = (item: ApiService): MappedService => ({
-    id: item.id,
-    title: item.service_title,
-    slug: item.slug,
-    thumbnail_image: item.thumbnail_image ? `${S3_BUCKET}/${item.thumbnail_image}` : '',
-    price: item.package_details?.basic?.price || item.price || 0,
-    mrp: item.package_details?.basic?.mrp || item.mrp || 0,
-    avg_rating: parseFloat(item.avg_rating) || 0,
-    total_reviews: item.total_reviews || 0,
-    total_sales: item.total_sales || 0,
-    is_onsale: item.is_onsale || false,
-    is_liked: item.is_liked || false,
-    is_trending: (item.total_sales || 0) > 3,
-    category: item.primary_category?.name,
-    category_id: item.primary_category?.slug,
-    creator: item.user
-      ? {
-          full_name: `${item.user.first_name} ${item.user.last_name}`,
-          user_name: item.user.user_name,
-          profile_image: item.user.profile_image ? `${S3_BUCKET}/${item.user.profile_image}` : '',
-        }
-      : undefined,
-  });
-
-  // Fetch services from API
+  // Fetch services using centralized API
   const fetchServices = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const params = new URLSearchParams();
-      params.set('page', '1');
-      params.set('limit', '50');
+      // Build filters from activeFilters state
+      const filters: ServiceFilters = {
+        page: 1,
+        limit: 50,
+        sortBy: activeFilters.sortBy as ServiceFilters['sortBy'],
+      };
 
-      const response = await fetch(`${API_URL_FEED}/services?${params.toString()}`);
-      if (!response.ok) throw new Error('Failed to fetch services');
-
-      const json = await response.json();
-      let items: ApiService[] = json.data?.items || [];
-
-      // Map to our format
-      let serviceList = items.map(mapService);
-
-      // Set categories from aggregations if available
-      if (json.data?.aggregations?.categories) {
-        setCategories(
-          json.data.aggregations.categories.map((cat: { id: number; name: string; slug: string; item_count: number }) => ({
-            id: cat.slug,
-            label: cat.name,
-            count: cat.item_count || 0,
-          }))
-        );
-      } else {
-        // Extract unique categories from services
-        const uniqueCategories = new Map<string, { label: string; count: number }>();
-        serviceList.forEach((s) => {
-          if (s.category_id && s.category) {
-            const existing = uniqueCategories.get(s.category_id);
-            uniqueCategories.set(s.category_id, {
-              label: s.category,
-              count: (existing?.count || 0) + 1,
-            });
-          }
-        });
-        setCategories(
-          Array.from(uniqueCategories.entries()).map(([id, { label, count }]) => ({ id, label, count }))
-        );
+      // Add category filter if selected
+      if (activeFilters.categories.length === 1) {
+        filters.categoryId = activeFilters.categories[0];
       }
 
-      // Client-side filters
+      // Add price range filter
       if (activeFilters.priceRange) {
-        serviceList = serviceList.filter(
-          (s) => s.price >= activeFilters.priceRange!.min && s.price <= activeFilters.priceRange!.max
-        );
+        filters.minPrice = activeFilters.priceRange.min;
+        filters.maxPrice = activeFilters.priceRange.max;
       }
 
+      // Add rating filter
       if (activeFilters.rating) {
-        serviceList = serviceList.filter((s) => s.avg_rating >= activeFilters.rating!);
+        filters.minRating = activeFilters.rating;
       }
 
-      if (activeFilters.categories.length > 0) {
+      const response = await getServices(filters);
+
+      // Apply multi-category filter client-side (API supports single category)
+      let serviceList = response.services;
+      if (activeFilters.categories.length > 1) {
         serviceList = serviceList.filter((s) =>
           activeFilters.categories.includes(s.category_id || '')
         );
       }
 
-      // Client-side sort
-      switch (activeFilters.sortBy) {
-        case 'popular':
-          serviceList.sort((a, b) => b.total_sales - a.total_sales);
-          break;
-        case 'price-low':
-          serviceList.sort((a, b) => a.price - b.price);
-          break;
-        case 'price-high':
-          serviceList.sort((a, b) => b.price - a.price);
-          break;
-        case 'rating':
-          serviceList.sort((a, b) => b.avg_rating - a.avg_rating);
-          break;
-      }
-
       setServices(serviceList);
+      setCategories(response.categories);
     } catch (err) {
       console.error('Failed to fetch services:', err);
       setError('Failed to load services. Please try again.');

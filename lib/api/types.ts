@@ -317,82 +317,118 @@ export interface AddressListResponse {
 }
 
 // ============================================
-// Forum & Discussion Types
+// Forum Types (matches actual API response)
 // ============================================
 
-export interface ForumTopic {
+export interface ForumUser {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_image?: string;
+}
+
+export interface Forum {
   id: string;
   title: string;
-  slug: string;
-  description?: string;
-  postCount: number;
-  lastPostAt?: string;
+  body: string;
+  creator_meta: ForumUser;
+  total_comments: number;
+  views: number;
+  total_likes: number;
+  is_pinned: boolean;
+  is_featured: boolean;
+  is_solved: boolean;
+  is_liked?: boolean;
+  is_bookmarked?: boolean;
+  created_at: string;
+  updated_at: string;
+  total_posts?: number;
+  total_solution?: number;
+  is_pin_req?: boolean;
 }
 
-export interface ForumTopicListResponse {
-  topics: ForumTopic[];
-}
-
-export interface ForumPost {
+export interface ForumComment {
   id: string;
-  topicId: string;
-  topic: ForumTopic;
-  authorId: string;
-  author: User;
+  forum_id: string;
+  body: string;
+  creator_meta: ForumUser;
+  total_likes: number;
+  is_liked?: boolean;
+  is_disliked?: boolean;
+  is_right_answer: boolean;
+  created_at: string;
+  updated_at?: string;
+  solved_at?: string;
+}
+
+export interface ForumContributor {
+  id?: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string;
+  total_contributed: number;
+}
+
+export interface ForumListResponse {
+  data: {
+    items: Forum[];
+    pagination: {
+      current_page: number;
+      total_pages: number;
+      total_items: number;
+      per_page: number;
+    };
+  };
+}
+
+export interface ForumDetailResponse {
+  data: Forum;
+}
+
+export interface ForumCommentsResponse {
+  data: {
+    items: ForumComment[];
+    pagination: {
+      current_page: number;
+      total_pages: number;
+      total_items: number;
+      per_page: number;
+    };
+  };
+}
+
+export interface TopContributorsResponse {
+  data: ForumContributor[];
+}
+
+export interface TopForumsResponse {
+  data: { id: string; title: string }[];
+}
+
+export interface ForumCreateRequest {
   title: string;
-  content: string;
-  replyCount: number;
-  viewCount: number;
-  isPinned: boolean;
-  isLocked: boolean;
-  createdAt: string;
-  updatedAt: string;
+  body: string;
 }
 
-export interface ForumPostListResponse {
-  posts: ForumPost[];
-  pagination: Pagination;
+export interface ForumUpdateRequest {
+  title?: string;
+  body?: string;
 }
 
-export interface ForumPostCreateRequest {
-  topicId: string;
-  title: string;
-  content: string;
+export interface ForumCommentCreateRequest {
+  body: string;
 }
 
-export interface ForumReply {
-  id: string;
-  postId: string;
-  authorId: string;
-  author: User;
-  content: string;
-  createdAt: string;
-  updatedAt: string;
+export interface ForumInteractionRequest {
+  type: 'like' | 'unlike' | 'bookmark' | 'unbookmark';
 }
 
-export interface ForumReplyListResponse {
-  replies: ForumReply[];
-  pagination: Pagination;
-}
-
-export interface Discussion {
-  id: string;
-  authorId: string;
-  author: User;
-  title: string;
-  content: string;
-  category: string;
-  tags: string[];
-  replyCount: number;
-  viewCount: number;
-  likeCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface DiscussionListResponse {
-  discussions: Discussion[];
-  pagination: Pagination;
+export interface ForumListParams {
+  page?: number;
+  limit?: number;
+  sort_by?: 'DESC' | 'likes' | 'views';
+  term?: string;
+  filter?: 'recent' | 'unanswered' | 'unsolved' | 'solved' | 'pinned';
 }
 
 // ============================================

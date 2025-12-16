@@ -1,6 +1,6 @@
 // Blog Details Page Route
 import { BlogDetails } from '@/components/pmc-migrated/blog';
-import { getBlogBySlug, mockBlogPosts } from '@/lib/mocks/blog.mock';
+import { fetchBlogBySlug, fetchAllBlogSlugs } from '@/lib/api/blog';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -13,7 +13,7 @@ export async function generateMetadata({
   params,
 }: BlogDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = await fetchBlogBySlug(slug);
 
   if (!post) {
     return {
@@ -24,19 +24,26 @@ export async function generateMetadata({
   return {
     title: `${post.title} | manob.ai Blog`,
     description: post.short_description,
+    openGraph: {
+      title: post.title,
+      description: post.short_description,
+      images: post.cover_image ? [post.cover_image] : [],
+    },
   };
 }
 
 // Generate static paths for all blog posts
 export async function generateStaticParams() {
-  return mockBlogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  const slugs = await fetchAllBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
+
+// Dynamic rendering to always fetch fresh data
+export const dynamic = 'force-dynamic';
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params;
-  const post = getBlogBySlug(slug);
+  const post = await fetchBlogBySlug(slug);
 
   if (!post) {
     notFound();

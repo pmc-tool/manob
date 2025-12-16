@@ -120,8 +120,8 @@ export default function Pricing() {
       </p>
 
       <div className="relative -mx-4 w-auto pt-20 md:mx-0 md:w-full xl:pt-16">
-        <div className="w-full rounded-4xl bg-gray-50 p-1 pb-0 ring-1 ring-inset ring-gray-200 md:p-2.5">
-          <div className="grid grid-cols-[minmax(187px,1fr),minmax(0,1fr)] rounded-[28px] bg-gray-100 p-1 shadow md:gap-2 md:rounded-3xl md:p-2 xl:grid-cols-4">
+        <div className="w-full rounded-xlxl bg-gray-50 p-1 pb-0 ring-1 ring-inset ring-gray-200 md:p-2.5">
+          <div className="grid grid-cols-[minmax(187px,1fr),minmax(0,1fr)] rounded-[28px] bg-gray-100 p-1 shadow md:gap-2 md:rounded-lgxl md:p-2 xl:grid-cols-4">
             <div className="relative flex flex-col gap-3 px-2.5 py-7 before:absolute before:inset-y-0 before:right-0 before:w-px before:bg-gray-200 min-[480px]:pl-4 min-[480px]:pr-4 md:pl-3 md:pr-4">
               <motion.div
                 className="absolute -top-18 left-[95px] whitespace-nowrap font-kalam text-[20px]/[24px] -tracking-[0.01em] text-primary"
@@ -283,7 +283,7 @@ export default function Pricing() {
                 </React.Fragment>
               ))}
             </div>
-            <div className="relative hidden flex-col gap-3 rounded-20 bg-gray-900 px-2.5 py-7 shadow-button-gray min-[480px]:px-4 md:rounded-2xl md:px-4 xl:flex">
+            <div className="relative hidden flex-col gap-3 rounded-md0 bg-gray-900 px-2.5 py-7 shadow-button-gray min-[480px]:px-4 md:rounded-mdxl md:px-4 xl:flex">
               <div className="absolute right-3 top-3 flex h-5 items-center rounded-[5px] bg-primary px-[7px] text-[11px] text-white">
                 MOST POPULAR
               </div>

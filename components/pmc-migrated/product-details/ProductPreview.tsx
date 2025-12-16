@@ -83,7 +83,7 @@ export default function ProductPreview({
 
   return (
     <>
-      <div className="bgc-dark mb-2 p-2 sm:p-3 relative rounded-2">
+      <div className="bg-[#1a1a1a] mb-2 p-2 sm:p-3 relative rounded-md">
         {/* Ribbons */}
         {trendingStatus && (
           <div className="ribbon trending">
@@ -124,7 +124,7 @@ export default function ProductPreview({
           </Link>
         </div>
 
-        {/* Action Buttons - matching original: d-flex flex-wrap gap-2 justify-content-center mt-2 mt-sm-3 */}
+        {/* Action Buttons - matching original: flex flex-wrap gap-2 justify-content-center mt-2 mt-sm-3 */}
         <div className="flex flex-wrap gap-2 justify-center mt-2 sm:mt-3">
           <Link href={previewLink} target="_blank">
             <PmcButton variant="primary" icon={<Columns size={18} />}>

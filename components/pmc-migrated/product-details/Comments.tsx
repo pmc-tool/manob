@@ -41,7 +41,7 @@ function SingleComment({
   };
 
   return (
-    <div className="bgc-gray-6 border mb-3 rounded-md">
+    <div className="bg-[#fafafa] border mb-3 rounded-md">
       <div className="flex p-3 sm:p-4">
         <div className="flex-shrink-0">
           <Image
@@ -53,15 +53,15 @@ function SingleComment({
             unoptimized
           />
         </div>
-        <div className="flex-grow ms-3">
+        <div className="flex-grow ml-3">
           <div className="comment-header mb-2">
             <div className="flex items-center gap-2">
-              <h4 className="fz16 mb-0 font-semibold">- {comment.user_name}</h4>
+              <h4 className="text-base mb-0 font-semibold">- {comment.user_name}</h4>
               <div className="flex gap-1">
                 {/* Status badges can go here */}
               </div>
             </div>
-            <div className="comment-datetime fz13 text-gray-500">{timeAgo(comment.created_at)}</div>
+            <div className="comment-datetime text-[13px] text-gray-500">{timeAgo(comment.created_at)}</div>
           </div>
           <div className="fs-15">{comment.content}</div>
 
@@ -70,7 +70,7 @@ function SingleComment({
             <div className="flex items-center gap-2 mt-3">
               <button
                 onClick={() => setReplyOpen(!replyOpen)}
-                className="fz12 font-semibold tracking-wider uppercase reply-open border-0 bg-transparent hover:text-primary"
+                className="text-xs font-semibold tracking-wider uppercase reply-open border-0 bg-transparent hover:text-primary"
               >
                 Reply
                 <CornerDownRight className="h-4 w-4 inline ml-1" />
@@ -91,10 +91,10 @@ function SingleComment({
                   unoptimized
                 />
               </div>
-              <div className="flex-grow ms-3">
+              <div className="flex-grow ml-3">
                 <div className="comment-header mb-2">
                   <div className="flex items-center gap-2">
-                    <h4 className="fz16 mb-0 font-semibold">- {reply.user_name}</h4>
+                    <h4 className="text-base mb-0 font-semibold">- {reply.user_name}</h4>
                     <div className="flex gap-1">
                       {reply.is_author && (
                         <span className="status status-success bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded">
@@ -103,7 +103,7 @@ function SingleComment({
                       )}
                     </div>
                   </div>
-                  <div className="comment-datetime fz13 text-gray-500">{timeAgo(reply.created_at)}</div>
+                  <div className="comment-datetime text-[13px] text-gray-500">{timeAgo(reply.created_at)}</div>
                 </div>
                 <div className="fs-15">{reply.content}</div>
               </div>
@@ -116,7 +116,7 @@ function SingleComment({
       {replyOpen && (
         <div className="reply-form p-3 sm:p-4 border-t">
           <div className="flex justify-between mb-2">
-            <h4 className="fz16 mb-0 font-semibold">Reply to {comment.user_name}</h4>
+            <h4 className="text-base mb-0 font-semibold">Reply to {comment.user_name}</h4>
             <button onClick={() => setReplyOpen(false)} className="reply-close-btn border-0 bg-transparent">
               <X className="h-4 w-4" />
             </button>
@@ -152,10 +152,10 @@ export default function Comments({
     <div className="mb-4 mt-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <h4 className="fz20 mb-0">
+        <h4 className="text-xl mb-0">
           <span className="font-bold">{totalComments}</span> comments found.
         </h4>
-        <div className="flex items-center gap-2 text-nowrap">
+        <div className="flex items-center gap-2 whitespace-nowrap">
           <span className="text-sm text-gray-700">Sort by</span>
           <PmcSelect
             onChange={(value) => onFilterChange(value as string)}
@@ -186,8 +186,8 @@ export default function Comments({
             unoptimized
           />
           <div className="mt-3">
-            <div className="font-semibold fz16">Your kudos and feedback are welcome!</div>
-            <div className="fz14 text-gray-500">Share your thoughts using the comment box under.</div>
+            <div className="font-semibold text-base">Your kudos and feedback are welcome!</div>
+            <div className="text-sm text-gray-500">Share your thoughts using the comment box under.</div>
           </div>
         </div>
       )}

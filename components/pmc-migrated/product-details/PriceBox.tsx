@@ -36,28 +36,12 @@ export default function PriceBox({
   const [extendSupport, setExtendSupport] = useState(false);
   const [licenseDropdownOpen, setLicenseDropdownOpen] = useState(false);
   const [downloadDropdownOpen, setDownloadDropdownOpen] = useState(false);
-  const [showBottomBar, setShowBottomBar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     if (licenses.length > 0) {
       setSelectedLicense(licenses[0]);
     }
   }, [licenses]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setShowBottomBar(false);
-      } else {
-        setShowBottomBar(true);
-      }
-      setLastScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
 
   const handleLicenseSelect = (license: License) => {
     setSelectedLicense(license);
@@ -165,24 +149,24 @@ export default function PriceBox({
                         }`}
                       >
                         <div className="flex items-center gap-1 mb-2">
-                          <h5 className="fz16 font-bold mb-0">{license.type}</h5>
+                          <h5 className="text-base font-bold mb-0">{license.type}</h5>
                           {selectedLicense?.type === license.type && (
                             <span className="badge bg-green-500 text-white text-xs px-2 py-0.5 rounded selected-badge">
                               Selected
                             </span>
                           )}
-                          <div className="font-bold fz21 ml-auto">
+                          <div className="font-bold text-[21px] ml-auto">
                             <sup>$</sup>
                             {formatPrice(license.price)}
                           </div>
                         </div>
-                        <p className="fz14 leading-normal text-gray-600 mb-0">{license.description}</p>
+                        <p className="text-sm leading-normal text-gray-600 mb-0">{license.description}</p>
                       </button>
                     </li>
                   ))}
                   <li>
                     <div className="text-center py-2 border-t">
-                      <Link href="/licenses" className="font-medium fz14 text-primary flex items-center justify-center">
+                      <Link href="/licenses" className="font-medium text-sm text-primary flex items-center justify-center">
                         View license details
                         <ChevronRight className="h-4 w-4" />
                       </Link>
@@ -195,12 +179,12 @@ export default function PriceBox({
             {/* Product Price */}
             <div className="price flex items-center gap-2 mb-0">
               {selectedLicense?.oldPrice && selectedLicense.oldPrice > 0 && (
-                <div id="old-price" className="font-normal fz19 text-gray-400 line-through">
+                <div id="old-price" className="font-normal text-[19px] text-gray-400 line-through">
                   <sup>$</sup>
                   {formatPrice(selectedLicense.oldPrice)}
                 </div>
               )}
-              <span id="current-price" className="text-primary fz32 font-bold">
+              <span id="current-price" className="text-primary text-[32px] font-bold">
                 <sup>$</sup>
                 {formatPrice(totalPrice)}
               </span>
@@ -210,7 +194,7 @@ export default function PriceBox({
           <hr className="opacity-100 mb-3 mt-2" />
 
           <div className="h5 mb-2 font-semibold">{productName}</div>
-          {productDescription && <p className="text fz14">{productDescription}</p>}
+          {productDescription && <p className="text text-sm">{productDescription}</p>}
 
           <hr className="opacity-100 mb-3" />
 
@@ -240,13 +224,13 @@ export default function PriceBox({
           <hr className="opacity-100 mb-3 mt-3" />
 
           {/* Extend Support */}
-          <div className="extend-support form-check mb-3">
+          <div className="mb-3">
             <label className="flex items-center font-medium gap-2 leading-none text-gray-700 cursor-pointer">
               <input
                 type="checkbox"
                 checked={extendSupport}
                 onChange={handleExtendSupportChange}
-                className="form-check-input w-4 h-4"
+                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <span>Extend support to 12 months</span>
               <span className="flex items-end gap-2 ml-auto">
@@ -255,7 +239,7 @@ export default function PriceBox({
                     ${formatPrice(selectedLicense.extendSupportOldPrice)}
                   </span>
                 )}
-                <span id="extend-support-current-price" className="font-bold fz19">
+                <span id="extend-support-current-price" className="font-bold text-[19px]">
                   ${formatPrice(selectedLicense?.extendSupportPrice || 0)}
                 </span>
               </span>
@@ -274,34 +258,12 @@ export default function PriceBox({
             </PmcButton>
           </div>
 
-          <div className="font-mono italic fz13 mt-1 text-center text-gray-500">
+          <div className="font-mono italic text-[13px] mt-1 text-center text-gray-500">
             Price is in US dollars and excludes tax and handling fees
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Bar */}
-      <div
-        className={`fixed bottom-0 left-0 w-full bg-white z-30 py-3 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] transition-transform duration-300 ${
-          showBottomBar ? 'translate-y-0' : 'translate-y-full'
-        }`}
-      >
-        <div className="container mx-auto px-4">
-          <PmcButton
-            variant="primary"
-            fullWidth
-            onClick={handleAddToCart}
-            disabled={!canAddToCart}
-            icon={<ShoppingCart size={20} />}
-          >
-            Add To Cart
-            <span className="text-lg ml-2">
-              <sup>$</sup>
-              {formatPrice(totalPrice)}
-            </span>
-          </PmcButton>
-        </div>
-      </div>
     </>
   );
 }

@@ -45,13 +45,13 @@ export default function Page() {
 
   return (
     <div className="container">
-      <section className={`align-items-center d-flex ${styles.authWrap}`}>
+      <section className={`items-center flex ${styles.authWrap}`}>
         <div
-          className={`flex-grow-1 m-auto ${styles.authInner} ${styles.authRecoveryForm}`}
+          className={`flex-grow m-auto ${styles.authInner} ${styles.authRecoveryForm}`}
         >
           <div className="auth-header mb-5">
-            <h4 className="fw-bold text-center mb-0">Forgot Password</h4>
-            <p className="fz13 lh-base text-center mb-0 mt-4">
+            <h4 className="font-bold text-center mb-0">Forgot Password</h4>
+            <p className="text-[13px] leading-normal text-center mb-0 mt-4">
               Enter your account&apos;s email and we&apos;ll send you an email to reset
               the password.
             </p>
@@ -59,7 +59,7 @@ export default function Page() {
           <div className="auth-body">
             <form onSubmit={handleSubmit(submit)}>
               {error && (
-                <div className="alert alert-danger mb-4" role="alert">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
                   {error}
                 </div>
               )}
@@ -68,7 +68,7 @@ export default function Page() {
                 <div className="position-relative">
                   <input
                     type="text"
-                    className={`form-control ${styles.authInput}`}
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${styles.authInput}`}
                     placeholder="name@example.com"
                     {...register("email", {
                       required: "Email is required",
@@ -85,23 +85,23 @@ export default function Page() {
                   errors={errors}
                   name="email"
                   render={({ message }) => (
-                    <div className="text-danger fz14">{message}</div>
+                    <div className="text-red-500 text-sm">{message}</div>
                   )}
                 />
               </div>
               <button
                 type="submit"
-                className="rounded ud-btn btn-default w-100"
+                className="rounded inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200 transition-all w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Sending..." : "Send email"}
               </button>
             </form>
           </div>
-          <div className="mt-3 text-center auth-text fz13">
+          <div className="mt-3 text-center auth-text text-[13px]">
             Secure Login with reCAPTCHA subject to Google <br />
             <a target="_blank" href="/privacy-policy">
-              <span className="text-decoration-underline">
+              <span className="underline">
                 Privacy & policy
               </span>
             </a>

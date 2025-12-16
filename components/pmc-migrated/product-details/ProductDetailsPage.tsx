@@ -27,6 +27,18 @@ const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
 const API_URL_INV = process.env.NEXT_PUBLIC_API_URL_INV || '';
 const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
 
+// Helper to construct proper image URLs
+const getImageUrl = (imagePath: string | undefined | null): string => {
+  if (!imagePath) return '';
+  // If already a full URL, return as-is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  // Remove leading slash if present to avoid double slashes
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  return `${S3_BUCKET}/${cleanPath}`;
+};
+
 // API Response interfaces
 interface ApiFeedProduct {
   id: string;
@@ -180,13 +192,17 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
 
       // Step 3: Fetch reviews
       const reviewsResponse = await fetch(`${API_URL_INV}/products/${productId}/reviews`);
-      let reviewsData: { stats: ApiReviewStats; items: ApiReview[] } = {
-        stats: { total_reviews: 0, avg_rating: 0, rating_sequence: { one_star: '0', two_star: '0', three_star: '0', four_star: '0', five_star: '0' } },
+      const defaultReviewStats = { total_reviews: 0, avg_rating: 0, rating_sequence: { one_star: '0', two_star: '0', three_star: '0', four_star: '0', five_star: '0' } };
+      let reviewsData: { stats: ApiReviewStats | null; items: ApiReview[] } = {
+        stats: defaultReviewStats,
         items: [],
       };
       if (reviewsResponse.ok) {
         const reviewsJson = await reviewsResponse.json();
-        reviewsData = reviewsJson.data || reviewsData;
+        reviewsData = {
+          stats: reviewsJson.data?.stats || defaultReviewStats,
+          items: reviewsJson.data?.items || [],
+        };
       }
 
       // Step 4: Fetch comments
@@ -211,8 +227,8 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
         product_name: feedProduct.product_name,
         short_description: feedProduct.short_description || invProduct?.short_description || '',
         full_description: invProduct?.full_description || '',
-        product_preview_file_url: feedProduct.image ? `${S3_BUCKET}/${feedProduct.image}` : '',
-        screenshots_urls: invProduct?.thumbnail_images?.map((img) => `${S3_BUCKET}/${img}`) || [],
+        product_preview_file_url: getImageUrl(feedProduct.image),
+        screenshots_urls: invProduct?.thumbnail_images?.map((img) => getImageUrl(img)) || [],
         is_onsale: feedProduct.is_onsale,
         regular_lic_price: feedProduct.price || invProduct?.price || 0,
         regular_lic_fee: 0,
@@ -239,7 +255,7 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
           first_name: feedProduct.user?.first_name || '',
           last_name: feedProduct.user?.last_name || '',
           user_name: feedProduct.user?.user_name || '',
-          profile_image: feedProduct.user?.profile_image ? `${S3_BUCKET}/${feedProduct.user.profile_image}` : '',
+          profile_image: getImageUrl(feedProduct.user?.profile_image),
           member_since: '',
         },
       };
@@ -270,7 +286,7 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
       const mappedReviews: Review[] = reviewsData.items.map((r) => ({
         id: r.id,
         user_name: `${r.reviewer_meta.first_name} ${r.reviewer_meta.last_name}`,
-        user_avatar: r.reviewer_meta.avatar ? `${S3_BUCKET}/${r.reviewer_meta.avatar}` : '',
+        user_avatar: getImageUrl(r.reviewer_meta.avatar),
         rating: parseFloat(r.review_rating) || 0,
         content: r.review_content,
         created_at: r.created_at,
@@ -278,15 +294,16 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
       }));
 
       // Map review stats
+      const ratingSeq = reviewsData.stats?.rating_sequence;
       const mappedReviewStats = {
-        avg_rating: reviewsData.stats.avg_rating || parseFloat(feedProduct.avg_rating) || 0,
-        total_reviews: reviewsData.stats.total_reviews || feedProduct.total_reviews || 0,
+        avg_rating: reviewsData.stats?.avg_rating || parseFloat(feedProduct.avg_rating) || 0,
+        total_reviews: reviewsData.stats?.total_reviews || feedProduct.total_reviews || 0,
         rating_sequence: {
-          5: parseInt(reviewsData.stats.rating_sequence.five_star) || 0,
-          4: parseInt(reviewsData.stats.rating_sequence.four_star) || 0,
-          3: parseInt(reviewsData.stats.rating_sequence.three_star) || 0,
-          2: parseInt(reviewsData.stats.rating_sequence.two_star) || 0,
-          1: parseInt(reviewsData.stats.rating_sequence.one_star) || 0,
+          5: parseInt(ratingSeq?.five_star || '0') || 0,
+          4: parseInt(ratingSeq?.four_star || '0') || 0,
+          3: parseInt(ratingSeq?.three_star || '0') || 0,
+          2: parseInt(ratingSeq?.two_star || '0') || 0,
+          1: parseInt(ratingSeq?.one_star || '0') || 0,
         },
       };
 
@@ -294,13 +311,13 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
       const mappedComments: Comment[] = commentsData.map((c) => ({
         id: c.id,
         user_name: `${c.user_meta?.first_name || ''} ${c.user_meta?.last_name || ''}`.trim() || 'Anonymous',
-        user_avatar: c.user_meta?.avatar ? `${S3_BUCKET}/${c.user_meta.avatar}` : '',
+        user_avatar: getImageUrl(c.user_meta?.avatar),
         content: c.content,
         created_at: c.created_at,
         replies: c.replies?.map((r) => ({
           id: r.id,
           user_name: `${r.user_meta?.first_name || ''} ${r.user_meta?.last_name || ''}`.trim() || 'Anonymous',
-          user_avatar: r.user_meta?.avatar ? `${S3_BUCKET}/${r.user_meta.avatar}` : '',
+          user_avatar: getImageUrl(r.user_meta?.avatar),
           content: r.content,
           created_at: r.created_at,
           is_author: r.is_author,
@@ -311,7 +328,7 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
       const mappedRelated = relatedItems.map((item) => ({
         id: item.id,
         title: item.product_name,
-        thumbnail_image: item.image ? `${S3_BUCKET}/${item.image}` : '',
+        thumbnail_image: getImageUrl(item.image),
         price: item.price,
         total_sales: item.total_sales || 0,
         avg_rating: parseFloat(item.avg_rating) || 0,
@@ -423,8 +440,8 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
                 <div className="alert alert-warning flex items-start gap-3">
                   <Info className="h-6 w-6 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="fz18 font-semibold mb-1">This product is yours! 🚀</h5>
-                    <p className="fz14">
+                    <h5 className="text-lg font-semibold mb-1">This product is yours! 🚀</h5>
+                    <p className="text-sm">
                       📌 You have created this product! ✅ Please review and take necessary action.
                     </p>
                   </div>
@@ -436,8 +453,8 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
                 <div className="alert alert-primary flex items-start gap-3">
                   <Info className="h-6 w-6 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="fz18 font-semibold mb-1">This item is currently hidden! 🔒</h5>
-                    <p className="fz14">
+                    <h5 className="text-lg font-semibold mb-1">This item is currently hidden! 🔒</h5>
+                    <p className="text-sm">
                       Before you can put this item on sale, it currently needs to be reviewed as
                       it&apos;s hidden. Simply use the &quot;Submit files to review&quot; button on
                       the Edit Tab. If your item was rejected, ensure all outlined issues are fixed.
@@ -465,36 +482,36 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
               />
 
               {/* Tabs Navigation */}
-              <ul className="item-details-tabs mb-8">
-                <li className="nav-item">
+              <ul className="flex bg-[#222222] rounded-lg overflow-hidden list-none p-0 m-0 mb-8">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('details')}
-                    className={`nav-link ${activeTab === 'details' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'details' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <FileText className="h-4 w-4" />
+                    <FileText className="h-4 w-4 shrink-0" />
                     Item Details
                   </button>
                 </li>
-                <li className="nav-item">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('comments')}
-                    className={`nav-link ${activeTab === 'comments' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'comments' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4 shrink-0" />
                     Comments
-                    <span className="badge">{comments.length}</span>
+                    <span className={`px-2 py-0.5 rounded-xl text-xs leading-none ${activeTab === 'comments' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>{comments.length}</span>
                   </button>
                 </li>
                 {(hasPurchased || reviews.length > 0) && (
-                  <li className="nav-item">
+                  <li className="flex-1 border-r border-[#393939] last:border-r-0">
                     <button
                       type="button"
                       onClick={() => setActiveTab('reviews')}
-                      className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`}
+                      className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'reviews' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                     >
-                      <Star className="h-4 w-4" />
+                      <Star className="h-4 w-4 shrink-0" />
                       {reviewStats.avg_rating.toFixed(1)} ({reviewStats.total_reviews})
                     </button>
                   </li>

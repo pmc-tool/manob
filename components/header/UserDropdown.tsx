@@ -40,7 +40,7 @@ export const userMenuItems: MenuProps["items"] = [
             Credit Balance
           </p>
           <div className="flex items-center gap-px">
-            <p className="text-base font-normal md:text-sm text-muted-foreground">
+            <p className="text-base font-normal md:text-sm text-gray-500-foreground">
               5 left
             </p>
             <ChevronRight size={14} />
@@ -50,7 +50,7 @@ export const userMenuItems: MenuProps["items"] = [
         <Progress percent={30} />
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-muted-foreground"></div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-gray-500-foreground">
             Daily credits reset at midnight UTC
           </p>
         </div>

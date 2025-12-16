@@ -62,7 +62,7 @@ export default function ItemAttributes({
 
   return (
     <div className="mb-4 p-3 sm:p-4 relative rounded-lg shadow bg-white item-attributes">
-      <table className="fz14 w-full mb-0">
+      <table className="text-sm w-full mb-0">
         <tbody>
           <tr className="border-b border-gray-100">
             <th className="py-2.5 pr-4 text-left text-gray-600 font-medium w-2/5">Last Update</th>

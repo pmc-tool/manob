@@ -75,7 +75,7 @@ export function CategoryList({
         <Link key={category.id} href={`/categories/${category.slug}`}>
           <Card
             hoverable
-            className="overflow-hidden rounded-2xl text-center"
+            className="overflow-hidden rounded-mdxl text-center"
             cover={
               category.image ? (
                 <div className="relative h-32 bg-gray-100">
@@ -115,7 +115,7 @@ export function CategoryList({
 export function CategoryCard({ category }: { category: Category }) {
   return (
     <Link href={`/categories/${category.slug}`}>
-      <div className="group relative overflow-hidden rounded-2xl">
+      <div className="group relative overflow-hidden rounded-mdxl">
         <div className="relative aspect-[4/3]">
           {category.image ? (
             <Image

@@ -21,7 +21,7 @@ export default function ServiceListLayout({
           <ProjectSidebar />
         </aside>
 
-        <main className="main border border-gray-200 rounded-2xl overflow-hidden shadow-[0_2px_2px_#0000000a,0_8px_8px_-8px_#0000000a] relative z-10">
+        <main className="main border border-gray-200 rounded-mdxl overflow-hidden shadow-[0_2px_2px_#0000000a,0_8px_8px_-8px_#0000000a] relative z-10">
           <div className="h-full overflow-auto p-6">
             {children}
           </div>

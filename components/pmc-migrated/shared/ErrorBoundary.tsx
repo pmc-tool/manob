@@ -131,7 +131,7 @@ export function ErrorDisplay({
   const status = error.severity === 'error' ? 'error' : 'warning';
 
   return (
-    <div className={`rounded-2xl border border-gray-200 bg-white p-6 ${className}`}>
+    <div className={`rounded-mdxl border border-gray-200 bg-white p-6 ${className}`}>
       <Result
         status={status}
         title={error.title}

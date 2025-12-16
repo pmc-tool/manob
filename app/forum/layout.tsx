@@ -23,7 +23,7 @@ export default function ForumLayout({
         </aside>
 
         {/* Main content area */}
-        <main className="main border border-gray-200 rounded-2xl overflow-hidden shadow-[0_2px_2px_#0000000a,0_8px_8px_-8px_#0000000a] relative z-10 bg-white">
+        <main className="main border border-gray-200 rounded-mdxl overflow-hidden shadow-[0_2px_2px_#0000000a,0_8px_8px_-8px_#0000000a] relative z-10 bg-white">
           <div className="p-4 md:p-6 h-full overflow-auto">
             {children}
           </div>

@@ -89,7 +89,7 @@ export default function PackageComparisonTable({
 
   return (
     <div id="comparePackages" className="package-comparison-table">
-      <h4 className="fz18 font-semibold mb-4">Compare Packages</h4>
+      <h4 className="text-lg font-semibold mb-4">Compare Packages</h4>
       <div className="table-responsive border rounded-lg overflow-hidden">
         <table className="comparison-table">
           <thead className="comparison-thead">

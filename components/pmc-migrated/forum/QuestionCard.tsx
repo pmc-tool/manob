@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { Pin, Star, CheckCircle } from 'lucide-react';
 import { Avatar } from '../shared/avatar';
-import { ForumQuestion } from '@/lib/mocks/forum.mock';
+import type { Forum } from '@/lib/api/types';
 import styles from './forum.module.css';
 
 interface QuestionCardProps {
-  question: ForumQuestion;
+  question: Forum;
   searchTerm?: string;
 }
 

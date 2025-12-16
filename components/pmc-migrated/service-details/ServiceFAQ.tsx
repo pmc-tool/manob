@@ -20,7 +20,7 @@ function FAQItem({ faq, index, isOpen, onToggle }: { faq: FAQ; index: number; is
         onClick={onToggle}
         className="w-full flex items-center justify-between py-4 text-left"
       >
-        <span className="font-medium fz15 text-gray-800 pr-4">{faq.question}</span>
+        <span className="font-medium text-[15px] text-gray-800 pr-4">{faq.question}</span>
         {isOpen ? (
           <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
         ) : (
@@ -28,7 +28,7 @@ function FAQItem({ faq, index, isOpen, onToggle }: { faq: FAQ; index: number; is
         )}
       </button>
       {isOpen && (
-        <div className="pb-4 text-gray-600 fz14 leading-relaxed">
+        <div className="pb-4 text-gray-600 text-sm leading-relaxed">
           {faq.answer}
         </div>
       )}
@@ -49,7 +49,7 @@ export default function ServiceFAQ({ faqs }: ServiceFAQProps) {
 
   return (
     <div className="service-faq mb-6">
-      <h3 className="fz20 font-bold mb-4">Frequently Asked Questions</h3>
+      <h3 className="text-xl font-bold mb-4">Frequently Asked Questions</h3>
       <div className="bg-white rounded-lg border">
         {faqs.map((faq, index) => (
           <FAQItem

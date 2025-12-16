@@ -73,7 +73,7 @@ const CartItem: React.FC<CartItemProps> = ({
       {/* Remove Button */}
       <button
         type="button"
-        className="bg-white absolute right-0 top-0 font-medium text-[13px] px-3 py-2 rounded-2xl text-gray-500 border-0 flex items-center gap-1 cursor-pointer hover:text-red-500"
+        className="bg-white absolute right-0 top-0 font-medium text-[13px] px-3 py-2 rounded-mdxl text-gray-500 border-0 flex items-center gap-1 cursor-pointer hover:text-red-500"
         onClick={() => onRemove(id)}
       >
         Remove

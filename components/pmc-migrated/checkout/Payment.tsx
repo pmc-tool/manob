@@ -103,7 +103,7 @@ export default function Payment({ onClick, isSaving }: PaymentProps) {
 
   return (
     <>
-      <div className="mb-4 pb-3 border-b-2">
+      <div className="mb-4 pb-3 border-b border-gray-200">
         <h2 className="font-medium text-xl mb-0">Billing & Payment</h2>
         <p className="mb-0 text-gray-600">
           Billing & Payment involves managing invoices, payment methods, and
@@ -124,11 +124,11 @@ export default function Payment({ onClick, isSaving }: PaymentProps) {
               </div>
             </div>
           </div>
-          <div className="checkout_form">
+          <div className="mt-4">
             <div>
               <h5 className="mb-3">Billing details</h5>
             </div>
-            <div className="border p-3 p-xl-4 rounded-3">
+            <div className="border p-3 xl:p-4 rounded-lg">
               {!billingInfo?.id ? (
                 <div className="mb-4">
                   <SecondaryButton
@@ -189,8 +189,8 @@ export default function Payment({ onClick, isSaving }: PaymentProps) {
           </div>
         </div>
         <div className="lg:col-span-4 xl:pl-5">
-          <div className="bg-gray-100 mb-3 p-4 rounded-2xl">
-            <div className="p-sm-2 p-lg-0 p-xl-2">
+          <div className="bg-gray-100 mb-3 p-4 rounded-mdxl">
+            <div className="sm:p-2 lg:p-0 xl:p-2">
               <h5 className="border-b pb-3 mb-4 text-[19px] font-semibold">Order summary</h5>
               <ul className="flex flex-col text-sm gap-2 list-none m-0 p-0">
                 <li className="flex justify-between">

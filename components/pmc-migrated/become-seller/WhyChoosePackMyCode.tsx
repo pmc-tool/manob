@@ -79,7 +79,7 @@ export default function WhyChooseSection() {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-gray-100 rounded-2xl p-6 md:p-8">
+        <div className="bg-gray-100 rounded-mdxl p-6 md:p-8">
           <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="flex-1">
               <div className="mb-4">

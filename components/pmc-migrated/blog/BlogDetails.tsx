@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { BlogPost, getRelatedPosts } from '@/lib/mocks/blog.mock';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import { BlogPost, fetchRelatedPosts } from '@/lib/api/blog';
 import ShareArticle from './ShareArticle';
 import Newsletter from './Newsletter';
 import RelatedPosts from './RelatedPosts';
@@ -60,9 +60,33 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
   const [tableOfContents, setTableOfContents] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [postData, setPostData] = useState<string | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [loadingRelated, setLoadingRelated] = useState(true);
   const router = useRouter();
 
-  const relatedPosts = singlePostData ? getRelatedPosts(singlePostData.id) : [];
+  // Load related posts
+  useEffect(() => {
+    async function loadRelatedPosts() {
+      if (!singlePostData) return;
+
+      setLoadingRelated(true);
+      try {
+        const apiRelated = await fetchRelatedPosts(
+          singlePostData.id,
+          singlePostData.tags,
+          4
+        );
+        setRelatedPosts(apiRelated);
+      } catch (error) {
+        console.error('Failed to load related posts:', error);
+        setRelatedPosts([]);
+      } finally {
+        setLoadingRelated(false);
+      }
+    }
+
+    loadRelatedPosts();
+  }, [singlePostData]);
 
   useEffect(() => {
     if (!singlePostData) {
@@ -123,7 +147,12 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
   };
 
   if (!singlePostData) {
-    return null;
+    return (
+      <div className="flex justify-center items-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-gray-600">Loading article...</span>
+      </div>
+    );
   }
 
   return (
@@ -149,7 +178,7 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
                   <div className="flex items-center gap-2">
                     <div className="flex-shrink-0">
                       <Image
-                        src={singlePostData.user_meta.profile_image}
+                        src={singlePostData.user_meta.profile_image || '/images/avatar-placeholder.png'}
                         height={32}
                         width={32}
                         className="rounded-full object-cover"
@@ -174,7 +203,7 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
                 {/* Cover Image */}
                 <div className="aspect-[16/9] relative rounded-lg overflow-hidden bg-gray-100">
                   <Image
-                    src={singlePostData.cover_image}
+                    src={singlePostData.cover_image || '/images/placeholder-blog.jpg'}
                     alt={singlePostData.title}
                     fill
                     className="object-cover"
@@ -183,22 +212,27 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
               </div>
               {/* Article Content */}
               <div
-                className="article-description text-base leading-relaxed"
+                className="article-description text-base leading-relaxed prose prose-lg max-w-none"
                 dangerouslySetInnerHTML={{ __html: postData || '' }}
               />
               {/* Tags */}
-              <div className="flex flex-wrap items-center gap-2 mt-8 mb-4">
-                <div className="font-medium">Tags:</div>
-                {singlePostData.tags?.split(',').map((tag) => (
-                  <Link
-                    href={`/blog?tag=${tag.trim()}`}
-                    key={tag}
-                    className="bg-gray-100 text-sm px-3 py-2 font-medium rounded-full shadow-sm hover:bg-gray-200 transition-colors"
-                  >
-                    {tag.trim()}
-                  </Link>
-                ))}
-              </div>
+              {singlePostData.tags && (
+                <div className="flex flex-wrap items-center gap-2 mt-8 mb-4">
+                  <div className="font-medium">Tags:</div>
+                  {singlePostData.tags.split(',').map((tag) => {
+                    const cleanTag = tag.trim().replace(/^#/, '');
+                    return (
+                      <Link
+                        href={`/blog?tag=${cleanTag}`}
+                        key={tag}
+                        className="bg-gray-100 text-sm px-3 py-2 font-medium rounded-full shadow-sm hover:bg-gray-200 transition-colors"
+                      >
+                        {cleanTag}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
               {/* Mobile Share & Newsletter */}
               <ShareArticle className="lg:hidden" />
               <Newsletter className="lg:hidden" />
@@ -207,26 +241,28 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
             {/* Sidebar */}
             <div className="lg:col-span-4 xl:col-span-3 hidden lg:block articles-sidebar">
               <div className="sticky top-20">
-                <div className="mb-8">
-                  <h6 className="mb-3 text-lg font-semibold">On this page</h6>
-                  <nav className="table-of-contents">
-                    <ul className="list-none p-0 m-0">
-                      {tableOfContents.map((item) => (
-                        <li
-                          key={item.id}
-                          className={item.level === 'h3' ? 'toc-subheading' : ''}
-                        >
-                          <button
-                            onClick={() => scrollToElement(item.id)}
-                            className={`toc-link ${activeId === item.id ? 'active' : ''}`}
+                {tableOfContents.length > 0 && (
+                  <div className="mb-8">
+                    <h6 className="mb-3 text-lg font-semibold">On this page</h6>
+                    <nav className="table-of-contents">
+                      <ul className="list-none p-0 m-0">
+                        {tableOfContents.map((item) => (
+                          <li
+                            key={item.id}
+                            className={item.level === 'h3' ? 'toc-subheading' : ''}
                           >
-                            {item.text}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
-                </div>
+                            <button
+                              onClick={() => scrollToElement(item.id)}
+                              className={`toc-link ${activeId === item.id ? 'active' : ''}`}
+                            >
+                              {item.text}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  </div>
+                )}
                 <ShareArticle />
                 <Newsletter />
               </div>
@@ -236,11 +272,13 @@ export default function BlogDetails({ singlePostData }: BlogDetailsProps) {
       </section>
 
       {/* Related Posts */}
-      <RelatedPosts
-        title="Related Posts"
-        subTitle="Discover more content you'll love—check out these related posts tailored just for your interests."
-        posts={relatedPosts}
-      />
+      {!loadingRelated && relatedPosts.length > 0 && (
+        <RelatedPosts
+          title="Related Posts"
+          subTitle="Discover more content you'll love—check out these related posts tailored just for your interests."
+          posts={relatedPosts}
+        />
+      )}
     </>
   );
 }

@@ -53,8 +53,8 @@ export default function Cart({ onProceedToCheckout }: CartProps) {
 
   return (
     <>
-      {/* Header - mb-5 pb-3 border-2 border-bottom */}
-      <div className="mb-5 pb-3 border-b-2 border-gray-200">
+      {/* Header - mb-5 pb-3 border-b */}
+      <div className="mb-5 pb-3 border-b border-gray-200">
         <h2 className="font-medium text-[21px] mb-0">Shopping Cart</h2>
       </div>
 
@@ -71,7 +71,7 @@ export default function Cart({ onProceedToCheckout }: CartProps) {
                 .map((_, idx) => (
                   <div
                     key={idx}
-                    className="items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-2xl shadow-sm bg-[#FCFCFC]"
+                    className="items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-mdxl shadow-sm bg-[#FCFCFC]"
                   >
                     <Skeleton active paragraph={{ rows: 3 }} />
                   </div>
@@ -126,16 +126,16 @@ export default function Cart({ onProceedToCheckout }: CartProps) {
 
         {/* Order Summary - col-lg-4 ps-xl-5 */}
         <div className="lg:w-1/3 xl:pl-8">
-          {/* bgc-gray-4 mb-3 p-4 rounded-4 */}
-          <div className="bg-[#f8f9fa] mb-3 p-4 rounded-2xl">
+          {/* bg-[#f8f8f8] mb-3 p-4 rounded-xl */}
+          <div className="bg-[#f8f9fa] mb-3 p-4 rounded-mdxl">
             {/* p-sm-2 p-lg-0 p-xl-2 */}
             <div className="sm:p-2 lg:p-0 xl:p-2">
-              {/* border-bottom pb-3 mb-4 fz19 */}
+              {/* border-b pb-3 mb-4 text-[19px] */}
               <h5 className="border-b border-gray-200 pb-3 mb-4 text-[19px] font-semibold">
                 Order summary
               </h5>
 
-              {/* d-flex flex-column fs-sm gap-2 list-unstyled mb-0 */}
+              {/* flex flex-column fs-sm gap-2 list-unstyled mb-0 */}
               <ul className="flex flex-col text-sm gap-2 list-none mb-0">
                 <li className="flex justify-between">
                   <span>Selected Item</span>
@@ -169,12 +169,12 @@ export default function Cart({ onProceedToCheckout }: CartProps) {
                 </li>
               </ul>
 
-              {/* border-top pt-4 mt-4 */}
+              {/* border-t pt-4 mt-4 */}
               <div className="border-t border-gray-200 pt-4 mt-4">
-                {/* d-flex justify-content-between */}
+                {/* flex justify-content-between */}
                 <div className="flex justify-between items-center">
                   <span className="text-sm">Total payable</span>
-                  {/* h5 fz18 mb-0 */}
+                  {/* h5 text-lg mb-0 */}
                   <span className="text-[18px] font-semibold mb-0">
                     ${cartTotals.total_payable.toFixed(2)}
                   </span>

@@ -91,8 +91,8 @@ function SingleReview({
   };
 
   return (
-    // Original: bgc-gray-4 d-flex mb-3 p-3 p-sm-4 rounded-2
-    <div className="bgc-gray-4 flex mb-3 p-3 sm:p-4 rounded-2">
+    // Original: bg-[#f8f8f8] flex mb-3 p-3 p-sm-4 rounded-md
+    <div className="bg-[#f8f8f8] flex mb-3 p-3 sm:p-4 rounded-md">
       <div className="flex-shrink-0">
         <Image
           src={review.user_avatar}
@@ -103,12 +103,12 @@ function SingleReview({
           unoptimized
         />
       </div>
-      <div className="flex-grow ms-3">
+      <div className="flex-grow ml-3">
         <div className="flex items-center gap-2 mb-1">
-          <h4 className="fz16 font-semibold mb-0">- {review.user_name}</h4>
+          <h4 className="text-base font-semibold mb-0">- {review.user_name}</h4>
           <ReviewStars rating={review.rating} />
         </div>
-        <p className="fz13 text-gray-500 mb-2">{timeAgo(review.created_at)}</p>
+        <p className="text-[13px] text-gray-500 mb-2">{timeAgo(review.created_at)}</p>
         <p className="text-gray-700 fs-15">{review.content}</p>
 
         {/* Author Reply */}
@@ -176,8 +176,8 @@ export default function Reviews({
       {/* Header - Original: row mb-4 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex-grow">
-          <h4 className="fz21 mb-0">
-            <span className="fw-bold">{totalReviews}</span> Reviews.
+          <h4 className="text-[21px] mb-0">
+            <span className="font-bold">{totalReviews}</span> Reviews.
           </h4>
         </div>
         <div className="shrink-0">
@@ -196,7 +196,7 @@ export default function Reviews({
       </div>
 
       {/* Rating Summary */}
-      <div className="mb-5 rounded-md p-3 sm:p-4 bgc-gray-4">
+      <div className="mb-5 rounded-md p-3 sm:p-4 bg-[#f8f8f8]">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="text-center sm:w-auto">
             <h6 className="mb-4 text-sm">Average user rating</h6>
@@ -215,11 +215,11 @@ export default function Reviews({
               >
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
-              <h3 className="absolute inset-0 flex items-center justify-center mb-0 fz18 text-primary font-bold">
+              <h3 className="absolute inset-0 flex items-center justify-center mb-0 text-lg text-primary font-bold">
                 {avgRating.toFixed(1)}
               </h3>
             </div>
-            <span className="fz13">{totalReviews} Reviews</span>
+            <span className="text-[13px]">{totalReviews} Reviews</span>
           </div>
           <RatingBreakdown ratingSequence={ratingSequence} totalCount={totalReviews} />
         </div>
@@ -241,8 +241,8 @@ export default function Reviews({
             unoptimized
           />
           <div className="mt-3">
-            <div className="font-semibold fz16">Review Not Available</div>
-            <div className="fz14 text-gray-500">
+            <div className="font-semibold text-base">Review Not Available</div>
+            <div className="text-sm text-gray-500">
               There are no reviews to display at the moment. Check back later
               <br className="hidden sm:block" />
               or be the first to leave a review!

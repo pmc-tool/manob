@@ -13,50 +13,32 @@ import ServiceSocialShare from './ServiceSocialShare';
 import ServiceReviews from './ServiceReviews';
 import RelatedServicesCarousel from './RelatedServicesCarousel';
 import {
-  ServiceData,
   ServiceReview,
-  mockRelatedServices,
   PackageTab,
   PackagesComparisonInfo,
 } from '@/lib/mocks/service-details.mock';
 import PackageComparisonTable from './PackageComparisonTable';
-
-const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
-const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
-
-// API Response interface
-interface ApiService {
-  id: string;
-  service_title: string;
-  slug: string;
-  thumbnail_image: string;
-  price: number;
-  mrp: number;
-  avg_rating: string;
-  total_reviews: number;
-  total_sales: number;
-  is_onsale: boolean;
-  is_liked: boolean;
-  updated_at: string;
-  primary_category?: { id: number; name: string; slug: string };
-  secondary_category?: { id: number; name: string; slug: string };
-  package_details?: {
-    basic?: { title: string; price: number; mrp: number; short_description: string; delivery_time: number };
-    standard?: { title: string; price: number; mrp: number; short_description: string; delivery_time: number };
-    premium?: { title: string; price: number; mrp: number; short_description: string; delivery_time: number };
-  };
-  user?: {
-    sub: string;
-    first_name: string;
-    last_name: string;
-    user_name: string;
-    email: string;
-    profile_image: string;
-  };
-}
+import {
+  getServiceBySlug,
+  getRelatedServices,
+  type ServiceDetails,
+  type ServiceListItem,
+} from '@/lib/api/services';
 
 interface ServiceDetailsPageProps {
   slug: string;
+}
+
+// Related service type for carousel
+interface RelatedService {
+  id: string;
+  slug: string;
+  title: string;
+  img: string;
+  authorName: string;
+  price: number;
+  rating: number;
+  reviews: number;
 }
 
 export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
@@ -65,9 +47,9 @@ export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
   const [reviewFilter, setReviewFilter] = useState('newest');
 
   // Data states
-  const [service, setService] = useState<ServiceData | null>(null);
+  const [service, setService] = useState<ServiceDetails | null>(null);
   const [reviews, setReviews] = useState<ServiceReview[]>([]);
-  const [relatedServices, setRelatedServices] = useState<typeof mockRelatedServices>([]);
+  const [relatedServices, setRelatedServices] = useState<RelatedService[]>([]);
   const [reviewStats, setReviewStats] = useState({ avg_rating: 0, total_reviews: 0, rating_sequence: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } });
   const [packageTabs, setPackageTabs] = useState<PackageTab[]>([]);
   const [packagesComparisonInfo, setPackagesComparisonInfo] = useState<PackagesComparisonInfo | null>(null);
@@ -80,168 +62,77 @@ export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
   const isOwner = false;
   const isHiddenItem = service?.current_status !== 'PUBLISHED';
 
-  // Fetch service data
+  // Fetch service data using centralized API
   const fetchServiceData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Search for service by slug
-      const searchQuery = slug.replace(/-/g, ' ').slice(0, 50);
-      const feedResponse = await fetch(`${API_URL_FEED}/services?search=${encodeURIComponent(searchQuery)}&limit=50`);
-      if (!feedResponse.ok) throw new Error('Failed to fetch service');
-
-      const feedJson = await feedResponse.json();
-      const feedItems: ApiService[] = feedJson.data?.items || [];
-
-      // Find exact match by slug
-      const apiService = feedItems.find((item) => item.slug === slug);
-      if (!apiService) throw new Error('Service not found');
-
-      // Map API data to ServiceData
-      const mappedService: ServiceData = {
-        id: apiService.id,
-        slug: apiService.slug,
-        title: apiService.service_title,
-        category: apiService.primary_category?.name || '',
-        categoryId: apiService.primary_category?.slug || '',
-        subcategory: apiService.secondary_category?.name,
-        short_description: apiService.package_details?.basic?.short_description || '',
-        full_description: `
-          <h3>About This Service</h3>
-          <p>${apiService.package_details?.basic?.short_description || 'Professional service offered by experienced provider.'}</p>
-
-          <h3>What You'll Get</h3>
-          <ul>
-            <li><strong>Basic Package:</strong> ${apiService.package_details?.basic?.short_description?.replace(/\n/g, ', ') || 'Essential features'}</li>
-            <li><strong>Standard Package:</strong> ${apiService.package_details?.standard?.short_description?.replace(/\n/g, ', ') || 'Extended features'}</li>
-            <li><strong>Premium Package:</strong> ${apiService.package_details?.premium?.short_description?.replace(/\n/g, ', ') || 'Complete solution'}</li>
-          </ul>
-        `,
-        gallery_images: apiService.thumbnail_image ? [`${S3_BUCKET}/${apiService.thumbnail_image}`] : [],
-        packages: [
-          {
-            id: 'basic',
-            name: apiService.package_details?.basic?.title || 'Basic',
-            description: apiService.package_details?.basic?.short_description || 'Basic package',
-            price: apiService.package_details?.basic?.price || apiService.price || 0,
-            oldPrice: apiService.package_details?.basic?.mrp !== apiService.package_details?.basic?.price ? apiService.package_details?.basic?.mrp : undefined,
-            deliveryDays: apiService.package_details?.basic?.delivery_time || 3,
-            revisions: 2,
-            features: (apiService.package_details?.basic?.short_description || '').split('\n').filter(Boolean),
-          },
-          {
-            id: 'standard',
-            name: apiService.package_details?.standard?.title || 'Standard',
-            description: apiService.package_details?.standard?.short_description || 'Standard package',
-            price: apiService.package_details?.standard?.price || 0,
-            oldPrice: apiService.package_details?.standard?.mrp !== apiService.package_details?.standard?.price ? apiService.package_details?.standard?.mrp : undefined,
-            deliveryDays: apiService.package_details?.standard?.delivery_time || 7,
-            revisions: 5,
-            features: (apiService.package_details?.standard?.short_description || '').split('\n').filter(Boolean),
-          },
-          {
-            id: 'premium',
-            name: apiService.package_details?.premium?.title?.trim() || 'Premium',
-            description: apiService.package_details?.premium?.short_description || 'Premium package',
-            price: apiService.package_details?.premium?.price || 0,
-            oldPrice: apiService.package_details?.premium?.mrp !== apiService.package_details?.premium?.price ? apiService.package_details?.premium?.mrp : undefined,
-            deliveryDays: apiService.package_details?.premium?.delivery_time || 14,
-            revisions: 'Unlimited' as const,
-            features: (apiService.package_details?.premium?.short_description || '').split('\n').filter(Boolean),
-          },
-        ].filter((pkg) => pkg.price > 0),
-        total_orders: apiService.total_sales || 0,
-        total_views: 0,
-        total_likes: 0,
-        is_liked: apiService.is_liked || false,
-        avg_rating: parseFloat(apiService.avg_rating) || 0,
-        total_reviews: apiService.total_reviews || 0,
-        response_time: '1 hour',
-        current_status: 'PUBLISHED',
-        tags: [],
-        faqs: [],
-        created_at: apiService.updated_at,
-        updated_at: apiService.updated_at,
-        seller: {
-          id: apiService.user?.sub || '',
-          first_name: apiService.user?.first_name || '',
-          last_name: apiService.user?.last_name || '',
-          user_name: apiService.user?.user_name || '',
-          profile_image: apiService.user?.profile_image ? `${S3_BUCKET}/${apiService.user.profile_image}` : '',
-          member_since: '',
-          country: '',
-          languages: ['English'],
-          response_time: '1 hour',
-          last_delivery: '',
-          description: '',
-          level: 'Level 2 Seller',
-          total_reviews: apiService.total_reviews || 0,
-          avg_rating: parseFloat(apiService.avg_rating) || 0,
-          completed_orders: apiService.total_sales || 0,
-          badges: [],
-        },
-      };
+      // Fetch service by slug using centralized API
+      const serviceData = await getServiceBySlug(slug);
+      if (!serviceData) {
+        throw new Error('Service not found');
+      }
 
       // Set review stats
       const mappedReviewStats = {
-        avg_rating: parseFloat(apiService.avg_rating) || 0,
-        total_reviews: apiService.total_reviews || 0,
+        avg_rating: serviceData.avg_rating,
+        total_reviews: serviceData.total_reviews,
         rating_sequence: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
       };
 
       // Build package tabs for comparison table
-      const mappedPackageTabs: PackageTab[] = mappedService.packages.map((pkg) => ({
+      const mappedPackageTabs: PackageTab[] = serviceData.packages.map((pkg) => ({
         id: pkg.id as 'basic' | 'standard' | 'premium',
         title: pkg.name,
       }));
 
-      // Build packages comparison info - map to ComparisonPackageInfo interface
+      // Build packages comparison info
       const mappedPackagesComparisonInfo: PackagesComparisonInfo = {
-        basic: {
-          title: mappedService.packages[0]?.name || 'Basic',
-          price: mappedService.packages[0]?.price || 0,
-          short_description: mappedService.packages[0]?.description || '',
-          delivery_time: mappedService.packages[0]?.deliveryDays || 3,
-          attributes: mappedService.packages[0]?.features?.map((f: string) => ({ key: f, value: true })) || [],
-        },
-        standard: mappedService.packages[1] ? {
-          title: mappedService.packages[1].name,
-          price: mappedService.packages[1].price,
-          short_description: mappedService.packages[1].description,
-          delivery_time: mappedService.packages[1].deliveryDays,
-          attributes: mappedService.packages[1].features?.map((f: string) => ({ key: f, value: true })) || [],
-        } : undefined,
-        premium: mappedService.packages[2] ? {
-          title: mappedService.packages[2].name,
-          price: mappedService.packages[2].price,
-          short_description: mappedService.packages[2].description,
-          delivery_time: mappedService.packages[2].deliveryDays,
-          attributes: mappedService.packages[2].features?.map((f: string) => ({ key: f, value: true })) || [],
-        } : undefined,
+        basic: serviceData.packages[0]
+          ? {
+              title: serviceData.packages[0].name,
+              price: serviceData.packages[0].price,
+              short_description: serviceData.packages[0].description,
+              delivery_time: serviceData.packages[0].deliveryDays,
+              attributes: serviceData.packages[0].features?.map((f) => ({ key: f, value: true })) || [],
+            }
+          : undefined,
+        standard: serviceData.packages[1]
+          ? {
+              title: serviceData.packages[1].name,
+              price: serviceData.packages[1].price,
+              short_description: serviceData.packages[1].description,
+              delivery_time: serviceData.packages[1].deliveryDays,
+              attributes: serviceData.packages[1].features?.map((f) => ({ key: f, value: true })) || [],
+            }
+          : undefined,
+        premium: serviceData.packages[2]
+          ? {
+              title: serviceData.packages[2].name,
+              price: serviceData.packages[2].price,
+              short_description: serviceData.packages[2].description,
+              delivery_time: serviceData.packages[2].deliveryDays,
+              attributes: serviceData.packages[2].features?.map((f) => ({ key: f, value: true })) || [],
+            }
+          : undefined,
       };
 
-      // Fetch related services
-      const relatedResponse = await fetch(`${API_URL_FEED}/services?limit=4`);
-      let relatedItems: ApiService[] = [];
-      if (relatedResponse.ok) {
-        const relatedJson = await relatedResponse.json();
-        relatedItems = (relatedJson.data?.items || []).filter((item: ApiService) => item.id !== apiService.id).slice(0, 4);
-      }
-
-      const mappedRelated = relatedItems.map((item) => ({
+      // Fetch related services using centralized API
+      const relatedItems = await getRelatedServices(serviceData.id, serviceData.categoryId, 4);
+      const mappedRelated: RelatedService[] = relatedItems.map((item: ServiceListItem) => ({
         id: item.id,
         slug: item.slug,
-        title: item.service_title,
-        img: item.thumbnail_image ? `${S3_BUCKET}/${item.thumbnail_image}` : '',
-        authorName: `${item.user?.first_name || ''} ${item.user?.last_name || ''}`.trim(),
-        price: item.package_details?.basic?.price || item.price || 0,
-        rating: parseFloat(item.avg_rating) || 0,
-        reviews: item.total_reviews || 0,
+        title: item.title,
+        img: item.thumbnail_image,
+        authorName: item.creator?.full_name || '',
+        price: item.price,
+        rating: item.avg_rating,
+        reviews: item.total_reviews,
       }));
 
       // Set all states
-      setService(mappedService);
+      setService(serviceData);
       setReviewStats(mappedReviewStats);
       setPackageTabs(mappedPackageTabs);
       setPackagesComparisonInfo(mappedPackagesComparisonInfo);
@@ -324,8 +215,8 @@ export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
             <div className="alert alert-warning flex items-start gap-3 mb-4">
               <Info className="h-6 w-6 flex-shrink-0 mt-0.5" />
               <div>
-                <h5 className="fz18 font-semibold mb-1">This service is yours!</h5>
-                <p className="fz14">
+                <h5 className="text-lg font-semibold mb-1">This service is yours!</h5>
+                <p className="text-sm">
                   You have created this service! Please review and take necessary action.
                 </p>
               </div>
@@ -337,8 +228,8 @@ export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
             <div className="alert alert-primary flex items-start gap-3 mb-4">
               <Info className="h-6 w-6 flex-shrink-0 mt-0.5" />
               <div>
-                <h5 className="fz18 font-semibold mb-1">This service is currently hidden!</h5>
-                <p className="fz14">
+                <h5 className="text-lg font-semibold mb-1">This service is currently hidden!</h5>
+                <p className="text-sm">
                   Before you can put this service on sale, it needs to be reviewed.
                 </p>
               </div>
@@ -372,35 +263,35 @@ export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
               />
 
               {/* Tabs Navigation */}
-              <ul className="item-details-tabs mb-6">
-                <li className="nav-item">
+              <ul className="flex bg-[#222222] rounded-lg overflow-hidden list-none p-0 m-0 mb-6">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('description')}
-                    className={`nav-link ${activeTab === 'description' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'description' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <FileText className="h-4 w-4" />
+                    <FileText className="h-4 w-4 shrink-0" />
                     Description
                   </button>
                 </li>
-                <li className="nav-item">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('reviews')}
-                    className={`nav-link ${activeTab === 'reviews' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'reviews' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <Star className="h-4 w-4" />
+                    <Star className="h-4 w-4 shrink-0" />
                     Reviews
-                    <span className="badge">{reviewStats.total_reviews}</span>
+                    <span className={`px-2 py-0.5 rounded-xl text-xs leading-none ${activeTab === 'reviews' ? 'bg-white text-primary' : 'bg-white/20 text-white'}`}>{reviewStats.total_reviews}</span>
                   </button>
                 </li>
-                <li className="nav-item">
+                <li className="flex-1 border-r border-[#393939] last:border-r-0">
                   <button
                     type="button"
                     onClick={() => setActiveTab('faq')}
-                    className={`nav-link ${activeTab === 'faq' ? 'active' : ''}`}
+                    className={`inline-flex items-center justify-center gap-2 py-3.5 px-4 w-full bg-transparent border-none font-medium text-sm cursor-pointer transition-all whitespace-nowrap leading-normal ${activeTab === 'faq' ? 'bg-primary text-white' : 'text-[#a9a9a9] hover:text-white hover:bg-primary'}`}
                   >
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4 shrink-0" />
                     FAQ
                   </button>
                 </li>
@@ -426,7 +317,7 @@ export default function ServiceDetailsPage({ slug }: ServiceDetailsPageProps) {
                     {/* Tags */}
                     {service.tags && service.tags.length > 0 && (
                       <div className="service-tags mb-6">
-                        <h4 className="fz16 font-semibold mb-3">Tags</h4>
+                        <h4 className="text-base font-semibold mb-3">Tags</h4>
                         <div className="flex flex-wrap gap-2">
                           {service.tags.map((tag, index) => (
                             <span

@@ -68,7 +68,7 @@ function RatingBreakdown({
 
 function SingleReview({ review }: { review: ServiceReview }) {
   return (
-    <div className="bgc-gray-4 flex mb-3 p-3 sm:p-4 rounded-lg">
+    <div className="bg-[#f8f8f8] flex mb-3 p-3 sm:p-4 rounded-lg">
       <div className="flex-shrink-0">
         <Image
           src={review.user_avatar}
@@ -79,9 +79,9 @@ function SingleReview({ review }: { review: ServiceReview }) {
           unoptimized
         />
       </div>
-      <div className="flex-grow ms-3">
+      <div className="flex-grow ml-3">
         <div className="flex flex-wrap items-center gap-2 mb-1">
-          <h4 className="fz16 font-semibold mb-0">{review.user_name}</h4>
+          <h4 className="text-base font-semibold mb-0">{review.user_name}</h4>
           <ReviewStars rating={review.rating} />
           {review.country && (
             <span className="flex items-center gap-1 text-gray-500 text-sm">
@@ -90,8 +90,8 @@ function SingleReview({ review }: { review: ServiceReview }) {
             </span>
           )}
         </div>
-        <p className="fz13 text-gray-500 mb-2">{timeAgo(review.created_at)}</p>
-        <p className="text-gray-700 fz14">{review.content}</p>
+        <p className="text-[13px] text-gray-500 mb-2">{timeAgo(review.created_at)}</p>
+        <p className="text-gray-700 text-sm">{review.content}</p>
 
         {/* Seller Reply */}
         {review.seller_reply && (
@@ -136,12 +136,12 @@ export default function ServiceReviews({
       </div>
 
       {/* Rating Summary */}
-      <div className="mb-5 rounded-lg p-4 bgc-gray-4">
+      <div className="mb-5 rounded-lg p-4 bg-[#f8f8f8]">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="text-center sm:w-40">
             <div className="text-5xl font-bold text-gray-800 mb-1">{avgRating.toFixed(1)}</div>
             <ReviewStars rating={Math.round(avgRating)} size={20} />
-            <p className="text-gray-500 fz13 mt-2">{totalReviews} Reviews</p>
+            <p className="text-gray-500 text-[13px] mt-2">{totalReviews} Reviews</p>
           </div>
           <RatingBreakdown ratingSequence={ratingSequence} totalCount={totalReviews} />
         </div>
@@ -155,8 +155,8 @@ export default function ServiceReviews({
           <div className="text-gray-400 mb-2">
             <Star className="h-12 w-12 mx-auto" />
           </div>
-          <div className="font-semibold fz16">No Reviews Yet</div>
-          <div className="fz14 text-gray-500">Be the first to leave a review!</div>
+          <div className="font-semibold text-base">No Reviews Yet</div>
+          <div className="text-sm text-gray-500">Be the first to leave a review!</div>
         </div>
       )}
 

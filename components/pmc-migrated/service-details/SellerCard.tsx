@@ -60,7 +60,7 @@ export default function SellerCard({ seller, onContactClick }: SellerCardProps) 
         </Link>
         <div className="flex-grow">
           <div className="flex items-center gap-2 mb-1">
-            <Link href={`/${seller.user_name}`} className="font-bold fz18 hover:text-primary">
+            <Link href={`/${seller.user_name}`} className="font-bold text-lg hover:text-primary">
               {seller.first_name} {seller.last_name}
             </Link>
             {seller.level && (
@@ -69,14 +69,14 @@ export default function SellerCard({ seller, onContactClick }: SellerCardProps) 
               </span>
             )}
           </div>
-          <p className="text-gray-500 fz14 mb-2">@{seller.user_name}</p>
+          <p className="text-gray-500 text-sm mb-2">@{seller.user_name}</p>
 
           {/* Rating & Reviews */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="font-semibold">{seller.avg_rating.toFixed(1)}</span>
-              <span className="text-gray-500 fz13">({seller.total_reviews})</span>
+              <span className="text-gray-500 text-[13px]">({seller.total_reviews})</span>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function SellerCard({ seller, onContactClick }: SellerCardProps) 
       </div>
 
       {/* Seller Description */}
-      <p className="text-gray-600 fz14 mb-4 line-clamp-4">{seller.description}</p>
+      <p className="text-gray-600 text-sm mb-4 line-clamp-4">{seller.description}</p>
 
       {/* Badges */}
       {seller.badges && seller.badges.length > 0 && (

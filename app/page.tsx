@@ -38,7 +38,7 @@ export default function Home() {
         </aside>
 
         {/* Main content area */}
-        <main className="main border border-gray-200 rounded-2xl shadow-[0_2px_2px_#0000000a,0_8px_8px_-8px_#0000000a] relative z-10" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
+        <main className="main border border-gray-200 rounded-mdxl shadow-[0_2px_2px_#0000000a,0_8px_8px_-8px_#0000000a] relative z-10" style={{ height: '100%', minHeight: 0, overflow: 'hidden' }}>
           <DashboardHome />
         </main>
       </div>

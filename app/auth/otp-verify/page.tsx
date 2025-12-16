@@ -118,23 +118,23 @@ export default function Page() {
 
   return (
     <div className="container">
-      <section className={`align-items-center d-flex ${styles.authWrap}`}>
+      <section className={`items-center flex ${styles.authWrap}`}>
         <div
-          className={`flex-grow-1 m-auto ${styles.authInner} ${styles.authRecoveryForm}`}
+          className={`flex-grow m-auto ${styles.authInner} ${styles.authRecoveryForm}`}
         >
           <div className="auth-header mb-5">
-            <h4 className="fw-bold text-center mb-0">
+            <h4 className="font-bold text-center mb-0">
               Two factor authentication
             </h4>
-            <p className="fz14 lh-base text-center mb-0 mt-4">
+            <p className="text-sm leading-normal text-center mb-0 mt-4">
               We have sent a code to{" "}
-              <span className="fw-medium text-dark">{registererEmail}</span>
+              <span className="font-medium text-gray-900">{registererEmail}</span>
             </p>
           </div>
           <div className="auth-body">
             <form onSubmit={handleSubmit(verifyOtp)}>
               {error && (
-                <div className="alert alert-danger mb-4" role="alert">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4" role="alert">
                   {error}
                 </div>
               )}
@@ -142,14 +142,14 @@ export default function Page() {
                 <label className={styles.authLabel}>
                   Enter the code we have sent you:
                 </label>
-                <div className="d-flex justify-content-between gap-1 gap-sm-3 mb-2">
+                <div className="flex justify-between gap-1 sm:gap-3 mb-2">
                   {[...Array(4)].map((_, index) => (
-                    <div key={index} className="position-relative">
+                    <div key={index} className="relative">
                       <input
                         type="tel"
                         maxLength={1}
                         pattern="[0-9]*"
-                        className={`form-control verification-form text-center ${styles.authInput}`}
+                        className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-center ${styles.authInput}`}
                         {...register(`o${index + 1}`, {
                           required: "Required",
                         })}
@@ -163,7 +163,7 @@ export default function Page() {
                         errors={errors}
                         name={`o${index + 1}`}
                         render={({ message }) => (
-                          <span className="text-danger fz14">{message}</span>
+                          <span className="text-red-500 text-sm">{message}</span>
                         )}
                       />
                     </div>
@@ -172,7 +172,7 @@ export default function Page() {
               </div>
               <button
                 type="submit"
-                className="rounded ud-btn btn-default w-100"
+                className="rounded inline-flex items-center justify-center gap-2 font-semibold text-sm px-6 py-3 rounded-xl bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200 transition-all w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Verifying..." : "Verify and Process"}
@@ -180,21 +180,21 @@ export default function Page() {
             </form>
           </div>
           <div className="mt-4 text-center">
-            <div className="d-inline fw-semibold fz12 text-body-secondary text-uppercase">
+            <div className="inline font-semibold text-xs text-body-secondary uppercase">
               Remember your password?{" "}
               <Link href="/auth/sign-in" className={styles.authLink}>
                 Log in
               </Link>
             </div>
           </div>
-          <div className="mt-3 text-center auth-text fz13">
+          <div className="mt-3 text-center auth-text text-[13px]">
             Secure Login with reCAPTCHA subject to Google{" "}
             <a target="_blank" href="/terms">
-              <span className="text-decoration-underline">Terms</span>
+              <span className="underline">Terms</span>
             </a>
             &amp;
             <a target="_blank" href="/privacy-policy">
-              <span className="text-decoration-underline">Privacy</span>
+              <span className="underline">Privacy</span>
             </a>
           </div>
         </div>

@@ -1,30 +1,43 @@
-// MIGRATION: QuestionsPage component from manob.ai
+// MIGRATION: QuestionsPage component - uses real API
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 import QuestionCard from './QuestionCard';
 import ForumSidebar from './ForumSidebar';
 import ForumSearch from './ForumSearch';
-import {
-  mockForumQuestions,
-  mockTopContributors,
-  mockTopQuestions,
-  forumTabs,
-  filterQuestions,
-  sortQuestions,
-} from '@/lib/mocks/forum.mock';
+import { forumApi } from '@/lib/api/forum';
+import type { Forum, ForumContributor, ForumListParams } from '@/lib/api/types';
 import styles from './forum.module.css';
+
+// Forum tabs configuration
+const forumTabs = [
+  { label: 'Recent', filter: 'recent' },
+  { label: 'Unanswered', filter: 'unanswered' },
+  { label: 'Unsolved', filter: 'unsolved' },
+  { label: 'Solved', filter: 'solved' },
+  { label: 'Pinned', filter: 'pinned' },
+] as const;
+
+type TabFilter = (typeof forumTabs)[number]['filter'];
 
 export default function QuestionsPage() {
   const router = useRouter();
   const pathname = usePathname();
   const queryParams = useSearchParams();
+
+  // State
+  const [forums, setForums] = useState<Forum[]>([]);
+  const [topContributors, setTopContributors] = useState<ForumContributor[]>([]);
+  const [topQuestions, setTopQuestions] = useState<{ id: string; title: string }[]>([]);
   const [sortOption, setSortOption] = useState<string>('DESC');
-  const [tabFilter, setTabFilter] = useState<string>('recent');
+  const [tabFilter, setTabFilter] = useState<TabFilter>('recent');
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const keyword = queryParams.get('query') || '';
 
   // Sync currentPage from URL
@@ -33,19 +46,58 @@ export default function QuestionsPage() {
     setCurrentPage(page);
   }, [queryParams]);
 
-  // Simulate loading
-  useEffect(() => {
+  // Fetch forums data
+  const fetchForums = useCallback(async () => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [tabFilter, sortOption, keyword]);
+    setError(null);
 
-  // Filter and sort questions
-  const filteredQuestions = useMemo(() => {
-    let questions = filterQuestions(mockForumQuestions, tabFilter, keyword);
-    questions = sortQuestions(questions, sortOption);
-    return questions;
-  }, [tabFilter, sortOption, keyword]);
+    try {
+      const params: ForumListParams = {
+        page: currentPage,
+        limit: 10,
+        sort_by: sortOption as ForumListParams['sort_by'],
+        filter: tabFilter,
+      };
+
+      if (keyword) {
+        params.term = keyword;
+      }
+
+      const response = await forumApi.getForums(params);
+      setForums(response.data.items);
+      setTotalPages(response.data.pagination.total_pages);
+    } catch (err) {
+      console.error('Failed to fetch forums:', err);
+      setError('Failed to load discussions. Please try again.');
+      setForums([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentPage, sortOption, tabFilter, keyword]);
+
+  // Fetch sidebar data (top contributors and top forums)
+  const fetchSidebarData = useCallback(async () => {
+    try {
+      const [contributorsRes, topForumsRes] = await Promise.all([
+        forumApi.getTopContributors(),
+        forumApi.getTopForums(),
+      ]);
+      setTopContributors(contributorsRes.data);
+      setTopQuestions(topForumsRes.data);
+    } catch (err) {
+      console.error('Failed to fetch sidebar data:', err);
+    }
+  }, []);
+
+  // Fetch data on mount and when filters change
+  useEffect(() => {
+    fetchForums();
+  }, [fetchForums]);
+
+  // Fetch sidebar data once on mount
+  useEffect(() => {
+    fetchSidebarData();
+  }, [fetchSidebarData]);
 
   // Handle pagination
   const handlePageChange = (page: number) => {
@@ -55,7 +107,7 @@ export default function QuestionsPage() {
   };
 
   // Handle tab change
-  const handleTabChange = (filter: string) => {
+  const handleTabChange = (filter: TabFilter) => {
     setTabFilter(filter);
     handlePageChange(1);
   };
@@ -130,9 +182,19 @@ export default function QuestionsPage() {
                 <div className={styles.loadingSpinner} />
                 <p>Loading discussions...</p>
               </div>
-            ) : filteredQuestions.length > 0 ? (
-              filteredQuestions.map((question) => (
-                <QuestionCard key={question.id} question={question} searchTerm={keyword} />
+            ) : error ? (
+              <div className={styles.emptyState}>
+                <p>{error}</p>
+                <button
+                  onClick={fetchForums}
+                  className={styles.retryButton}
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : forums.length > 0 ? (
+              forums.map((forum) => (
+                <QuestionCard key={forum.id} question={forum} searchTerm={keyword} />
               ))
             ) : (
               <div className={styles.emptyState}>
@@ -140,13 +202,36 @@ export default function QuestionsPage() {
               </div>
             )}
           </div>
+
+          {/* Pagination */}
+          {!isLoading && !error && totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={styles.paginationButton}
+              >
+                Previous
+              </button>
+              <span className={styles.pageInfo}>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={styles.paginationButton}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
         <div className={styles.forumSidebarWrapper}>
           <ForumSidebar
-            topContributors={mockTopContributors}
-            topQuestions={mockTopQuestions}
+            topContributors={topContributors}
+            topQuestions={topQuestions}
           />
         </div>
       </div>

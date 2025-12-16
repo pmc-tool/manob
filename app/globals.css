@@ -216,3 +216,53 @@ body,
 .font-kalam {
   font-family: var(--font-kalam), cursive;
 }
+
+/* ==============================================
+   App Layout Classes (Dashboard/Engine View)
+   ============================================== */
+.layout {
+  display: grid;
+  grid-template-rows: 60px 1fr;
+  grid-template-areas: "header" "content";
+  height: 100vh;
+}
+
+.header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.content {
+  grid-area: content;
+  display: grid;
+  position: relative;
+  height: calc(100vh - 60px);
+}
+
+.sidebar {
+  overflow: auto;
+}
+
+.main {
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 2px #0000000a, 0 8px 8px -8px #0000000a;
+  border-radius: 6px;
+}
+
+/* ==============================================
+   PMC Custom Utilities
+   ============================================== */
+.rounded-mdxl {
+  border-radius: 0.75rem;
+}
+
+.container {
+  width: 100%;
+  max-width: 1320px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}

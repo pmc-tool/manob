@@ -49,11 +49,11 @@ export default function ItemDescription({ shortDescription, fullDescription }: I
           isExpanded ? '' : 'lg:max-h-none max-h-[400px] overflow-hidden'
         }`}
       >
-        {shortDescription && <p className="text-gray-600 mb-4 fz15">{shortDescription}</p>}
+        {shortDescription && <p className="text-gray-600 mb-4 text-[15px]">{shortDescription}</p>}
 
         {/* Render decoded HTML */}
         <div
-          className="rich-html-content [&_h3]:fz18 [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_li]:mb-1 [&_p]:mb-4 [&_p]:fz15"
+          className="[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_li]:mb-1 [&_p]:mb-4 [&_p]:text-[15px]"
           dangerouslySetInnerHTML={{ __html: cleanedDescription }}
         />
       </div>

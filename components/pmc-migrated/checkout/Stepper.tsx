@@ -47,7 +47,7 @@ const Stepper: React.FC<StepperProps> = ({
               >
                 {index + 1}
               </span>
-              <span className="stepper-label">{step.label}</span>
+              <span className="hidden md:inline">{step.label}</span>
             </button>
           </div>
           {index < steps.length - 1 && (

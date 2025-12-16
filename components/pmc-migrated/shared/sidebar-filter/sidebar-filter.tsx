@@ -62,12 +62,12 @@ function CheckboxFilter({
         <div className="relative mb-3">
           <input
             type="text"
-            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm pr-8"
+            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Search size={14} className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 text-gray-400" />
+          <Search size={14} className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 text-gray-500" />
         </div>
       )}
       <div className="flex flex-col gap-2" style={{ maxHeight: "200px", overflowY: "auto" }}>
@@ -107,10 +107,10 @@ function RangeFilter({
     <div>
       <div className="flex gap-2 mb-3">
         <div className="flex-1">
-          <label className="text-xs text-gray-500 mb-1 block">Min</label>
+          <label className="text-xs text-gray-500 mb-1">Min</label>
           <input
             type="number"
-            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
             value={min}
             onChange={(e) => {
               setMin(Number(e.target.value));
@@ -119,10 +119,10 @@ function RangeFilter({
           />
         </div>
         <div className="flex-1">
-          <label className="text-xs text-gray-500 mb-1 block">Max</label>
+          <label className="text-xs text-gray-500 mb-1">Max</label>
           <input
             type="number"
-            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+            className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary"
             value={max}
             onChange={(e) => {
               setMax(Number(e.target.value));
@@ -167,18 +167,18 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({
   };
 
   return (
-    <div className="accordion" id="accordionFilter">
+    <div id="accordionFilter">
       {filters?.map((filter, index) => (
         <div
           key={index}
-          className="bg-transparent border-0 border-bottom card rounded-0 mb-4"
+          className="bg-transparent border-0 border-b mb-4 rounded-none"
         >
           <div
             className="bg-transparent border-0 pb-4 pt-0 px-0 rounded-none"
             id={`heading${index + 1}`}
           >
             <button
-              className="border-0 bg-transparent font-bold text-xs uppercase p-0 relative text-left w-full flex justify-between items-center"
+              className="border-0 font-bold text-[13px] uppercase p-0 relative text-left w-full flex justify-between items-center bg-transparent cursor-pointer hover:text-primary"
               type="button"
               onClick={() => toggleSection(index)}
             >
@@ -190,7 +190,7 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({
             </button>
           </div>
           {openSections[index] && (
-            <div className="card-body px-0 pt-0 pb-4">
+            <div className="px-0 pt-0 pb-4">
               {/* Range filters (pricing, bid_counts) */}
               {(filter.type === "pricing" || filter.type === "bid_counts") &&
                 isRangeOptions(filter.options) && (
@@ -220,7 +220,7 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({
                 isFilterGroups(filter.options) &&
                 filter.options.map((group, groupIdx) => (
                   <div key={groupIdx} className="mb-4">
-                    <h6 className="fz14 fw-semibold mb-2">- {group.type_name}</h6>
+                    <h6 className="text-sm font-semibold mb-2">- {group.type_name}</h6>
                     <CheckboxFilter
                       options={group.filters}
                       showSearch={filter.showSearch}

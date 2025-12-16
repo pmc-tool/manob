@@ -27,14 +27,14 @@ export default function CheckoutComplete({
 
   return (
     <div className="container">
-      <div className="row justify-content-center">
-        <div className="col-lg-7 text-center">
+      <div className="flex justify-center">
+        <div className="w-full lg:w-7/12 text-center">
           <CheckCircle2 size={70} className="text-success mb-4" />
           <div className="mb-4">
             <h2>Thank you for your purchase!</h2>
             <p className="text-black-50 mb-1">
               Make sure you make note of your purchase number, which is{" "}
-              <strong className="text-dark">{orderNumber}.</strong>
+              <strong className="text-gray-900">{orderNumber}.</strong>
             </p>
             <p className="text-black-50 mb-0">
               You will be receiving an email shortly with confirmation of your

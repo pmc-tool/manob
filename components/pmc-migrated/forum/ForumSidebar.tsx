@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Plus, ChevronRight } from 'lucide-react';
 import { Avatar } from '../shared/avatar';
-import { ForumContributor } from '@/lib/mocks/forum.mock';
+import type { ForumContributor } from '@/lib/api/types';
 import styles from './forum.module.css';
 
 interface Stat {

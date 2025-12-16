@@ -64,7 +64,7 @@ export default function Cart({ onClick }: CartProps) {
 
   return (
     <>
-      <div className="mb-5 pb-3 border-b-2">
+      <div className="mb-5 pb-3 border-b border-gray-200">
         <h2 className="font-medium text-xl mb-0">Shopping Cart</h2>
       </div>
 
@@ -78,7 +78,7 @@ export default function Cart({ onClick }: CartProps) {
                 .map((_, idx) => (
                   <div
                     key={idx}
-                    className="items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-2xl shadow-sm"
+                    className="items-start border mb-3 overflow-hidden p-3 lg:p-4 relative rounded-mdxl shadow-sm"
                     style={{ backgroundColor: "#FCFCFC" }}
                   >
                     <Skeleton active paragraph={{ rows: 3 }} />
@@ -127,7 +127,7 @@ export default function Cart({ onClick }: CartProps) {
           </div>
         </div>
         <div className="lg:col-span-4 xl:pl-5">
-          <div className="bg-gray-100 mb-3 p-4 rounded-2xl">
+          <div className="bg-gray-100 mb-3 p-4 rounded-mdxl">
             <div className="sm:p-2 lg:p-0 xl:p-2">
               <h5 className="border-b pb-3 mb-4 text-[19px] font-semibold">Order summary</h5>
               <ul className="flex flex-col text-sm gap-2 list-none mb-0">

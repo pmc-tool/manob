@@ -73,8 +73,8 @@ export default function Skills({ skills }: SkillsProps) {
     <form onSubmit={handleStartSetup}>
       <div className={`container ${styles.formContent}`}>
         <div className="mb-4">
-          <h2 className="fw-bold">Add Skill To Reach Client</h2>
-          <p className="text-muted">Showcase your skills to build trust and reach more clients.</p>
+          <h2 className="font-bold">Add Skill To Reach Client</h2>
+          <p className="text-gray-500">Showcase your skills to build trust and reach more clients.</p>
         </div>
         {successMessage && (
           <div className={styles.successMessage}>
@@ -108,7 +108,7 @@ export default function Skills({ skills }: SkillsProps) {
               Your seller profile has been
               <br className="hidden lg:block" /> created successfully!
             </h3>
-            <div className="text-muted">
+            <div className="text-gray-500">
               Your account is ready — you&apos;ll be redirected to your seller
               <br className="hidden lg:block" /> dashboard in 5 seconds.
             </div>
