@@ -2,28 +2,25 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, ArrowUpDown } from 'lucide-react';
+import { Search, ArrowUpDown, Loader2 } from 'lucide-react';
 import { Select } from 'antd';
 import { ListingToggle, type ListingType } from '@/components/pmc-migrated/marketplace/listing-toggle';
 import { SidebarFilter, type ActiveFilters } from '@/components/pmc-migrated/marketplace/sidebar-filter';
 import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
 import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
-// MOCK: Using mock data until real API is connected
 import { mockCategories } from '@/lib/mocks/categories.mock';
-import { mockFeaturedProducts, mockTrendingProducts } from '@/lib/mocks/products.mock';
 import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
 import { useGetProductsQuery } from '@/state/services/home-service/public-product.service';
 
-// MOCK: Combine products and services
-const allProducts = [...mockFeaturedProducts, ...mockTrendingProducts];
+// Services still use mock data for now
 const allServices = [...mockFeaturedServices, ...mockTrendingServices];
 
-// MOCK: Filter categories with deterministic counts (avoid hydration mismatch)
+// Filter categories
 const filterCategories = mockCategories.map((cat, index) => ({
   id: cat.slug,
   label: cat.title,
-  count: ((index + 1) * 17) % 89 + 10, // Deterministic pseudo-random: 27, 44, 61, 78, 6, 23...
+  count: ((index + 1) * 17) % 89 + 10,
 }));
 
 const SORT_OPTIONS = [
@@ -44,9 +41,45 @@ export default function MarketplacePage() {
     rating: null,
   });
 
+  // Fetch products from API
+  const {
+    data: publicProducts,
+    isLoading: isLoadingProducts,
+  } = useGetProductsQuery({
+    queryParams: {
+      page: 1,
+      limit: 50
+    }
+  });
+
+  // Map API products to component format
+  const apiProducts = useMemo(() => {
+    const items = publicProducts?.items || [];
+    return items.map((item: any) => ({
+      id: item.id,
+      title: item.product_name,
+      slug: item.slug,
+      thumbnail_image: item.image?.startsWith('http') ? item.image : `${process.env.NEXT_PUBLIC_S3BUCKET}/${item.image}`,
+      price: item.price || 0,
+      mrp: item.mrp || 0,
+      avg_rating: parseFloat(item.avg_rating) || 0,
+      total_reviews: item.total_reviews || 0,
+      total_sales: item.total_sales || 0,
+      is_onsale: item.is_onsale || false,
+      is_trending: item.is_trending || false,
+      is_liked: item.is_liked || false,
+      is_pixi_compatible: item.is_pixi_compatible || false,
+      creator: {
+        full_name: `${item.user?.first_name || ''} ${item.user?.last_name || ''}`.trim(),
+        user_name: item.user?.user_name || '',
+        profile_image: item.user?.profile_image || '',
+      }
+    }));
+  }, [publicProducts]);
+
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let result = [...allProducts];
+    let result = [...apiProducts];
 
     if (activeFilters.priceRange) {
       result = result.filter(
@@ -74,23 +107,8 @@ export default function MarketplacePage() {
     }
 
     return result;
-  }, [activeFilters, sortBy]);
-const { 
-    data: publicProducts, 
-    error: productsError, 
-    isLoading: isLoadingProducts,
-    isError: isProductsError 
-  } = useGetProductsQuery({
-    queryParams: {
-      page: 1,
-      limit: 10
-    }
-  })
+  }, [apiProducts, activeFilters, sortBy]);
 
-  console.log('Public Products Data---------------:', publicProducts);
-  console.log('Products Error---------------:', productsError);
-  console.log('Is Loading---------------:', isLoadingProducts);
-  console.log('Is Error---------------:', isProductsError);
   // Filter and sort services
   const filteredServices = useMemo(() => {
     let result = [...allServices];
@@ -184,7 +202,12 @@ const {
           </div>
 
           {/* Grid */}
-          {currentItems.length > 0 ? (
+          {listingType === 'products' && isLoadingProducts ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <span className="ml-3 text-gray-500">Loading products...</span>
+            </div>
+          ) : currentItems.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {listingType === 'products'
                 ? filteredProducts.map((product) => (
