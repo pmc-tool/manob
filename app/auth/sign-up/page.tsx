@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import SignUpPage from "../_components/SignUpPage";
 
 export const metadata: Metadata = {
-  title: "Login or Register at Packmycode | Start Today",
+  title: "Create Account | manob.ai",
   description:
-    "Access your Packmycode account or register for free to start buying, selling, or posting jobs today.",
+    "Join manob.ai to discover digital products, templates, and services from top creators.",
   alternates: {
-    canonical: "https://packmycode.com/auth/sign-up",
+    canonical: "https://manob.ai/auth/sign-up",
   },
 };
 

@@ -2,11 +2,15 @@
 // Uses lucide-react icons, Tailwind CSS
 'use client';
 
+import { useState } from 'react';
 import { Zap, Tag, Box } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReviewStars } from '../review-stars';
 import { Ribbon } from '../ribbon';
+
+// Placeholder image for missing/failed images
+const PLACEHOLDER_IMAGE = 'https://picsum.photos/400/250?grayscale';
 
 interface ServiceCardProps {
   id: string;
@@ -48,6 +52,9 @@ export default function ServiceCard({
   isOnSale,
   isPixiCompatible = false,
 }: ServiceCardProps) {
+  const [imageSrc, setImageSrc] = useState(img || PLACEHOLDER_IMAGE);
+  const [authorImgSrc, setAuthorImgSrc] = useState(authorImg || '');
+
   return (
     <div className="group relative bg-white rounded-2xl overflow-hidden h-full flex flex-col shadow-sm hover:shadow-lg transition-shadow">
       <Link href={`/service-details/${slug}`} className="absolute inset-0 z-[1]" />
@@ -64,12 +71,14 @@ export default function ServiceCard({
 
       <div className="relative overflow-hidden aspect-[16/10]">
         <Image
-          src={img}
+          src={imageSrc}
           alt={title}
           width={400}
           height={200}
           className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 group-hover:-rotate-1"
           style={{ width: '100%', height: 'auto' }}
+          unoptimized
+          onError={() => setImageSrc(PLACEHOLDER_IMAGE)}
         />
       </div>
 
@@ -111,13 +120,15 @@ export default function ServiceCard({
           <hr className="border-t border-gray-200 my-3" />
           <div className="flex items-center gap-2 relative z-[2]">
             <Link href={authorProfileLink} className="flex-shrink-0">
-              {authorImg ? (
+              {authorImgSrc ? (
                 <Image
-                  src={authorImg}
+                  src={authorImgSrc}
                   alt={authorName}
                   width={30}
                   height={30}
                   className="w-[30px] h-[30px] rounded-full object-cover"
+                  unoptimized
+                  onError={() => setAuthorImgSrc('')}
                 />
               ) : (
                 <div className="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-sm font-semibold">

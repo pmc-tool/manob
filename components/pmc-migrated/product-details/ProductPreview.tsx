@@ -7,6 +7,9 @@ import { useEffect, useState } from 'react';
 import { Columns, ArrowUpRight, Image as ImageIcon, Tag, Zap } from 'lucide-react';
 import { PmcButton, SecondaryButton } from '@/components/ui/pmc-button';
 
+// Placeholder image for missing/failed images (using picsum for reliable fallback)
+const PLACEHOLDER_IMAGE = 'https://picsum.photos/785/400?grayscale';
+
 interface ProductPreviewProps {
   previewImage: string;
   previewLink: string;
@@ -31,8 +34,14 @@ export default function ProductPreview({
   isOnSale,
 }: ProductPreviewProps) {
   const [dimensions, setDimensions] = useState<ImageDimension[]>([]);
+  const [mainImageSrc, setMainImageSrc] = useState(previewImage || PLACEHOLDER_IMAGE);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Update main image when previewImage prop changes
+  useEffect(() => {
+    setMainImageSrc(previewImage || PLACEHOLDER_IMAGE);
+  }, [previewImage]);
 
   useEffect(() => {
     const fetchDimensions = async () => {
@@ -101,13 +110,14 @@ export default function ProductPreview({
         {/* Preview Image */}
         <div className="preview-image-thumb relative group">
           <Image
-            src={previewImage}
+            src={mainImageSrc}
             alt={previewAlt}
             width={785}
             height={400}
             className="w-full h-auto"
             style={{ width: '100%', height: 'auto' }}
             unoptimized
+            onError={() => setMainImageSrc(PLACEHOLDER_IMAGE)}
           />
           <Link
             href={previewLink}

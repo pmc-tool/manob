@@ -40,7 +40,10 @@
       "Bash(git -C \"/Users/nowshidalamsayem/Desktop/CLAUDE/packmycode new/pmc-engine-web-main\" log --oneline --all)",
       "Bash(git -C \"/Users/nowshidalamsayem/Desktop/CLAUDE/packmycode new/pmc-engine-web-main\" log --oneline --grep=\"migrat\\|Migrat\")",
       "Bash(git pull:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(git diff:*)",
+      "Bash(printf:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }

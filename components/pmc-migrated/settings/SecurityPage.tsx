@@ -1,219 +1,174 @@
-// MIGRATION: SecurityPage component from manob.ai
+// Security Settings Page - Change Password
 'use client';
 
 import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import styles from './settings.module.css';
+import { Card, Form, Input, Button, Alert, Typography, Divider } from 'antd';
+import { Lock, KeyRound, CheckCircle2, Info } from 'lucide-react';
 
-interface FormData {
+const { Title, Text, Paragraph } = Typography;
+
+interface PasswordFormValues {
   old_password: string;
   new_password: string;
   confirm_password: string;
 }
 
-interface FormErrors {
-  old_password?: string;
-  new_password?: string;
-  confirm_password?: string;
-}
-
 export default function SecurityPage() {
-  const [formData, setFormData] = useState<FormData>({
-    old_password: '',
-    new_password: '',
-    confirm_password: '',
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.old_password) {
-      newErrors.old_password = 'Password is required';
-    }
-
-    if (!formData.new_password) {
-      newErrors.new_password = 'Password is required';
-    } else if (formData.new_password.length < 8) {
-      newErrors.new_password = 'Password must be at least 8 characters';
-    } else if (!/[A-Z]/.test(formData.new_password)) {
-      newErrors.new_password = 'Password must contain at least one uppercase letter';
-    } else if (!/[a-z]/.test(formData.new_password)) {
-      newErrors.new_password = 'Password must contain at least one lowercase letter';
-    } else if (!/\d/.test(formData.new_password)) {
-      newErrors.new_password = 'Password must contain at least one number';
-    } else if (!/[@$!%*?&]/.test(formData.new_password)) {
-      newErrors.new_password = 'Password must contain at least one special character';
-    }
-
-    if (!formData.confirm_password) {
-      newErrors.confirm_password = 'Please confirm your password';
-    } else if (formData.confirm_password !== formData.new_password) {
-      newErrors.confirm_password = 'Passwords must match';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (_values: PasswordFormValues) => {
     setSuccessMessage('');
-
-    if (!validateForm()) return;
-
     setIsSubmitting(true);
+
     try {
       // Mock API call - replace with actual API
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setSuccessMessage('Password changed successfully!');
-      setFormData({ old_password: '', new_password: '', confirm_password: '' });
-    } catch (error) {
-      setErrors({ old_password: 'Failed to change password. Please try again.' });
+      form.resetFields();
+    } catch {
+      setSuccessMessage('');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const passwordRules = [
+    'At least 8 characters',
+    'One uppercase letter',
+    'One lowercase letter',
+    'One number',
+    'One special character (@$!%*?&#)',
+  ];
+
   return (
-    <div className={styles.settingsCard}>
-      <form onSubmit={handleSubmit}>
-        <div className={styles.cardBody}>
-          <div className={styles.cardHeader}>
-            <h2>Change Password</h2>
-            <p className={styles.muted}>
-              Secure your account with a strong password and two-factor authentication.
-            </p>
-          </div>
-
-          {successMessage && (
-            <div className={styles.successMessage}>{successMessage}</div>
-          )}
-
-          <div className={styles.formSection}>
-            {/* Current Password */}
-            <div className={styles.formRow}>
-              <div className={styles.formLabel}>
-                <h6 className={styles.required}>Current Password</h6>
-                <p className={styles.muted}>
-                  Please enter your existing password for verification.
-                </p>
-              </div>
-              <div className={styles.formInput}>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type={showOldPassword ? 'text' : 'password'}
-                    name="old_password"
-                    placeholder="Enter Current Password"
-                    maxLength={20}
-                    value={formData.old_password}
-                    onChange={handleChange}
-                    className={errors.old_password ? styles.inputError : ''}
-                  />
-                  <button
-                    type="button"
-                    className={styles.eyeButton}
-                    onClick={() => setShowOldPassword(!showOldPassword)}
-                  >
-                    {showOldPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                  </button>
-                </div>
-                {errors.old_password && (
-                  <span className={styles.errorText}>{errors.old_password}</span>
-                )}
-              </div>
-            </div>
-
-            {/* New Password */}
-            <div className={styles.formRow}>
-              <div className={styles.formLabel}>
-                <h6 className={styles.required}>New Password</h6>
-                <p className={styles.muted}>
-                  Choose a strong password with at least 8 characters.
-                </p>
-              </div>
-              <div className={styles.formInput}>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type={showNewPassword ? 'text' : 'password'}
-                    name="new_password"
-                    placeholder="Enter New Password"
-                    maxLength={20}
-                    value={formData.new_password}
-                    onChange={handleChange}
-                    className={errors.new_password ? styles.inputError : ''}
-                  />
-                  <button
-                    type="button"
-                    className={styles.eyeButton}
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                  >
-                    {showNewPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                  </button>
-                </div>
-                {errors.new_password && (
-                  <span className={styles.errorText}>{errors.new_password}</span>
-                )}
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div className={`${styles.formRow} ${styles.noBorder}`}>
-              <div className={styles.formLabel}>
-                <h6 className={styles.required}>Re-Enter Password</h6>
-                <p className={styles.muted}>
-                  Confirm your new password by entering it again.
-                </p>
-              </div>
-              <div className={styles.formInput}>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    name="confirm_password"
-                    placeholder="Re-Enter New Password"
-                    maxLength={20}
-                    value={formData.confirm_password}
-                    onChange={handleChange}
-                    className={errors.confirm_password ? styles.inputError : ''}
-                  />
-                  <button
-                    type="button"
-                    className={styles.eyeButton}
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                  </button>
-                </div>
-                {errors.confirm_password && (
-                  <span className={styles.errorText}>{errors.confirm_password}</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className={styles.submitBtn}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Changing Password...' : 'Change Password'}
-          </button>
+    <div className="space-y-8">
+      {/* Change Password Card */}
+      <Card className="shadow-sm">
+        <div className="mb-5">
+          <Title level={5} className="mb-1!">Change Password</Title>
+          <Text type="secondary" className="text-sm">
+            Update your password to keep your account secure
+          </Text>
         </div>
-      </form>
+
+        <Divider className="my-4!" />
+
+        {successMessage && (
+          <Alert
+            message={successMessage}
+            type="success"
+            showIcon
+            icon={<CheckCircle2 size={16} />}
+            className="mb-6"
+            closable
+          />
+        )}
+
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Form Column */}
+          <div className="lg:col-span-3">
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              requiredMark={false}
+            >
+              <Form.Item
+                name="old_password"
+                label={<span className="text-sm font-medium text-gray-700">Current Password</span>}
+                rules={[{ required: true, message: 'Please enter your current password' }]}
+              >
+                <Input.Password
+                  prefix={<KeyRound size={16} className="text-gray-400" />}
+                  placeholder="Enter your current password"
+                  maxLength={50}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="new_password"
+                label={<span className="text-sm font-medium text-gray-700">New Password</span>}
+                rules={[
+                  { required: true, message: 'Please enter a new password' },
+                  { min: 8, message: 'Password must be at least 8 characters' },
+                  {
+                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/,
+                    message: 'Password must include uppercase, lowercase, number and special character',
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input.Password
+                  prefix={<Lock size={16} className="text-gray-400" />}
+                  placeholder="Enter a new password"
+                  maxLength={50}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="confirm_password"
+                label={<span className="text-sm font-medium text-gray-700">Confirm New Password</span>}
+                dependencies={['new_password']}
+                hasFeedback
+                rules={[
+                  { required: true, message: 'Please confirm your new password' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('new_password') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('Passwords do not match'));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password
+                  prefix={<Lock size={16} className="text-gray-400" />}
+                  placeholder="Re-enter your new password"
+                  maxLength={50}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item className="mb-0! pt-2">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={isSubmitting}
+                  size="large"
+                >
+                  {isSubmitting ? 'Updating...' : 'Update Password'}
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+
+          {/* Password Requirements Column */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+              <div className="flex items-center gap-2 mb-3">
+                <Info size={14} className="text-gray-500" />
+                <Text className="text-sm font-medium text-gray-700">Password Requirements</Text>
+              </div>
+              <ul className="space-y-2">
+                {passwordRules.map((rule, index) => (
+                  <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="w-1 h-1 rounded-full bg-gray-400" />
+                    {rule}
+                  </li>
+                ))}
+              </ul>
+              <Paragraph type="secondary" className="mt-3! mb-0! text-xs">
+                Choose a password you haven't used before.
+              </Paragraph>
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { SettingsModalProvider } from "@/context/SettingsModalContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { SocketProvider } from "@/context/SocketProvider";
+import { UserModeProvider } from "@/context/UserModeContext";
 import StoreProvider from "./StoreProvider";
 import { Suspense } from "react";
 
@@ -47,6 +48,7 @@ export default function RootLayout({
         <body className={`${dmSans.variable} ${kalam.variable} antialiased`}>
           <AntdRegistry>
             <AuthProvider>
+              <UserModeProvider>
               <CartProvider>
                 <RenameModalProvider>
                   <SettingsModalProvider>
@@ -61,6 +63,7 @@ export default function RootLayout({
                   </SettingsModalProvider>
                 </RenameModalProvider>
               </CartProvider>
+              </UserModeProvider>
             </AuthProvider>
           </AntdRegistry>
         </body>

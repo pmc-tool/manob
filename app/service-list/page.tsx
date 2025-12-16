@@ -1,12 +1,15 @@
-// MIGRATION: Service list page with centralized API
+// Service list page using RTK Query
 'use client';
 
-import { Suspense, useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
-import { getServices, type ServiceListItem, type ServiceFilters } from '@/lib/api/services';
+import {
+  useGetServicesQuery,
+  useGetServiceFilterOptionsQuery,
+} from '@/state/services/home-service/public-service.service';
 import styles from './page.module.css';
 
 export default function ServiceListPage() {
@@ -27,65 +30,76 @@ function ServiceListContent() {
     sortBy: 'newest',
   });
 
-  // Data states
-  const [services, setServices] = useState<ServiceListItem[]>([]);
-  const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Build query params for RTK Query
+  const queryParams = useMemo(() => {
+    const params: Record<string, any> = {
+      page: 1,
+      limit: 50,
+    };
 
-  // Fetch services using centralized API
-  const fetchServices = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Build filters from activeFilters state
-      const filters: ServiceFilters = {
-        page: 1,
-        limit: 50,
-        sortBy: activeFilters.sortBy as ServiceFilters['sortBy'],
-      };
-
-      // Add category filter if selected
-      if (activeFilters.categories.length === 1) {
-        filters.categoryId = activeFilters.categories[0];
-      }
-
-      // Add price range filter
-      if (activeFilters.priceRange) {
-        filters.minPrice = activeFilters.priceRange.min;
-        filters.maxPrice = activeFilters.priceRange.max;
-      }
-
-      // Add rating filter
-      if (activeFilters.rating) {
-        filters.minRating = activeFilters.rating;
-      }
-
-      const response = await getServices(filters);
-
-      // Apply multi-category filter client-side (API supports single category)
-      let serviceList = response.services;
-      if (activeFilters.categories.length > 1) {
-        serviceList = serviceList.filter((s) =>
-          activeFilters.categories.includes(s.category_id || '')
-        );
-      }
-
-      setServices(serviceList);
-      setCategories(response.categories);
-    } catch (err) {
-      console.error('Failed to fetch services:', err);
-      setError('Failed to load services. Please try again.');
-      setServices([]);
-    } finally {
-      setLoading(false);
+    // Add category filter
+    if (activeFilters.categories.length > 0) {
+      params.category_ids = activeFilters.categories;
     }
+
+    // Add price range filter
+    if (activeFilters.priceRange) {
+      params.priceMin = activeFilters.priceRange.min;
+      params.priceMax = activeFilters.priceRange.max;
+    }
+
+    return params;
   }, [activeFilters]);
 
-  useEffect(() => {
-    fetchServices();
-  }, [fetchServices]);
+  // Fetch services using RTK Query
+  const {
+    data: servicesData,
+    isLoading: servicesLoading,
+    error: servicesError,
+    refetch: refetchServices,
+  } = useGetServicesQuery({ queryParams });
+
+  // Fetch filter options (aggregations) using RTK Query
+  const {
+    data: filterOptions,
+    isLoading: filterOptionsLoading,
+  } = useGetServiceFilterOptionsQuery();
+
+  // Map filter options to categories format
+  const categories = useMemo(() => {
+    if (!filterOptions?.categories) return [];
+    return filterOptions.categories.map((cat: any) => ({
+      id: cat.id || cat._id,
+      label: cat.name || cat.title,
+      count: cat.count || 0,
+    }));
+  }, [filterOptions]);
+
+  // Get services list from response
+  const services = useMemo(() => {
+    if (!servicesData?.items) return [];
+
+    let serviceList = servicesData.items;
+
+    // Apply client-side sorting if needed
+    if (activeFilters.sortBy === 'price_low') {
+      serviceList = [...serviceList].sort((a: any, b: any) => a.price - b.price);
+    } else if (activeFilters.sortBy === 'price_high') {
+      serviceList = [...serviceList].sort((a: any, b: any) => b.price - a.price);
+    } else if (activeFilters.sortBy === 'rating') {
+      serviceList = [...serviceList].sort((a: any, b: any) => b.avg_rating - a.avg_rating);
+    }
+
+    // Apply rating filter client-side
+    if (activeFilters.rating) {
+      serviceList = serviceList.filter((s: any) => s.avg_rating >= activeFilters.rating!);
+    }
+
+    return serviceList;
+  }, [servicesData, activeFilters.sortBy, activeFilters.rating]);
+
+  const loading = servicesLoading || filterOptionsLoading;
+  const error = servicesError ? 'Failed to load services. Please try again.' : null;
 
   return (
     <div className={styles.container}>
@@ -115,17 +129,17 @@ function ServiceListContent() {
       {error && !loading && (
         <div className={styles.emptyState}>
           <p>{error}</p>
-          <button onClick={fetchServices}>Try again</button>
+          <button onClick={() => refetchServices()}>Try again</button>
         </div>
       )}
 
       {/* Service Grid */}
       {!loading && !error && services.length > 0 && (
         <div className={styles.grid}>
-          {services.map((service) => (
+          {services.map((service: any) => (
             <ServiceCard
-              key={service.id}
-              id={service.id}
+              key={service.id || service._id}
+              id={service.id || service._id}
               slug={service.slug}
               img={service.thumbnail_image}
               author={service.creator?.full_name}

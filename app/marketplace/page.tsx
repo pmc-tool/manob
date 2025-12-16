@@ -10,7 +10,10 @@ import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card'
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
 import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
 import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
-import { useGetProductsQuery, useGetFilterOptionsQuery } from '@/state/services/home-service/public-product.service';
+import {
+  useGetProductsQuery,
+  useGetParentCategoriesQuery,
+} from '@/state/services/home-service/public-product.service';
 
 // Services still use mock data for now
 const allServices = [...mockFeaturedServices, ...mockTrendingServices];
@@ -33,18 +36,24 @@ export default function MarketplacePage() {
     rating: null,
   });
 
-  // Fetch filter options from API
-  const { data: filterOptions } = useGetFilterOptionsQuery();
+  // Fetch categories from API
+  const { data: categoriesData } = useGetParentCategoriesQuery();
 
-  // Map API filter options to sidebar format
+  // Map API categories to sidebar format
   const filterCategories = useMemo(() => {
-    const categories = filterOptions?.categories || filterOptions?.primary_categories || [];
+    // Handle different response structures
+    const categories = categoriesData?.items || categoriesData || [];
+
+    if (!Array.isArray(categories)) {
+      return [];
+    }
+
     return categories.map((cat: any) => ({
       id: String(cat.id),
-      label: cat.name || cat.title,
+      label: cat.name || cat.title || cat.label,
       count: cat.count || cat.product_count || 0,
     }));
-  }, [filterOptions]);
+  }, [categoriesData]);
 
   // Build query params with filters
   const queryParams = useMemo(() => {

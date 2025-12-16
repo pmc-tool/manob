@@ -27,18 +27,20 @@ import {
   Comment,
 } from '@/lib/mocks/product-details.mock';
 
-const S3_BUCKET = process.env.NEXT_PUBLIC_S3BUCKET || '';
+// Placeholder image for missing/failed images (using picsum for reliable fallback)
+const PLACEHOLDER_IMAGE = 'https://picsum.photos/785/400?grayscale';
 
 // Helper to construct proper image URLs
 const getImageUrl = (imagePath: string | undefined | null): string => {
-  if (!imagePath) return '';
+  if (!imagePath) return PLACEHOLDER_IMAGE;
   // If already a full URL, return as-is
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
   // Remove leading slash if present to avoid double slashes
   const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-  return `${S3_BUCKET}/${cleanPath}`;
+  const s3Bucket = process.env.NEXT_PUBLIC_S3BUCKET || 'https://ds.packmycode.com';
+  return `${s3Bucket}/${cleanPath}`;
 };
 
 interface ProductDetailsPageProps {
@@ -93,7 +95,7 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
       product_name: feedProduct.product_name,
       short_description: feedProduct.short_description || detailedProduct?.short_description || '',
       full_description: detailedProduct?.full_description || '',
-      product_preview_file_url: getImageUrl(feedProduct.image),
+      product_preview_file_url: getImageUrl(feedProduct.image || feedProduct.thumbnail_image || detailedProduct?.image),
       screenshots_urls: detailedProduct?.thumbnail_images?.map((img: string) => getImageUrl(img)) || [],
       is_onsale: feedProduct.is_onsale,
       regular_lic_price: feedProduct.price || detailedProduct?.price || 0,

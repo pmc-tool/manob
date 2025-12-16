@@ -59,7 +59,31 @@ export const publicProductService = createApi({
         url: `/themes/aggr`,
         baseUrl: process.env.NEXT_PUBLIC_API_URL_FEED,
       }),
-      transformResponse: (response: any) => response.data,
+      transformResponse: (response: any) => response?.data || response,
+    }),
+    // Get popular categories from FEED API
+    getPopularCategories: builder.query<any, void>({
+      query: () => ({
+        url: `/home/popular-categories`,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_FEED,
+      }),
+      transformResponse: (response: any) => response?.data || response,
+    }),
+    // Get all parent categories from INV API
+    getParentCategories: builder.query<any, void>({
+      query: () => ({
+        url: `/categories/parent`,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
+      }),
+      transformResponse: (response: any) => response?.data || response,
+    }),
+    // Get subcategories by parent ID
+    getSubCategories: builder.query<any, { parentId: number }>({
+      query: ({ parentId }) => ({
+        url: `/categories/${parentId}`,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
+      }),
+      transformResponse: (response: any) => response?.data || response,
     }),
     getProducts: builder.query<
       any,
@@ -103,6 +127,9 @@ export const {
   useGetPublicProductQuery,
   useGetProductsQuery,
   useGetFilterOptionsQuery,
+  useGetPopularCategoriesQuery,
+  useGetParentCategoriesQuery,
+  useGetSubCategoriesQuery,
   useGetRelatedProductQuery,
   useGetPublicProductByUserIdQuery,
   useGetSearchResultQuery,

@@ -2,12 +2,16 @@
 // Uses lucide-react icons, Tailwind CSS, with cart integration
 'use client';
 
+import { useState } from 'react';
 import { Zap, Tag, ShoppingCart, ExternalLink, Box, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReviewStars } from '../review-stars';
 import { Ribbon } from '../ribbon';
 import useAddToCart from '@/hooks/useAddToCart';
+
+// Placeholder image for missing/failed images
+const PLACEHOLDER_IMAGE = 'https://picsum.photos/400/250?grayscale';
 
 interface Author {
   id?: string;
@@ -62,6 +66,7 @@ export default function ProductCard({
   size = 'default',
 }: ProductCardProps) {
   const { addToCart, isLoading, isInCart } = useAddToCart();
+  const [imageSrc, setImageSrc] = useState(img || PLACEHOLDER_IMAGE);
   const isSmall = size === 'small';
 
   // Handle author as either string or Author object
@@ -97,12 +102,14 @@ export default function ProductCard({
 
       <div className="relative overflow-hidden aspect-[16/10]">
         <Image
-          src={img}
+          src={imageSrc}
           alt={title}
           width={400}
           height={isSmall ? 120 : 200}
           className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110 group-hover:-rotate-1"
           style={{ height: isSmall ? '120px' : 'auto' }}
+          unoptimized
+          onError={() => setImageSrc(PLACEHOLDER_IMAGE)}
         />
       </div>
 
