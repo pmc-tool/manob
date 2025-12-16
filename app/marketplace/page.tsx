@@ -41,16 +41,33 @@ export default function MarketplacePage() {
     rating: null,
   });
 
-  // Fetch products from API
+  // Build query params with filters
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page: 1,
+      limit: 50
+    };
+
+    // Add category filter
+    if (activeFilters.categories.length > 0) {
+      params.category_ids = activeFilters.categories;
+    }
+
+    // Add price range filter
+    if (activeFilters.priceRange) {
+      params.priceMin = activeFilters.priceRange.min;
+      params.priceMax = activeFilters.priceRange.max;
+    }
+
+    return params;
+  }, [activeFilters]);
+
+  // Fetch products from API with filters
   const {
     data: publicProducts,
     isLoading: isLoadingProducts,
-  } = useGetProductsQuery({
-    queryParams: {
-      page: 1,
-      limit: 50
-    }
-  });
+    isFetching: isFetchingProducts,
+  } = useGetProductsQuery({ queryParams });
 
   // Map API products to component format
   const apiProducts = useMemo(() => {
@@ -77,20 +94,16 @@ export default function MarketplacePage() {
     }));
   }, [publicProducts]);
 
-  // Filter and sort products
+  // Filter and sort products (API handles category & price, client handles rating & sort)
   const filteredProducts = useMemo(() => {
     let result = [...apiProducts];
 
-    if (activeFilters.priceRange) {
-      result = result.filter(
-        (p) => p.price >= activeFilters.priceRange!.min && p.price <= activeFilters.priceRange!.max
-      );
-    }
-
+    // Rating filter (client-side, API doesn't support it)
     if (activeFilters.rating) {
       result = result.filter((p) => p.avg_rating >= activeFilters.rating!);
     }
 
+    // Sorting (client-side)
     switch (sortBy) {
       case 'popular':
         result.sort((a, b) => b.total_sales - a.total_sales);
@@ -107,7 +120,7 @@ export default function MarketplacePage() {
     }
 
     return result;
-  }, [apiProducts, activeFilters, sortBy]);
+  }, [apiProducts, activeFilters.rating, sortBy]);
 
   // Filter and sort services
   const filteredServices = useMemo(() => {
@@ -202,7 +215,7 @@ export default function MarketplacePage() {
           </div>
 
           {/* Grid */}
-          {listingType === 'products' && isLoadingProducts ? (
+          {listingType === 'products' && (isLoadingProducts || isFetchingProducts) ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
               <span className="ml-3 text-gray-500">Loading products...</span>
