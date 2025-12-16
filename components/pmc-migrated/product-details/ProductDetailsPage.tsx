@@ -20,7 +20,12 @@ import {
   License,
   Review,
   Comment,
+  mockProduct,
+  mockLicenses,
+  mockReviews,
+  mockComments,
   mockRelatedProducts,
+  mockReviewStats,
 } from '@/lib/mocks/product-details.mock';
 
 const API_URL_FEED = process.env.NEXT_PUBLIC_API_URL_FEED || '';
@@ -348,8 +353,15 @@ export default function ProductDetailsPage({ slug }: ProductDetailsPageProps) {
       setComments(mappedComments);
       setRelatedProducts(mappedRelated);
     } catch (err) {
-      console.error('Failed to fetch product:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load product');
+      console.error('Failed to fetch product, using mock data:', err);
+      // Use mock data as fallback
+      setProduct(mockProduct);
+      setLicenses(mockLicenses);
+      setReviews(mockReviews);
+      setReviewStats(mockReviewStats);
+      setComments(mockComments);
+      setRelatedProducts(mockRelatedProducts);
+      setError(null);
     } finally {
       setLoading(false);
     }

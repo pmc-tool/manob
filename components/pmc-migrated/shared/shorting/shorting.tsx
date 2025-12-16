@@ -1,5 +1,5 @@
+// Shorting component - converted to Tailwind CSS (already was mostly Tailwind)
 import React from "react";
-import styles from "./shorting.module.css";
 
 interface ShortingProps {
   options: { id: string; label: string }[];
@@ -7,6 +7,7 @@ interface ShortingProps {
   onSelect: (value: string) => void;
   selectedOption: string;
 }
+
 export default function Shorting({
   options,
   name,
