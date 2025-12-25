@@ -22,7 +22,7 @@ function urlString(queryParams: any) {
 export const publicProductService = createApi({
   reducerPath: "publicProductsApi",
   baseQuery: (args: any, api: any, extraOptions: any) => {
-    const customBaseUrl = args?.baseUrl || process.env.API_URL;
+    const customBaseUrl = args?.baseUrl || process.env.NEXT_PUBLIC_API_URL;
     const baseQuery = fetchBaseQuery({
       baseUrl: customBaseUrl,
       prepareHeaders: (headers, { getState }) => {
@@ -43,23 +43,47 @@ export const publicProductService = createApi({
     getPublicProduct: builder.query<any, { id: string }>({
       query: ({ id }) => ({
         url: `/public/products/${id}`,
-        baseUrl: process.env.API_URL_INV,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
       }),
       transformResponse: (response: any) => response.data,
     }),
     getRelatedProduct: builder.query<any, { id: string }>({
       query: ({ id }) => ({
         url: `/public/app/products/${id}/related`,
-        baseUrl: process.env.API_URL_INV,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
       }),
       transformResponse: (response: any) => response.data,
     }),
     getFilterOptions: builder.query<any, void>({
       query: () => ({
         url: `/themes/aggr`,
-        baseUrl: process.env.API_URL_FEED,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_FEED,
       }),
-      transformResponse: (response: any) => response.data,
+      transformResponse: (response: any) => response?.data || response,
+    }),
+    // Get popular categories from FEED API
+    getPopularCategories: builder.query<any, void>({
+      query: () => ({
+        url: `/home/popular-categories`,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_FEED,
+      }),
+      transformResponse: (response: any) => response?.data || response,
+    }),
+    // Get all parent categories from INV API
+    getParentCategories: builder.query<any, void>({
+      query: () => ({
+        url: `/categories/parent`,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
+      }),
+      transformResponse: (response: any) => response?.data || response,
+    }),
+    // Get subcategories by parent ID
+    getSubCategories: builder.query<any, { parentId: number }>({
+      query: ({ parentId }) => ({
+        url: `/categories/${parentId}`,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
+      }),
+      transformResponse: (response: any) => response?.data || response,
     }),
     getProducts: builder.query<
       any,
@@ -69,9 +93,7 @@ export const publicProductService = createApi({
     >({
       query: ({ queryParams }) => ({
         url: `/themes?${urlString(queryParams)}`,
-        // url: `/themes?page=${page}&limit=${limit}&category_ids=${category_ids}`,
-        // url: `/themes?page=${page}&limit=${limit}&category_id=${category_id}&priceMin=${priceMin}&priceMax=${priceMax}`,
-        baseUrl: process.env.API_URL_FEED,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_FEED,
       }),
       keepUnusedDataFor: 0,
       transformResponse: (response: any) => response.data,
@@ -86,7 +108,7 @@ export const publicProductService = createApi({
         url: `/global-search?type=${queryParams?.type}&query=${
           queryParams?.keyword
         }&${urlString(queryParams)}`,
-        baseUrl: process.env.API_URL_FEED,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_FEED,
       }),
       keepUnusedDataFor: 0,
       transformResponse: (response: any) => response.data,
@@ -94,7 +116,7 @@ export const publicProductService = createApi({
     getPublicProductByUserId: builder.query<any, string>({
       query: (id) => ({
         url: `/public/user/${id}/products`,
-        baseUrl: process.env.API_URL_INV,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
       }),
       transformResponse: (response: any) => response.data,
     }),
@@ -105,6 +127,9 @@ export const {
   useGetPublicProductQuery,
   useGetProductsQuery,
   useGetFilterOptionsQuery,
+  useGetPopularCategoriesQuery,
+  useGetParentCategoriesQuery,
+  useGetSubCategoriesQuery,
   useGetRelatedProductQuery,
   useGetPublicProductByUserIdQuery,
   useGetSearchResultQuery,

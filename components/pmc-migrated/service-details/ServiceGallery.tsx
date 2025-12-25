@@ -2,8 +2,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X, Play } from 'lucide-react';
+
+const PLACEHOLDER_IMAGE = 'https://picsum.photos/800/450?grayscale';
 
 interface ServiceGalleryProps {
   images: string[];
@@ -15,8 +17,24 @@ export default function ServiceGallery({ images, videoUrl, title }: ServiceGalle
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [imageSources, setImageSources] = useState<string[]>([]);
 
-  const allMedia = videoUrl ? [videoUrl, ...images] : images;
+  // Initialize image sources with fallback for empty arrays
+  useEffect(() => {
+    const validImages = images.filter(Boolean);
+    setImageSources(validImages.length > 0 ? validImages : [PLACEHOLDER_IMAGE]);
+  }, [images]);
+
+  const allMedia = videoUrl ? [videoUrl, ...imageSources] : imageSources;
+
+  // Handle image load error
+  const handleImageError = (index: number) => {
+    setImageSources(prev => {
+      const updated = [...prev];
+      updated[index] = PLACEHOLDER_IMAGE;
+      return updated;
+    });
+  };
 
   const handlePrevious = () => {
     setActiveIndex((prev) => (prev === 0 ? allMedia.length - 1 : prev - 1));
@@ -57,12 +75,13 @@ export default function ServiceGallery({ images, videoUrl, title }: ServiceGalle
               </div>
             ) : (
               <Image
-                src={allMedia[activeIndex]}
+                src={allMedia[activeIndex] || PLACEHOLDER_IMAGE}
                 alt={`${title} - Image ${activeIndex + 1}`}
                 fill
                 className="object-cover cursor-pointer"
                 onClick={() => openLightbox(activeIndex)}
                 unoptimized
+                onError={() => handleImageError(activeIndex)}
               />
             )}
           </div>
@@ -103,11 +122,12 @@ export default function ServiceGallery({ images, videoUrl, title }: ServiceGalle
                   </div>
                 ) : (
                   <Image
-                    src={media}
+                    src={media || PLACEHOLDER_IMAGE}
                     alt={`Thumbnail ${index + 1}`}
                     fill
                     className="object-cover rounded"
                     unoptimized
+                    onError={() => handleImageError(videoUrl ? index - 1 : index)}
                   />
                 )}
               </button>
@@ -145,12 +165,13 @@ export default function ServiceGallery({ images, videoUrl, title }: ServiceGalle
               </div>
             ) : (
               <Image
-                src={allMedia[lightboxIndex]}
+                src={allMedia[lightboxIndex] || PLACEHOLDER_IMAGE}
                 alt={`${title} - Image ${lightboxIndex + 1}`}
                 width={1200}
                 height={800}
                 className="object-contain max-h-[80vh]"
                 unoptimized
+                onError={() => handleImageError(lightboxIndex)}
               />
             )}
           </div>

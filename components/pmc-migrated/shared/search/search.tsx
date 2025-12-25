@@ -1,9 +1,8 @@
-// PageHeaderSearch - migrated from PMC
+// PageHeaderSearch - migrated from PMC - converted to Tailwind CSS
 "use client";
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import styles from "./search.module.css";
 
 interface Props {
   title?: string;
@@ -12,7 +11,6 @@ interface Props {
   placeholder: string;
   count: string;
   infoText: string;
-  // initValue?: string;
 }
 
 export default function PageHeaderSearch({
@@ -22,43 +20,38 @@ export default function PageHeaderSearch({
   placeholder,
   count,
   infoText,
-}: // initValue,
-Props) {
-  // const [inputValue, setInputValue] = useState(initValue ?? "");
+}: Props) {
   const [showModal, setShowModal] = useState(false);
   const [searchVal, setSearchVal] = useState("");
   const searchQuery = useSearchParams();
   const searchQueryValue: string | null = searchQuery.get("q");
   const handleInputClick = () => {
-    setShowModal(true); // Open the SearchSuggestions modal on input click
-    // Analytics tracking - window.analytics will be added when connected to backend
+    setShowModal(true);
     (window as any).analytics?.goal?.("breadcum-search?ref=page_header");
   };
   useEffect(() => {
     setSearchVal(searchQueryValue || "");
   }, [searchQueryValue, searchQuery]);
   const handleCloseModal = () => {
-    setShowModal(false); // Close the modal
+    setShowModal(false);
   };
 
   return (
     <>
       {title && <h4 className="mb-0 text-xl capitalize">{title}</h4>}
       {description && <p className="leading-normal capitalize">{description}</p>}
-      <form className={`relative ${styles.searchBox}`}>
+      <form className="relative max-w-[600px]">
         <input
-          className={`w-full border rounded-lg px-4 py-3 pr-32 outline-none focus:border-primary ${styles.searchInput}`}
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-32 outline-none text-[15px] transition-[border-color] duration-200 focus:border-primary focus:shadow-[0_0_0_2px_rgba(29,191,115,0.1)]"
           type="search"
           name="search"
           autoComplete="off"
           placeholder={placeholder}
-          // value={inputValue}
           defaultValue={searchVal}
           onClick={handleInputClick}
-          // onChange={(e) => setInputValue(e.target.value)}
         />
         <button
-          className={`flex items-center gap-2 justify-center absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-4 py-2 rounded ${styles.searchButton}`}
+          className="flex items-center gap-2 justify-center absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-4 py-2 rounded font-medium text-sm transition-colors hover:opacity-90"
           type="submit"
         >
           <Search size={18} />

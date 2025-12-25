@@ -10,7 +10,7 @@ export const ServiceWithTokenService = createApi({
     getPublicWithTokenService: builder.query<any, { id: string }>({
       query: ({ id }) => ({
         url: `/public-service/${id}`,
-        baseUrl: process.env.API_URL_INV,
+        baseUrl: process.env.NEXT_PUBLIC_API_URL_INV,
       }),
       transformResponse: (response: any) => response.data,
     }),

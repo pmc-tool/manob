@@ -4,13 +4,13 @@
 
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useId } from 'react';
 import 'swiper/css';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { ProductCard } from '../product-card';
 import { ProductCardSkeleton } from './ProductCardSkeleton';
 import type { Product } from '@/lib/mocks/products.mock';
-import styles from './ProductsCarousel.module.css';
 
 type ProductsCarouselProps = {
   title: string;
@@ -29,25 +29,29 @@ export default function ProductsCarousel({
   isLoading = false,
   loginUserName = '',
 }: ProductsCarouselProps) {
+  const id = useId().replace(/:/g, '');
+  const nextBtnId = `next-${id}`;
+  const prevBtnId = `prev-${id}`;
+
   return (
-    <section className={styles.section}>
-      <div className={styles.header}>
-        <h3 className={styles.title}>{title}</h3>
-        <Link className={styles.headerLink} href={linkHref}>
+    <section className="pt-0">
+      <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+        <h3 className="text-xl font-semibold m-0 text-gray-900">{title}</h3>
+        <Link className="flex items-center gap-2 font-semibold text-primary no-underline transition-opacity hover:opacity-80" href={linkHref}>
           <span>{linkText}</span>
           <ArrowUpRight size={16} />
         </Link>
       </div>
 
-      <div className={styles.swiperContainer}>
-        <div className={styles.swiperInner}>
+      <div className="relative">
+        <div className="overflow-hidden">
           <Swiper
             modules={[Navigation]}
             spaceBetween={24}
             slidesPerView={1}
             navigation={{
-              nextEl: `.${styles.nextButton}`,
-              prevEl: `.${styles.prevButton}`,
+              nextEl: `#${nextBtnId}`,
+              prevEl: `#${prevBtnId}`,
             }}
             breakpoints={{
               480: { slidesPerView: 1.5 },
@@ -64,7 +68,7 @@ export default function ProductsCarousel({
               ))}
             {!isLoading &&
               products?.map((item) => (
-                <SwiperSlide key={item.id} className={styles.slideAuto}>
+                <SwiperSlide key={item.id} className="h-auto">
                   <ProductCard
                     id={item.id}
                     img={item.thumbnail_image}
@@ -84,10 +88,16 @@ export default function ProductsCarousel({
                   />
                 </SwiperSlide>
               ))}
-            <button className={`${styles.navButton} ${styles.nextButton}`}>
+            <button
+              id={nextBtnId}
+              className="absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md cursor-pointer flex items-center justify-center transition-all text-gray-900 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed right-0 md:-right-5"
+            >
               <ChevronRight size={21} />
             </button>
-            <button className={`${styles.navButton} ${styles.prevButton}`}>
+            <button
+              id={prevBtnId}
+              className="absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md cursor-pointer flex items-center justify-center transition-all text-gray-900 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed left-0 md:-left-5"
+            >
               <ChevronLeft size={21} />
             </button>
           </Swiper>

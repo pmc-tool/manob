@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import SignInPage from "../_components/SignInPage";
 
 export const metadata: Metadata = {
-  title: "Login or Register at Packmycode | Start Today",
+  title: "Sign In | manob.ai",
   description:
-    "Access your Packmycode account or register for free to start buying, selling, or posting jobs today.",
+    "Sign in to your manob.ai account to access your dashboard, purchases, and more.",
   alternates: {
-    canonical: "https://packmycode.com/auth/sign-in",
+    canonical: "https://manob.ai/auth/sign-in",
   },
 };
 

@@ -1,10 +1,8 @@
-// MIGRATION: FilterBar component - Top horizontal filter bar
-// Replaces left sidebar filter to work with PMC Engine dashboard shell
+// MIGRATION: FilterBar component - Top horizontal filter bar - converted to Tailwind CSS
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, X, SlidersHorizontal } from 'lucide-react';
-import styles from './FilterBar.module.css';
+import { ChevronDown, X } from 'lucide-react';
 
 export interface FilterOption {
   id: string;
@@ -120,35 +118,36 @@ export default function FilterBar({
   const getCategoryLabel = (id: string) => categories.find((c) => c.id === id)?.label || id;
 
   return (
-    <div className={styles.filterBar} ref={dropdownRef}>
-      <div className={styles.filterRow}>
-        <div className={styles.filters}>
+    <div className="bg-white border-b border-gray-200 py-3 px-4" ref={dropdownRef}>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Category Dropdown */}
-          <div className={styles.dropdown}>
+          <div className="relative">
             <button
-              className={`${styles.dropdownTrigger} ${activeFilters.categories.length > 0 ? styles.active : ''}`}
+              className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-colors ${activeFilters.categories.length > 0 ? 'bg-primary/10 border-primary text-primary' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
               onClick={() => toggleDropdown('category')}
             >
               <span>Category</span>
               {activeFilters.categories.length > 0 && (
-                <span className={styles.badge}>{activeFilters.categories.length}</span>
+                <span className="bg-primary text-white text-xs px-1.5 py-0.5 rounded-full">{activeFilters.categories.length}</span>
               )}
-              <ChevronDown size={14} className={openDropdown === 'category' ? styles.rotated : ''} />
+              <ChevronDown size={14} className={`transition-transform ${openDropdown === 'category' ? 'rotate-180' : ''}`} />
             </button>
             {openDropdown === 'category' && (
-              <div className={styles.dropdownMenu}>
-                <div className={styles.dropdownHeader}>Categories</div>
-                <div className={styles.dropdownContent}>
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[200px]">
+                <div className="px-3 py-2 border-b border-gray-100 font-medium text-sm text-gray-900">Categories</div>
+                <div className="max-h-[280px] overflow-y-auto p-2">
                   {categories.map((cat) => (
-                    <label key={cat.id} className={styles.checkboxItem}>
+                    <label key={cat.id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-gray-50 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={activeFilters.categories.includes(cat.id)}
                         onChange={() => handleCategoryToggle(cat.id)}
+                        className="rounded border-gray-300 text-primary focus:ring-primary"
                       />
-                      <span className={styles.checkboxLabel}>{cat.label}</span>
+                      <span className="text-sm text-gray-700">{cat.label}</span>
                       {cat.count !== undefined && (
-                        <span className={styles.count}>({cat.count})</span>
+                        <span className="text-xs text-gray-400 ml-auto">({cat.count})</span>
                       )}
                     </label>
                   ))}
@@ -158,20 +157,20 @@ export default function FilterBar({
           </div>
 
           {/* Price Dropdown */}
-          <div className={styles.dropdown}>
+          <div className="relative">
             <button
-              className={`${styles.dropdownTrigger} ${activeFilters.priceRange ? styles.active : ''}`}
+              className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-colors ${activeFilters.priceRange ? 'bg-primary/10 border-primary text-primary' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
               onClick={() => toggleDropdown('price')}
             >
               <span>{activeFilters.priceRange?.label || 'Price'}</span>
-              <ChevronDown size={14} className={openDropdown === 'price' ? styles.rotated : ''} />
+              <ChevronDown size={14} className={`transition-transform ${openDropdown === 'price' ? 'rotate-180' : ''}`} />
             </button>
             {openDropdown === 'price' && (
-              <div className={styles.dropdownMenu}>
-                <div className={styles.dropdownHeader}>Price Range</div>
-                <div className={styles.dropdownContent}>
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[160px]">
+                <div className="px-3 py-2 border-b border-gray-100 font-medium text-sm text-gray-900">Price Range</div>
+                <div className="p-2">
                   <button
-                    className={`${styles.radioItem} ${!activeFilters.priceRange ? styles.selected : ''}`}
+                    className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${!activeFilters.priceRange ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:bg-gray-50'}`}
                     onClick={() => handlePriceSelect(null)}
                   >
                     Any Price
@@ -179,7 +178,7 @@ export default function FilterBar({
                   {PRICE_RANGES.map((range) => (
                     <button
                       key={range.label}
-                      className={`${styles.radioItem} ${activeFilters.priceRange?.label === range.label ? styles.selected : ''}`}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${activeFilters.priceRange?.label === range.label ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:bg-gray-50'}`}
                       onClick={() => handlePriceSelect(range)}
                     >
                       {range.label}
@@ -191,20 +190,20 @@ export default function FilterBar({
           </div>
 
           {/* Rating Dropdown */}
-          <div className={styles.dropdown}>
+          <div className="relative">
             <button
-              className={`${styles.dropdownTrigger} ${activeFilters.rating ? styles.active : ''}`}
+              className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg border transition-colors ${activeFilters.rating ? 'bg-primary/10 border-primary text-primary' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}
               onClick={() => toggleDropdown('rating')}
             >
               <span>{activeFilters.rating ? `${activeFilters.rating}+ Stars` : 'Rating'}</span>
-              <ChevronDown size={14} className={openDropdown === 'rating' ? styles.rotated : ''} />
+              <ChevronDown size={14} className={`transition-transform ${openDropdown === 'rating' ? 'rotate-180' : ''}`} />
             </button>
             {openDropdown === 'rating' && (
-              <div className={styles.dropdownMenu}>
-                <div className={styles.dropdownHeader}>Minimum Rating</div>
-                <div className={styles.dropdownContent}>
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[140px]">
+                <div className="px-3 py-2 border-b border-gray-100 font-medium text-sm text-gray-900">Minimum Rating</div>
+                <div className="p-2">
                   <button
-                    className={`${styles.radioItem} ${!activeFilters.rating ? styles.selected : ''}`}
+                    className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${!activeFilters.rating ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:bg-gray-50'}`}
                     onClick={() => handleRatingSelect(null)}
                   >
                     Any Rating
@@ -212,7 +211,7 @@ export default function FilterBar({
                   {RATINGS.map((rating) => (
                     <button
                       key={rating}
-                      className={`${styles.radioItem} ${activeFilters.rating === rating ? styles.selected : ''}`}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${activeFilters.rating === rating ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:bg-gray-50'}`}
                       onClick={() => handleRatingSelect(rating)}
                     >
                       {rating}+ Stars
@@ -224,22 +223,22 @@ export default function FilterBar({
           </div>
 
           {/* Sort Dropdown */}
-          <div className={styles.dropdown}>
+          <div className="relative">
             <button
-              className={styles.dropdownTrigger}
+              className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border bg-white border-gray-200 text-gray-700 hover:border-gray-300 transition-colors"
               onClick={() => toggleDropdown('sort')}
             >
               <span>Sort: {SORT_OPTIONS.find((s) => s.id === activeFilters.sortBy)?.label}</span>
-              <ChevronDown size={14} className={openDropdown === 'sort' ? styles.rotated : ''} />
+              <ChevronDown size={14} className={`transition-transform ${openDropdown === 'sort' ? 'rotate-180' : ''}`} />
             </button>
             {openDropdown === 'sort' && (
-              <div className={styles.dropdownMenu}>
-                <div className={styles.dropdownHeader}>Sort By</div>
-                <div className={styles.dropdownContent}>
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[180px]">
+                <div className="px-3 py-2 border-b border-gray-100 font-medium text-sm text-gray-900">Sort By</div>
+                <div className="p-2">
                   {SORT_OPTIONS.map((option) => (
                     <button
                       key={option.id}
-                      className={`${styles.radioItem} ${activeFilters.sortBy === option.id ? styles.selected : ''}`}
+                      className={`w-full text-left px-3 py-2 text-sm rounded transition-colors ${activeFilters.sortBy === option.id ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:bg-gray-50'}`}
                       onClick={() => handleSortSelect(option.id)}
                     >
                       {option.label}
@@ -251,10 +250,10 @@ export default function FilterBar({
           </div>
         </div>
 
-        <div className={styles.resultInfo}>
-          <span className={styles.resultCount}>{totalResults.toLocaleString()} {listingType}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-600">{totalResults.toLocaleString()} {listingType}</span>
           {activeFilterCount > 0 && (
-            <button className={styles.clearAll} onClick={clearAllFilters}>
+            <button className="text-sm text-primary hover:underline" onClick={clearAllFilters}>
               Clear all
             </button>
           )}
@@ -263,27 +262,27 @@ export default function FilterBar({
 
       {/* Active Filter Tags */}
       {activeFilterCount > 0 && (
-        <div className={styles.activeTags}>
+        <div className="flex items-center gap-2 mt-3 flex-wrap">
           {activeFilters.categories.map((catId) => (
-            <span key={catId} className={styles.tag}>
+            <span key={catId} className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-sm text-gray-700 rounded-full">
               {getCategoryLabel(catId)}
-              <button onClick={() => removeCategory(catId)}>
+              <button onClick={() => removeCategory(catId)} className="text-gray-400 hover:text-gray-600">
                 <X size={12} />
               </button>
             </span>
           ))}
           {activeFilters.priceRange && (
-            <span className={styles.tag}>
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-sm text-gray-700 rounded-full">
               {activeFilters.priceRange.label}
-              <button onClick={() => handlePriceSelect(null)}>
+              <button onClick={() => handlePriceSelect(null)} className="text-gray-400 hover:text-gray-600">
                 <X size={12} />
               </button>
             </span>
           )}
           {activeFilters.rating && (
-            <span className={styles.tag}>
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-sm text-gray-700 rounded-full">
               {activeFilters.rating}+ Stars
-              <button onClick={() => handleRatingSelect(null)}>
+              <button onClick={() => handleRatingSelect(null)} className="text-gray-400 hover:text-gray-600">
                 <X size={12} />
               </button>
             </span>

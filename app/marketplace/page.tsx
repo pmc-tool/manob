@@ -2,36 +2,28 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, ArrowUpDown } from 'lucide-react';
+import { Search, ArrowUpDown, Loader2 } from 'lucide-react';
+import { Select } from 'antd';
 import { ListingToggle, type ListingType } from '@/components/pmc-migrated/marketplace/listing-toggle';
 import { SidebarFilter, type ActiveFilters } from '@/components/pmc-migrated/marketplace/sidebar-filter';
-// import { FilterBar, type ActiveFilters } from '@/components/pmc-migrated/marketplace/filter-bar'; // TOP BAR STYLE (commented)
 import { ProductCard } from '@/components/pmc-migrated/marketplace/product-card';
 import { ServiceCard } from '@/components/pmc-migrated/marketplace/service-card';
 import { SearchModal } from '@/components/pmc-migrated/marketplace/search-bar';
-// MOCK: Using mock data until real API is connected
-import { mockCategories } from '@/lib/mocks/categories.mock';
-import { mockFeaturedProducts, mockTrendingProducts } from '@/lib/mocks/products.mock';
 import { mockFeaturedServices, mockTrendingServices } from '@/lib/mocks/services.mock';
-import styles from './page.module.css';
+import {
+  useGetProductsQuery,
+  useGetParentCategoriesQuery,
+} from '@/state/services/home-service/public-product.service';
 
-// MOCK: Combine products and services
-const allProducts = [...mockFeaturedProducts, ...mockTrendingProducts];
+// Services still use mock data for now
 const allServices = [...mockFeaturedServices, ...mockTrendingServices];
 
-// MOCK: Filter categories with deterministic counts (avoid hydration mismatch)
-const filterCategories = mockCategories.map((cat, index) => ({
-  id: cat.slug,
-  label: cat.title,
-  count: ((index + 1) * 17) % 89 + 10, // Deterministic pseudo-random: 27, 44, 61, 78, 6, 23...
-}));
-
 const SORT_OPTIONS = [
-  { id: 'newest', label: 'Newest' },
-  { id: 'popular', label: 'Most Popular' },
-  { id: 'price-low', label: 'Price: Low to High' },
-  { id: 'price-high', label: 'Price: High to Low' },
-  { id: 'rating', label: 'Highest Rated' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'popular', label: 'Most Popular' },
+  { value: 'price-low', label: 'Price: Low to High' },
+  { value: 'price-high', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Highest Rated' },
 ];
 
 export default function MarketplacePage() {
@@ -44,20 +36,88 @@ export default function MarketplacePage() {
     rating: null,
   });
 
-  // Filter and sort products
-  const filteredProducts = useMemo(() => {
-    let result = [...allProducts];
+  // Fetch categories from API
+  const { data: categoriesData } = useGetParentCategoriesQuery();
 
-    if (activeFilters.priceRange) {
-      result = result.filter(
-        (p) => p.price >= activeFilters.priceRange!.min && p.price <= activeFilters.priceRange!.max
-      );
+  // Map API categories to sidebar format
+  const filterCategories = useMemo(() => {
+    // Handle different response structures
+    const categories = categoriesData?.items || categoriesData || [];
+
+    if (!Array.isArray(categories)) {
+      return [];
     }
 
+    return categories.map((cat: any) => ({
+      id: String(cat.id),
+      label: cat.name || cat.title || cat.label,
+      count: cat.count || cat.product_count || 0,
+    }));
+  }, [categoriesData]);
+
+  // Build query params with filters
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page: 1,
+      limit: 50
+    };
+
+    // Add category filter
+    if (activeFilters.categories.length > 0) {
+      params.category_ids = activeFilters.categories;
+    }
+
+    // Add price range filter
+    if (activeFilters.priceRange) {
+      params.priceMin = activeFilters.priceRange.min;
+      params.priceMax = activeFilters.priceRange.max;
+    }
+
+    return params;
+  }, [activeFilters]);
+
+  // Fetch products from API with filters
+  const {
+    data: publicProducts,
+    isLoading: isLoadingProducts,
+    isFetching: isFetchingProducts,
+  } = useGetProductsQuery({ queryParams });
+
+  // Map API products to component format
+  const apiProducts = useMemo(() => {
+    const items = publicProducts?.items || [];
+    return items.map((item: any) => ({
+      id: item.id,
+      title: item.product_name,
+      slug: item.slug,
+      thumbnail_image: item.image?.startsWith('http') ? item.image : `${process.env.NEXT_PUBLIC_S3BUCKET}/${item.image}`,
+      price: item.price || 0,
+      mrp: item.mrp || 0,
+      avg_rating: parseFloat(item.avg_rating) || 0,
+      total_reviews: item.total_reviews || 0,
+      total_sales: item.total_sales || 0,
+      is_onsale: item.is_onsale || false,
+      is_trending: item.is_trending || false,
+      is_liked: item.is_liked || false,
+      is_pixi_compatible: item.is_pixi_compatible || false,
+      creator: {
+        full_name: `${item.user?.first_name || ''} ${item.user?.last_name || ''}`.trim(),
+        user_name: item.user?.user_name || '',
+        profile_image: item.user?.profile_image || '',
+      }
+    }));
+  }, [publicProducts]);
+
+  // Filter and sort products (API handles category & price, client handles rating & sort)
+  const filteredProducts = useMemo(() => {
+    let result = [...apiProducts];
+
+    // Rating filter (client-side, API doesn't support it)
     if (activeFilters.rating) {
       result = result.filter((p) => p.avg_rating >= activeFilters.rating!);
     }
 
+    // Sorting (client-side)
     switch (sortBy) {
       case 'popular':
         result.sort((a, b) => b.total_sales - a.total_sales);
@@ -74,7 +134,7 @@ export default function MarketplacePage() {
     }
 
     return result;
-  }, [activeFilters, sortBy]);
+  }, [apiProducts, activeFilters.rating, sortBy]);
 
   // Filter and sort services
   const filteredServices = useMemo(() => {
@@ -121,23 +181,26 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className="flex flex-col gap-4 h-full">
       {/* Header Row */}
-      <div className={styles.headerRow}>
-        <div className={styles.headerLeft}>
-          <h1 className={styles.title}>Marketplace</h1>
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold text-gray-900 m-0">Marketplace</h1>
           <ListingToggle activeType={listingType} onToggle={handleToggle} />
         </div>
 
-        <button onClick={() => setShowSearch(true)} className={styles.searchButton}>
+        <button
+          onClick={() => setShowSearch(true)}
+          className="flex items-center gap-2 px-3.5 py-2 text-[13px] bg-gray-100 border-none rounded-lg text-gray-500 cursor-pointer transition-colors hover:bg-gray-200"
+        >
           <Search size={16} />
-          <span>Search {listingType}...</span>
-          <kbd>/</kbd>
+          <span className="hidden sm:inline">Search {listingType}...</span>
+          <kbd className="px-1.5 py-0.5 text-[11px] bg-white border border-gray-200 rounded text-gray-400">/</kbd>
         </button>
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className={styles.mainContent}>
+      <div className="flex gap-5 flex-1 min-h-0 flex-col md:flex-row">
         {/* Left Sidebar Filter */}
         <SidebarFilter
           categories={filterCategories}
@@ -146,27 +209,33 @@ export default function MarketplacePage() {
         />
 
         {/* Right Content Area */}
-        <div className={styles.contentArea}>
+        <div className="flex-1 min-w-0 flex flex-col">
           {/* Sort Bar */}
-          <div className={styles.sortBar}>
-            <span className={styles.resultCount}>
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+            <span className="text-sm text-gray-500">
               {currentItems.length} {listingType}
             </span>
-            <div className={styles.sortSelect}>
+            <div className="flex items-center gap-1.5 text-gray-500">
               <ArrowUpDown size={14} />
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <Select
+                value={sortBy}
+                onChange={(value) => setSortBy(value)}
+                options={SORT_OPTIONS}
+                size="small"
+                style={{ width: 160 }}
+                variant="outlined"
+              />
             </div>
           </div>
 
           {/* Grid */}
-          {currentItems.length > 0 ? (
-            <div className={styles.grid}>
+          {listingType === 'products' && (isLoadingProducts || isFetchingProducts) ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <span className="ml-3 text-gray-500">Loading products...</span>
+            </div>
+          ) : currentItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {listingType === 'products'
                 ? filteredProducts.map((product) => (
                     <ProductCard
@@ -213,12 +282,13 @@ export default function MarketplacePage() {
                   ))}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              <p>No {listingType} found matching your filters.</p>
+            <div className="text-center py-12 px-5 bg-gray-50 rounded-xl">
+              <p className="text-[15px] text-gray-500 mb-3">No {listingType} found matching your filters.</p>
               <button
                 onClick={() =>
                   setActiveFilters({ categories: [], priceRange: null, rating: null })
                 }
+                className="px-4 py-2 text-[13px] font-medium text-primary bg-transparent border border-primary rounded-lg cursor-pointer transition-all hover:bg-primary hover:text-white"
               >
                 Clear filters
               </button>

@@ -38,7 +38,7 @@ const mutex = {
 
 // Dynamic base query handling
 const dynamicBaseQuery = async (args: any, api: any, extraOptions: any) => {
-  const customBaseUrl = args?.baseUrl || process.env.API_URL;
+  const customBaseUrl = args?.baseUrl || process.env.NEXT_PUBLIC_API_URL;
 
   const baseQuery = fetchBaseQuery({
     baseUrl: customBaseUrl,
@@ -87,7 +87,7 @@ export const baseQueryWithReAuth = async (
         // console.log("here = 33", refreshToken);
         // console.log("p_aut", p_aut);
         const refreshResult = await fetch(
-          `${process.env.API_URL_ACC}/auth/token`,
+          `${process.env.NEXT_PUBLIC_API_URL_ACC}/auth/token`,
           {
             headers: {
               Authorization: `Bearer ${refreshToken}`,

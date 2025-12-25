@@ -4,9 +4,12 @@ import {
   Activity,
   BotMessageSquare,
   Briefcase,
+  DollarSign,
   History,
   Home,
+  LayoutDashboard,
   Mail,
+  ReceiptText,
   Settings,
   SplinePointer,
   Store,
@@ -15,17 +18,19 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useSettingsModal } from "@/context/SettingsModalContext";
+import { useUserMode } from "@/context/UserModeContext";
 import HistoryPanel from "./HistoryPanel";
 
 export default function ProjectSidebar() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [openHistory, setOpenHistory] = useState(false);
   const { openModal } = useSettingsModal();
+  const { isSeller } = useUserMode();
   const router = useRouter();
 
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = (tab: string) => {
+  const handleClick = (tab: string, path?: string) => {
     setActiveTab(tab);
 
     if (tab === "history") {
@@ -34,32 +39,8 @@ export default function ProjectSidebar() {
       setOpenHistory(false);
     }
 
-    if (tab === "settings") {
-      router.push("/settings/security");
-    }
-
-    if (tab === "marketplace") {
-      router.push("/marketplace");
-    }
-
-    if (tab === "market2") {
-      router.push("/market-2");
-    }
-
-    if (tab === "chat") {
-      router.push("/projects");
-    }
-
-    if (tab === "inbox") {
-      router.push("/chat");
-    }
-
-    if (tab === "hire") {
-      router.push("/job-list");
-    }
-
-    if (tab === "home") {
-      router.push("/");
+    if (path) {
+      router.push(path);
     }
   };
 
@@ -93,82 +74,53 @@ export default function ProjectSidebar() {
         : "group-hover/sidebar-item:bg-v0-alpha-400"
     }`;
 
+  // Buyer menu items
+  const buyerMenuItems = [
+    { key: "home", icon: Home, label: "Home", path: "/" },
+    { key: "chat", icon: BotMessageSquare, label: "Chat", path: "/projects" },
+    { key: "design", icon: SplinePointer, label: "Design", path: undefined },
+    { key: "marketplace", icon: Store, label: "Market", path: "/marketplace" },
+    { key: "market2", icon: Activity, label: "Market 2", path: "/market-2" },
+    { key: "hire", icon: Briefcase, label: "Hire", path: "/job-list" },
+    { key: "history", icon: History, label: "History", path: undefined },
+  ];
+
+  // Seller menu items
+  const sellerMenuItems = [
+    { key: "dashboard", icon: LayoutDashboard, label: "Dashboard", path: "/seller/dashboard" },
+    { key: "jobs", icon: Briefcase, label: "Jobs", path: "/job-list" },
+    { key: "finance", icon: DollarSign, label: "Finance", path: "/seller/finance" },
+    { key: "marketplace", icon: Store, label: "Market", path: "/marketplace" },
+    { key: "activities", icon: Activity, label: "Activities", path: "/seller/activities" },
+    { key: "refund", icon: ReceiptText, label: "Refund", path: "/seller/refund-list" },
+    { key: "history", icon: History, label: "History", path: undefined },
+  ];
+
+  // Get menu items based on mode
+  const menuItems = isSeller ? sellerMenuItems : buyerMenuItems;
+
   return (
     <div className="relative" style={{ zIndex: 50, overflow: 'visible', height: '100%' }}>
       {/* SIDEBAR */}
       <div className="flex-col h-full p-2 flex min-w-16 pl-0 bg-white rounded-xl justify-between">
         <div className="flex flex-col gap-2.5">
-          <button
-            onClick={() => handleClick("home")}
-            className={buttonClass("home")}
-          >
-            <div className={iconClass("home")}>
-              <Home size={22} />
-            </div>
-            Home
-          </button>
-
-          <button
-            onClick={() => handleClick("chat")}
-            className={buttonClass("chat")}
-          >
-            <div className={iconClass("chat")}>
-              <BotMessageSquare size={23} />
-            </div>
-            Chat
-          </button>
-
-          <button className={buttonClass("design")}>
-            <div className={iconClass("design")}>
-              <SplinePointer size={23} />
-            </div>
-            Design
-          </button>
-
-          <button
-            onClick={() => handleClick("marketplace")}
-            className={buttonClass("marketplace")}
-          >
-            <div className={iconClass("marketplace")}>
-              <Store size={22} />
-            </div>
-            Market
-          </button>
-
-          <button
-            onClick={() => handleClick("market2")}
-            className={buttonClass("market2")}
-          >
-            <div className={iconClass("market2")}>
-              <Activity size={22} />
-            </div>
-            Market 2
-          </button>
-
-          <button
-            onClick={() => handleClick("hire")}
-            className={buttonClass("hire")}
-          >
-            <div className={iconClass("hire")}>
-              <Briefcase size={22} />
-            </div>
-            Hire
-          </button>
-
-          <button
-            onClick={() => handleClick("history")}
-            className={buttonClass("history")}
-          >
-            <div className={iconClass("history")}>
-              <History size={22} />
-            </div>
-            History
-          </button>
+          {menuItems.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => handleClick(item.key, item.path)}
+              className={buttonClass(item.key)}
+            >
+              <div className={iconClass(item.key)}>
+                <item.icon size={22} />
+              </div>
+              {item.label}
+            </button>
+          ))}
         </div>
 
         <div className="mt-auto flex flex-col gap-2.5">
           <button
-            onClick={() => handleClick("settings")}
+            onClick={() => handleClick("settings", "/settings/security")}
             className={buttonClass("settings")}
           >
             <div className={iconClass("settings")}>
@@ -178,7 +130,7 @@ export default function ProjectSidebar() {
           </button>
 
           <button
-            onClick={() => handleClick("inbox")}
+            onClick={() => handleClick("inbox", "/chat")}
             className={buttonClass("inbox")}
           >
             <div className={iconClass("inbox")}>

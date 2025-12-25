@@ -1,8 +1,7 @@
-// MIGRATION: Avatar component from manob.ai
+// MIGRATION: Avatar component from manob.ai - converted to Tailwind CSS
 'use client';
 
 import Image from 'next/image';
-import styles from './Avatar.module.css';
 
 type AvatarProps = {
   avatar?: string;
@@ -47,14 +46,14 @@ export default function Avatar({
           minWidth: size,
           minHeight: size,
         }}
-        className={`${styles.avatar} ${className}`}
+        className={`rounded-full object-cover ${className}`}
       />
     );
   }
 
   return (
     <div
-      className={`${styles.avatarPlaceholder} ${className}`}
+      className={`flex items-center justify-center rounded-full text-white font-medium select-none ${className}`}
       style={{
         backgroundColor: bgColor,
         width: size,
